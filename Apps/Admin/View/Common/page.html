@@ -1,0 +1,32 @@
+<div id="page" class="r"></div>
+<div id="div_pagesize" class="r">
+    <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+</div>
+<script>
+    var pages = '{$page_info.totalPages}';
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: pages, //通过后台拿到的总页数
+            curr: '{$page_info.page}', //初始化当前页
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U($controller.'/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href=new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var url = "{:U($controller.'/p/1/pagesize/"+page_size+"/_param_')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+</script>

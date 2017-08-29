@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$media_info.title}</title>
+    <meta name="keywords" content="{$media_info.keywords}" />
+    <meta name="description" content="{$media_info.description}" />
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">
+    <link rel="stylesheet" href="__PUBLIC__/Home/css/main.css?v=2">
+</head>
+<body>
+<header>
+    <div class="hd-l">
+        <div class="header-logo"><img alt="logo" src="__PUBLIC__/Home/img/hd-logo.png"></div>
+        <a href="" style="margin-left: -30px;">指娱游戏App</a>
+    <a style="margin-right: -17px;margin-top: -4px;" href="http://weibo.com/zhiyugame?refer_flag=1001030101_ " target="_blank" id="hd-sina" data-type="0"><img alt="" src="__PUBLIC__/Home/img/hd-sina.png"></a>
+        <a href="http://tieba.baidu.com/f?kw=%D6%B8%D3%E9%D3%CE%CF%B7&fr=ala0&tpl=5" target="_blank" id="hd-tieba" data-type="0" style="width:20px;"><img alt="" src="__PUBLIC__/Home/img/hd-tieba.png"></a>
+    </div>
+    <div>
+        <span>你没玩过的精彩游戏，都在指娱！</span>
+    </div>
+</header>
+<div class="bread"><img alt="" src="__PUBLIC__/Home/img/bread-deng.png">您现在的位置是：首页 > 游戏库 > {$app_info.app_name}</div>
+<div class="container">
+
+    <!--左侧大块-->
+    <div class="container-left">
+        <div class="video-container">
+            <div class="change-to-page">
+            <img alt="" src="{$media_info.cover_imgs_url}">
+            <!-- <img alt="" src="__PUBLIC__/Home/img/timg.jpeg> -->
+            </div>
+            <!--左侧阴影里游戏介绍-->
+            <div class="vc-video-box">
+                <div class="filter-box"></div>
+                <div class="video-title">
+                    <div class="vt-name">{$app_info.app_name}</div>
+                    <div class="xxcontainer"  data-score="{$app_info.start_score}">
+                      <!-- 2017-05-16 加了类名 -->
+                        <div id="xxdiv1" class="score_bg">
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                        </div>
+                        <div id="xxdiv2" class="score_cover">
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                        </div>
+                    </div>
+                    <div class="xx-score">{$app_info.start_score}</div>
+                </div>
+                <div class="video-game-name">开发：{$app_info.supplier_name}</div>
+                <div class="video-mp4">
+                    <img alt="" src="{$video_img}">
+                </div>
+                <div class="video-version" style="margin-bottom: 2px;margin-top:-2px;">
+                    <div><div>类型：{$app_info.type_name}</div><div>大小：{$app_info.app_size|byte_to_m}M</div></div>
+                    <div><div>版本：{$app_info.version_name}</div><div>上线：{$app_info.sj_time|date='Y-m-d',###}</div></div>
+                </div>
+                <div class="video-line">
+                    <div class="vl-tag">
+                        <div class="vltag-pinzhi">{$app_info.game_quality}</div>
+                        <div class="zzxcontainer">
+                            <div id="zzxdiv1-1">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div id="zzxdiv2-12">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="vltag-pinzhi-score" id="game-pinzhi">{$app_info.game_quality_value}</div>
+                    </div>
+                    <div class="vl-tag">
+                        <div class="vltag-pinzhi">{$app_info.game_picture}</div>
+                        <div class="zzxcontainer">
+                            <div id="zzxdiv1-2">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div id="zzxdiv2-22">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="vltag-pinzhi-score" id="game-huazhi">{$app_info.game_picture_value}</div>
+                    </div>
+                    <div class="vl-tag">
+                        <div class="vltag-pinzhi">{$app_info.game_gandu}</div>
+                        <div class="zzxcontainer">
+                            <div id="zzxdiv1-3">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div id="zzxdiv2-32">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="vltag-pinzhi-score" id="game-gandu">{$app_info.game_gandu_value}</div>
+                    </div>
+                    <div class="vl-tag">
+                        <div class="vltag-pinzhi">{$app_info.game_diff}</div>
+                        <div class="zzxcontainer">
+                            <div id="zzxdiv1-4">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div id="zzxdiv2-42">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="vltag-pinzhi-score" id="shangshou-nandu">{$app_info.game_diff_value}</div>
+                    </div>
+                </div>
+                <div class="video-download">
+                    <a href="{$media_info.android_down_url}" id="anzhuo"><img src="__PUBLIC__/Home/img/anzhuo.png"><span>安卓安装</span></a>
+                    <a href="{$media_info.ios_down_url}" id="ios"><img src="__PUBLIC__/Home/img/ios.png"><span>IOS安装</span></a>
+                </div>
+            </div>
+            <!--右下角图-->
+            <div class="vc-img-box">
+                <volist name="pic_url" key="i" id="val">
+                    <div class="right-pic"><img src="{$val}"></div>
+                </volist>
+            </div>
+            <!--遮罩div-->
+            <div class="module" style="display: none;">
+                <if condition="$app_info['is_landscape'] eq 1">
+                    <div class="module-img-box">
+                        <img alt="" src="">
+                        <div class="close-module"><img alt="" src="__PUBLIC__/Home/img/off.png"></div>
+                    </div>
+                </if>
+                <if condition="$app_info['is_landscape'] eq 0">
+                    <div class="module-img-box shuping">
+                        <img alt="" src="">
+                        <div class="close-module"><img alt="" src="__PUBLIC__/Home/img/off.png"></div>
+                    </div>
+                </if>
+            </div>
+        </div>
+        <div class="game-intr" id="game-jianjie">
+            <span></span>
+            <span style="color:#333;">游戏简介</span>
+        </div>
+        <div class="intr-detail-box">
+            {$app_info.introduct}   
+        </div>
+        <div class="intr-all">
+            <div class="intr-all-box" datatype=0>展开简介<img alt="" src="__PUBLIC__/Home/img/out.png"></div>
+        </div>
+        <div class="intro-nav">
+            <div class="in-nav1 newback">玩法介绍</div>
+            <div class="in-nav2">游戏攻略</div>
+            <div class="in-nav3">精美图片</div>
+        </div>
+        <div>
+            <!--简介-->
+            <div class="in-intr" id="ini-intr">
+                <div class="ini-box ini-box1">
+                    {$media_info.play_info|htmlspecialchars_decode}
+                </div>
+            </div>
+            <!--攻略-->
+            <div class="in-intr" style="display: none;" id="ini-strategy">
+                <div class="ini-box in-strategy-box">
+                    <volist name="gl_list" key="gl_i" id="gl_val">
+                        <a href="{$gl_val.gl_url}">{$gl_val.gl_title}</a>
+                    </volist>
+                </div>
+            </div>
+            <!--精美图片-->
+            <div class="in-intr" id="ini-beauty" style="display: none;">
+                <div class="ini-box ini-beauty">
+                    <volist name="fine_arr" key="fine_i" id="fine_val">
+                        <div class="beauty-div active" id="beauty-div{$fine_i}" data-url="{$fine_val.fine_url}" data-num={$fine_i}><img alt="" src="{$fine_val.fine_thumb_url}"><div class="beauty-mask"></div></div>
+                    </volist>
+                    <p id="beauty-page"><span id="now-page">2</span><span>/{$fine_count}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--右侧大块-->
+    <div class="container-right">
+        <div class="cr-div keep">
+            <div class="scan">
+                <div class="scan-four">
+                    <div><img alt="" src="__PUBLIC__/Home/img/scan-share4.png"></div>
+                    <div>扫我，这里的游戏杠杠滴！</div>
+                    <div><img alt="" src="__PUBLIC__/Home/img/scan1.png" id="hover-wx" data-type=0>
+                        <img alt="" src="__PUBLIC__/Home/img/scan2.png" id="hover-qq" data-type=0>
+                        <a href="mailto:zykefu@jiawanhd.com"><img alt="" src="__PUBLIC__/Home/img/scan3.png" id="hover-email" data-type=0></a>
+                        <a href="http://tieba.baidu.com/f?kw=%D6%B8%D3%E9%D3%CE%CF%B7&fr=ala0&tpl=5" target="_blank"><img alt="" src="__PUBLIC__/Home/img/scan4.png" id="hover-tb" data-type=0></a>
+                    </div>
+                </div>
+                <div class="scan-ewm"><img alt="" src="__PUBLIC__/Home/img/scan-ewm.png"></div>
+            </div>
+            <div class="share">
+                <div id="keep-page" data-type="0"><img alt="" src="__PUBLIC__/Home/img/keep.png" width="22" height="22"><a id="fav">收藏本页</a></div>
+                <div id="share-page" data-type="0"><img alt="" src="__PUBLIC__/Home/img/share.png">分享本页</div>
+            </div>
+            <!--hover时-->
+
+            <!--微信-->
+            <div class="hover-wx"><img alt="" src="__PUBLIC__/Home/img/down-qrcode-app.png"></div>
+            <!--QQ-->
+            <div class="hover-qq"><img alt="" src="__PUBLIC__/Home/img/qq-qrcode.png"></div>
+            <!--email-->
+            <div class="hover-email">更多好玩的游戏，请来告诉我们吧！~</div>
+        </div>
+        <div class="cr-div cr-div-character">
+            <div class="game-character">
+                <div class="game-intr cr-border-top">
+                    <span></span>
+                    <span>游戏特点</span>
+                </div>
+            </div>
+            <div class="cdc-box">
+                <volist name="game_tag" key="gt_i" id="gt_val">
+                    <div>{$gt_val}</div>
+                </volist>
+            </div>
+        </div>
+        <div class="cr-div">
+            <div class="game-character">
+                <div class="game-intr cr-border-top">
+                    <span></span>
+                    <span>厂商介绍</span>
+                </div>
+            </div>
+            <div class="logo-and-name">
+                <div class="lan-logo"><img alt="" src="{$app_info.supplier_icon}"></div>
+                <div class="lan-name">
+                    <div class="lan-name-n">{$app_info.supplier_name}</div>
+                    <div class="lan-name-d">{$app_info.other_game}</div>
+                </div>
+            </div>
+            <div class="name-and-desp">{$app_info.supplier_info}</div>
+        </div>
+        <div class="cr-div cr-div-sug">
+            <div class="game-sug">游戏专辑推荐</div>
+            <div class="sug-sub-title">{$media_info.special_title}</div>
+            <div class="sub-sub-title-desp">{$media_info.special_info}</div>
+            <!--第一个游戏-->
+            <volist name="game_special_list" key="gs_i" id="gs_val">
+                <div class="down-num-box-outer">
+                    <div class="dnbo-box">
+                        <div class="down-num-box">
+                            <div class="dnb-icon"><img alt="" src="{$gs_val.icon}"></div>
+                            <div class="name-and-num">
+                                <div>{$gs_val.app_name}</div>
+                                <div>{$gs_val.type_name}</div>
+                            </div>
+                            <div class="xxcontainer dnb-xx" data-score="{$gs_val.start_score}">
+                                <div id="xxdiv1-{$gs_val.start_score|intval}" class="score_bg">
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                </div>
+                                <div id="xxdiv2-{$gs_val.start_score|intval}1" class="score_cover">
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dnb-desp">{$gs_val.game_info}</div>
+                    </div>
+                </div>
+            </volist>
+        </div>
+    </div>
+</div>
+<div class="footer-banner">
+    <div class="footer-box">
+        <div><img alt="" src="__PUBLIC__/Home/img/red-bag.png"></div>
+        <div><img alt="" src="__PUBLIC__/Home/img/slogan.png"></div>
+        <div style="margin-top: 16px;"><a href="http://app.zhiyugame.com/home/app/down_wjb"><img alt="" src="__PUBLIC__/Home/img/but_lijiyouxi.png"></a></div>
+    </div>
+</div>
+<div class="click-share-box" style="display: none;">
+    <div class="csb-top-back"><img alt="" src="__PUBLIC__/Home/img/click-share-back.png"></div>
+    <div class="csb-top-font">分享</div>
+    <div class="csb-top-close"><img alt="" src="__PUBLIC__/Home/img/off.png"></div>
+    <div class="csb-center-erweima"><img alt="" src="__PUBLIC__/Home/img/wechat.png"></div>
+    <div class="csb-alert">微信“扫一扫”，点击右上角分享</div>
+    <div class="csb-qas">
+        <div class="bdsharebuttonbox">
+        <!-- <a href="#" class="bds_more" data-cmd="more"></a> -->
+        <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a></div>
+        <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+        <a id="shaer-page-qq" style="display: none;"><img alt="" src="__PUBLIC__/Home/img/QQ.png"></a>
+        <a id="shaer-page-sina" style="display: none;"><img alt="" src="__PUBLIC__/Home/img/sina.png"></a>
+    </div>
+</div>
+<script src="__PUBLIC__/Home/js/jquery-2.1.4.min.js"></script>
+<script>
+    //收藏本站
+    $.fn.addFavorite = function (title, href) {
+        return this.click(function () {
+            var t = $(this);
+            var explorer = navigator.userAgent;
+            if (explorer.indexOf("MSIE") >= 0) {
+                window.external.addFavorite(href, title);
+            } else if (explorer.indexOf("Firefox") >= 0 || explorer.indexOf("Opera") >= 0) {
+                alert(376);
+                t.attr("rel", "sidebar");
+                t.attr("title", title);
+                t.attr("href", href);
+            } else {
+                alert("请使用Ctrl+D将本页加入收藏夹！");
+            }
+        });
+    };
+    $(function () {
+        $('#fav').addFavorite('收藏本页', location.href);
+//hover时点亮头部
+        $("#hd-sina").hover(function () {
+            if($(this).attr("data-type")==0){
+                $(this).find("img").prop("src","__PUBLIC__/Home/img/hd-sina-liang.png");
+                $(this).attr("data-type","1");
+            }else{
+                $(this).find("img").prop("src","__PUBLIC__/Home/img/hd-sina.png");
+                $(this).attr("data-type","0");
+            }
+        })
+        $("#hd-tieba").hover(function () {
+            if($(this).attr("data-type")==0){
+                $(this).find("img").prop("src","__PUBLIC__/Home/img/hd-tieba-liang.png");
+                $(this).attr("data-type","1");
+            }else{
+                $(this).find("img").prop("src","__PUBLIC__/Home/img/hd-tieba.png");
+                $(this).attr("data-type","0");
+            }
+        })
+//点击展开简介
+        console.log(parseInt($(".intr-detail-box").css("height")));
+        if(parseInt($(".intr-detail-box").css("height"))>=83){
+            $(".intr-all").show();
+            $(".intr-detail-box").css("border-bottom","none");
+            $(".intr-all-box").click(function () {
+                if($(this).attr("datatype")==0){
+                    $(".intr-detail-box").css("max-height","400px");
+                    $(".intr-detail-box").addClass("autoheight");
+                    $(this).find("img").addClass("rotate");
+                    $(this).attr("datatype",1);
+                }else{
+                    $(this).find("img").removeClass("rotate");
+                    $(".intr-detail-box").removeClass("autoheight").css("max-height","82px");
+                    $(this).attr("datatype",0);
+                }
+            })
+        }else{
+            $(".intr-all").hide();
+        }
+
+//点击切换游戏介绍
+        $(".in-nav1").mouseenter(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-intr").show().siblings().hide();
+        })
+        $(".in-nav2").mouseenter(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-strategy").show().siblings().hide();
+        })
+        $(".in-nav3").mouseenter(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-beauty").show().siblings().hide();
+        })
+
+
+        $(".in-nav1").click(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-intr").show().siblings().hide();
+        })
+        $(".in-nav2").click(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-strategy").show().siblings().hide();
+        })
+        $(".in-nav3").click(function () {
+            $(this).addClass("border-white newback").siblings().removeClass("border-white newback");
+            $("#ini-beauty").show().siblings().hide();
+        })
+//有五颗星星评价时，分数可保留一位小数。要配合上文里的CSS和dom
+// 2017-05-16 start
+         function starNum(num){
+             if(num>=0&&num<1){
+                 var spanArr=$("#xxdiv2").children();
+                 var spaner=parseInt($(spanArr[0]).css("width"));
+                 var newWidther=num*spaner+"px";
+                 $(spanArr[0]).css("width",newWidther).find("i").addClass("light");
+                 $(spanArr[1]).hide().nextAll().hide();
+             }else{
+                 var n=Math.floor(num);
+                 var yu=num-n;
+                 for(var i=0;i<n;i++){
+                     var spanArr=$("#xxdiv2").children();
+                     $(spanArr[i]).find('i').addClass("light");
+                 }
+                 var spanWidth=parseInt($(spanArr[n]).css("width"));
+                 var newWidth=yu*spanWidth+"px";
+                 $(spanArr[n]).css("width",newWidth).find("i").addClass("light");
+                 var j=Math.floor(5-num);
+                 $(spanArr[5-j]).hide().nextAll().hide();
+             }
+         }
+         var star=$(".xx-score").text();
+         starNum(star);
+// 2017-05-16 end
+//点击右下角图，同步显示在模态框里
+        $(".right-pic").click(function(){
+            showModule(this);
+        })
+        function showModule(dom){
+            var $src=$(dom).find("img").prop("src");
+            $(".module").show();
+            $(".module-img-box>img").prop("src",$src);
+            $(".vc-img-box").addClass("hz-index");
+            // $(dom).addClass("m-border").siblings().removeClass("m-border");
+            $(".close-module").click(function(){
+                $(".module").hide();
+                $(".vc-img-box").removeClass("hz-index");
+                $(".right-pic").removeClass("m-border");
+            })
+        }
+
+//点击视频占位符，视频跳出播放
+        $(".video-mp4").click(function(){
+            showModuleVideo(this);
+        })
+        function showModuleVideo(){
+            var _html = $(".module").html();
+            $(".module").html(
+                    '<div class="module-img-box">'+
+                        '<img alt="" src="">'+
+                            '<div class="close-module"><img alt="" src="__PUBLIC__/Home/img/off.png"></div>'+
+                    '</div>'
+            )
+            $(".module").show();
+            $(".module-img-box").html(
+                    "<video autoplay controls><source src='{$video_url}' poster='{$video_img}' type='video/mp4'>您的浏览器不支持视频播放</video><div id='close-video' class='newclose'><img alt='' src='__PUBLIC__/Home/img/off.png'></div>"
+            ); 
+            $("video").css("width","100%");
+            $(".newclose").click(function(){
+                console.log("hahaha")
+                $(".module").html(_html);
+                $(".module").hide();
+            });
+
+        }
+//游戏专辑推荐里的星星评分
+        function scoreHandle ($target) {
+            // 拿到一个小星星的宽度
+            var starWidth = $target.find('.score_bg span').width()
+            $target.each(function (index, ele) {
+                //这个Index是选择器的index位置，ele是当前的元素相当于this自身
+                var $this = $(ele)
+                //  拿到对应的分数
+                var num = $this.attr("data-score");
+                //拿到整数部分
+                var intNum = Math.floor(num)
+                // 取到上面一层的全部小星星
+                var $coverStar = $this.children('.score_cover').children('span')
+                // 将jquery类数组变为数组
+                coverStar = $.makeArray($coverStar)
+                // 先画出整只星星
+                for (var i = 0; i < intNum; i++) {
+                    $(coverStar[i]).css('display', 'inline-block').children('i').addClass('light')
+                }
+                //最后画残废的星星
+                $(coverStar[intNum]).css({
+                    'width': (num - intNum) * starWidth,
+                    'display': 'inline-block'
+                }).children('i').addClass('light')
+            })
+        }
+        scoreHandle($('.xxcontainer'))
+
+
+
+// 2017-05-16 start 轮播图
+        var beautyPlay = {
+            currentNum: 1,
+            $target: '',
+            length: '',
+            timer: null,
+            init: function () {
+              var that = this;
+              that.length = that.$target.length;
+              that.$target.on('mouseenter', function () {
+                clearTimeout(that.timer)
+                var $this = $(this)
+                that.currentNum = $this.data('num');
+                $this.addClass('active').siblings('.beauty-div').removeClass('active');
+                that.handle(that.currentNum)
+              })
+
+              that.$target.on('mouseleave', function() {
+                that.autoPlay()
+              })
+              that.autoPlay()
+
+            },
+            handle: function (num) {
+              if (num === 4) {
+                $('[data-num=3]').css('z-index', 3)
+                $('[data-num=2]').css('z-index', 2)
+                $('[data-num=1]').css('z-index', 1)
+              } else if (num === 1) {
+                $('[data-num=4]').css('z-index', 1)
+                $('[data-num=3]').css('z-index', 2)
+                $('[data-num=2]').css('z-index', 3)
+              }else if (num === 2) {
+                  $('[data-num=4]').css('z-index', 1)
+                  $('[data-num=3]').css('z-index', 2)
+                  $('[data-num=1]').css('z-index', 3)
+              }else if (num === 3) {
+                  $('[data-num=4]').css('z-index', 3)
+                  $('[data-num=2]').css('z-index', 2)
+                  $('[data-num=1]').css('z-index', 1)
+              }
+            },
+            autoPlay: function () {
+              var that = this
+              this.currentNum++
+              if (this.currentNum > this.length) {
+                this.currentNum = 1
+              }
+              this.$target.removeClass('active')
+              $('[data-num='+ this.currentNum +']').addClass('active')
+              this.handle(this.currentNum)
+
+              this.timer = setTimeout(function () {
+                that.autoPlay()
+              }, 2000)
+              $("#now-page").text(this.currentNum);
+            },
+            go: function ($target) {
+              this.$target = $target;
+              this.init();
+            }
+        }
+        beautyPlay.go($('.beauty-div'));
+
+
+//点击轮播图，新窗口显示高清大图
+        $("#beauty-div1,#beauty-div2,#beauty-div3,#beauty-div4").click(function () {
+            var imgUrl=$(this).data("url");
+            window.open(imgUrl,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes")
+        })
+// 2017-05-16 end
+
+//video下的游戏评分色块
+        function game1Score(num,colorset){
+            if(num>=0&&num<1){
+                var spanArrer=$("#zzxdiv2-12").children();
+                var spaner=parseInt($(spanArrer[0]).css("width"));
+                var newWidther=num*spaner+"px";
+                $(spanArrer[0]).css("width",newWidther).find("i").css("color",colorset);
+                $(spanArrer[1]).hide().nextAll().hide();
+            }else{
+                var n=Math.floor(num);
+                var yu=num-n;
+                for(var i=0;i<n;i++){
+                    var spanArr=$("#zzxdiv2-12").children();
+                    $(spanArr[i]).find('i').css("color",colorset);
+                }
+                var spanWidth=parseInt($(spanArr[n]).css("width"));
+                var newWidth=yu*spanWidth+"px";
+                $(spanArr[n]).css("width",newWidth).find("i").css("color",colorset);
+                var j=Math.floor(10-num);
+                $(spanArr[10-j]).hide().nextAll().hide();
+            }
+        }
+        var gamepinzhi=$("#game-pinzhi").text();
+        game1Score(gamepinzhi,'#f4dd1f');
+
+        function game2Score(num,colorset){
+            if(num>=0&&num<1){
+                var spanArrer=$("#zzxdiv2-22").children();
+                var spaner=parseInt($(spanArrer[0]).css("width"));
+                var newWidther=num*spaner+"px";
+                $(spanArrer[0]).css("width",newWidther).find("i").css("color",colorset);
+                $(spanArrer[1]).hide().nextAll().hide();
+            }else{
+                var n=Math.floor(num);
+                var yu=num-n;
+                for(var i=0;i<n;i++){
+                    var spanArr=$("#zzxdiv2-22").children();
+                    $(spanArr[i]).find('i').css("color",colorset);
+                }
+                var spanWidth=parseInt($(spanArr[n]).css("width"));
+                var newWidth=yu*spanWidth+"px";
+                $(spanArr[n]).css("width",newWidth).find("i").css("color",colorset);
+                var j=Math.floor(10-num);
+                $(spanArr[10-j]).hide().nextAll().hide();
+            }
+        }
+        var gamehuazhi=$("#game-huazhi").text();
+        game2Score(gamehuazhi,'#ff553b');
+
+        function game3Score(num,colorset){
+            if(num>=0&&num<1){
+                var spanArrer=$("#zzxdiv2-32").children();
+                var spaner=parseInt($(spanArrer[0]).css("width"));
+                var newWidther=num*spaner+"px";
+                $(spanArrer[0]).css("width",newWidther).find("i").css("color",colorset);
+                $(spanArrer[1]).hide().nextAll().hide();
+            }else{
+                var n=Math.floor(num);
+                var yu=num-n;
+                for(var i=0;i<n;i++){
+                    var spanArr=$("#zzxdiv2-32").children();
+                    $(spanArr[i]).find('i').css("color",colorset);
+                }
+                var spanWidth=parseInt($(spanArr[n]).css("width"));
+                var newWidth=yu*spanWidth+"px";
+                $(spanArr[n]).css("width",newWidth).find("i").css("color",colorset);
+                var j=Math.floor(10-num);
+                $(spanArr[10-j]).hide().nextAll().hide();
+            }
+        }
+        var gamegandu=$("#game-gandu").text();
+        game3Score(gamegandu,'#5add0a');
+
+        function game4Score(num,colorset){
+            if(num>=0&&num<1){
+                var spanArrer=$("#zzxdiv2-42").children();
+                var spaner=parseInt($(spanArrer[0]).css("width"));
+                var newWidther=num*spaner+"px";
+                $(spanArrer[0]).css("width",newWidther).find("i").css("color",colorset);
+                $(spanArrer[1]).hide().nextAll().hide();
+            }else{
+                var n=Math.floor(num);
+                var yu=num-n;
+                for(var i=0;i<n;i++){
+                    var spanArr=$("#zzxdiv2-42").children();
+                    $(spanArr[i]).find('i').css("color",colorset);
+                }
+                var spanWidth=parseInt($(spanArr[n]).css("width"));
+                var newWidth=yu*spanWidth+"px";
+                $(spanArr[n]).css("width",newWidth).find("i").css("color",colorset);
+                var j=Math.floor(10-num);
+                $(spanArr[10-j]).hide().nextAll().hide();
+            }
+        }
+        var shangshounandu=$("#shangshou-nandu").text();
+        game4Score(shangshounandu,'#2ea4ff');
+    })
+
+//分享此页
+    $("#share-page").click(function () {
+       $(".click-share-box").show();
+       $(".csb-top-close").click(function () {
+            $(".click-share-box").hide();
+        });
+    })
+//hover效果
+    $("#hover-wx").hover(function () {
+        if($(this).attr("data-type")==0){
+            $(".hover-wx").show();
+            $(this).attr("data-type",1);
+        }else{
+            $(".hover-wx").hide();
+            $(this).attr("data-type",0);
+        }
+    })
+    $("#hover-qq").hover(function () {
+        if($(this).attr("data-type")==0){
+            $(".hover-qq").show();
+            $(this).attr("data-type",1);
+        }else{
+            $(".hover-qq").hide();
+            $(this).attr("data-type",0);
+        }
+    })
+    $("#hover-email").hover(function () {
+        if($(this).attr("data-type")==0){
+            $(".hover-email").show();
+            $(this).attr("data-type",1);
+        }else{
+            $(".hover-email").hide();
+            $(this).attr("data-type",0);
+        }
+    })
+    $("#keep-page").hover(function () {
+        if($(this).data("type")==0){
+            $(this).css("color","#fff");
+            $(this).css("background","#fbe602");
+            $(this).find("img").prop("src","__PUBLIC__/Home/img/keep-hover.png");
+            $(this).data("type","1");
+        }else{
+            $(this).css("color","#999");
+            $(this).css("background","#fff");
+            $(this).find("img").prop("src","__PUBLIC__/Home/img/keep.png");
+            $(this).data("type","0");
+        }
+    })
+    $("#share-page").hover(function () {
+        if($(this).data("type")==0){
+            $(this).css("color","#fff");
+            $(this).css("background","#30ad9d");
+            $(this).find("img").prop("src","__PUBLIC__/Home/img/share-hover.png");
+            $(this).data("type","1");
+        }else{
+            $(this).css("color","#999");
+            $(this).css("background","#fff");
+            $(this).find("img").prop("src","__PUBLIC__/Home/img/share.png");
+            $(this).data("type","0");
+        }
+    })
+
+//    轮播图目前最多有四张
+    var turnImgNum=$(".ini-box.ini-beauty").children(".beauty-div").length;
+    console.log(turnImgNum)
+    if(turnImgNum==2){
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(2)").css("right",0);
+    }else if(turnImgNum==3){
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(3)").css("right",0);
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(2)").css("left","15%");
+    }else if(turnImgNum==4){
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(4)").css("right",0);
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(3)").css("right","9%");
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(2)").css("left","10%");
+    }else if(turnImgNum==5){
+    	$(".ini-box.ini-beauty").find(".beauty-div:nth-child(5)").css({"right":0,"top":0});
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(4)").css({"right":"7%","top":0});
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(3)").css({"right":"14%","top":0});
+        $(".ini-box.ini-beauty").find(".beauty-div:nth-child(2)").css({"left":"7%","top":0});
+    }
+
+    $(".down-num-box-outer").mouseenter(function(){
+    	$(".down-num-box",this).css("background","none");
+    }).mouseleave(function(){
+    	$(".down-num-box",this).css("background","#f8f8f8");
+    })
+
+    $(".bds_sqq").css({"background":"url(/Public/Home/img/QQ.png) no-repeat",
+    	'height': '24px',
+	    'width': '33px'
+	})
+	$(".bds_tsina").css({"background":"url(/Public/Home/img/sina.png) no-repeat",
+    	"height":"24px",
+    	"width":"31px"
+	})
+	$(".csb-qas").css({
+    	"height":"auto",
+    	"width":"20%"
+	})
+</script>
+</body>
+</html>

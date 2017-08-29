@@ -1,0 +1,182 @@
+<include file='Common:meta'/>
+<title>畅游榜管理</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    游戏<if condition="($data_source eq 1)">周榜
+        <elseif condition="$data_source eq 2"/>月榜
+        <else />总榜
+    </if>列表管理
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/AppRank/popular_rank_list/data_source/'.$data_source)}">
+                <input type="text" name="id_or_name" id="id_or_name" placeholder=" 游戏名称或者游戏id" style="width:250px" class="input-text" value="{$id_or_name}">
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="r">
+            <a href="javascript:;" onclick="generate_list()" class="btn btn-success radius"><i class="Hui-iconfont"></i>生成列表</a>
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>游戏ID</th>
+            <th>游戏名称</th>
+            <th>排序</th>
+            <th>充值金额</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="app_list" key="i" id="val">
+            <tr class="text-c">
+                <td>{$val.app_id}</td>
+                <td>{$val.app_name}</td>
+                <if condition="$val['pre_sort'] eq 9999999">
+                    <td>--</td>
+                    <else/>
+                    <td>{$val.pre_sort}</td>
+                </if>
+                <if condition="empty($val['total_money'])">
+                    <td>0</td>
+                    <else/>
+                    <td>{$val.total_money}</td>
+                </if>
+                <td>
+                    <a title="编辑"
+                       href="javascript:;"
+                       onclick="app_sort_edit('排序编辑','{:U(\'Admin/AppRank/rank_sort_edit/data_source/\'.$data_source.\'/app_id/\'.$val[app_id].\'/rank_type/1/\')}?id={$val.rank_id}', 600, 550)"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont"></i>编辑
+                    </a>
+                    <a title="恢复默认排序"
+                       href="javascript:;"
+                       onclick="recoverDefaultSort('{$val[rank_id]}', '{$val[app_id]}')"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-chexiao"></i>恢复默认排序
+                    </a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+
+    <div id="page" class="r"></div>
+    <div id="div_pagesize" class="r">
+        <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+    </div>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var data_source = "{$data_source}";
+    var pages = "{$pages}";
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: {$pages}, //通过后台拿到的总页数
+            curr: {$page}, //初始化当前页
+
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U('Admin/AppRank/popular_rank_list/p/"+e.curr+"/pagesize/"+pagesize+"/_param_/data_source/"+data_source+"')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href = new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var url = "{:U('Admin/AppRank/popular_rank_list/p/1/pagesize/"+page_size+"/_param_/data_source/"+data_source+"')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+
+    //生成列表操作
+    function generate_list() {
+        layer.confirm('确定要更新前台的列表展示吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/AppRank/ajax_generate_list')}", {data_source:data_source,rank_type:1}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //恢复列表的默认排序
+    function recoverDefaultSort(rankId, appId){
+        layer.confirm('确定要恢复默认排序吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/AppRank/recover_default_sort')}", {data_source:data_source, rank_type:1, app_id:appId, rank_id:rankId }, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //搜索表单重置按钮
+    $("#reset").click(function(){
+        $("input[name=id_or_name]").val('');
+    });
+
+    /*编辑按钮点击弹框*/
+    function app_sort_edit(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
+</script>
+</body>
+</html>

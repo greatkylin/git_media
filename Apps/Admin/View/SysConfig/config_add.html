@@ -1,0 +1,147 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <include file='Common:meta' />
+    <link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet">
+    <title>添加配置</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/SysConfig/config_add')}">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>配置名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入分类名称" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>关键词：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入唯一关键词" id="keyword" name="keyword">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>值：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <textarea id="config_value" name="config_value" cols="" rows="" class="textarea" placeholder="请输入配置值..." datatype="*0-255"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>状态：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box">
+                    <select name="is_delete" class="select valid" aria-required="true" aria-invalid="false">
+                        <option value="1">正常</option>
+                        <option value="2">删除</option>
+                    </select>
+                    <label id="articlecolumn-error" class="error valid" style="display: block;"></label>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入排序" id="sort" name="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button  class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</article>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script>
+    $(function() {
+        //表单验证
+        $("#form-add").validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                config_value: {
+                    required: true,
+                    minlenth: 1,
+                    maxlenth: 255
+                },
+                keyword: {
+                    required: true,
+                    remote:{
+                        url: "{:U('Admin/SysConfig/ajax_check_keyword')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            keyword: function () {
+                                return $("#keyword").val();　　　　//这个是取要验证的密码
+                            }
+                        },
+                        dataFilter: function (data) {　　　　//判断控制器返回的内容
+                            data = $.parseJSON(data);
+                            if (data.error) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            },
+            messages: {
+                name: {
+                    required: "请填写配置！"
+                },
+                config_value: {
+                    required: "请填写配置值！"
+                },
+                keyword: {
+                    required: "请填写关键字",
+                    remote: "关键字已存在，请重新填写"
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: "post",  //提交方式
+                    dataType: "json", //数据类型
+                    data: {},
+                    url: "{:U('Admin/SysConfig/config_add')}", //请求url
+                    success: function (data) { //提交成功的回调函数
+                        if (data.error) {
+                            $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                            layer.alert(data.detail, {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                        } else {
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+                    }
+                });
+
+            }
+        });
+
+    });
+
+    //关闭窗口
+    function removeIframe(){
+        var index = parent.layer.getFrameIndex(window.name);
+        // parent.$('.btn-refresh').click();
+        parent.layer.close(index);
+    }
+</script>
+</body>
+</html>

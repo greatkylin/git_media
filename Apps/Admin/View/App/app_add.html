@@ -1,0 +1,145 @@
+<include file='Common:meta' />
+<title>新建落地页</title>
+</head>
+<body>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">游戏名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="请输入游戏名搜索" id="appname" name="appname" style="width:40%;">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>游戏ID：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box" style="width: 40%;display: none;" id="app_span">
+
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">自定义标题：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="请输入落地页标题" id="title" name="title" style="width:40%;">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">网页地址：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span id="span_web_url"></span>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	function selecttime(flag) {
+		if (flag == 1) {
+			var endTime = $("#countTimeend").val();
+			if (endTime != "") {
+				WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm', maxDate: endTime});
+			} else {
+				WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm'});
+			}
+		} else {
+			var startTime = $("#countTimestart").val();
+			if (startTime != "") {
+				WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm', minDate: startTime});
+			} else {
+				WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm'});
+			}
+		}
+	}
+	// 搜索游戏名
+	$("#appname").bind('keyup',function () {
+		var apppname = $("#appname").val();
+		if(apppname == '')
+		{
+			layer.msg('请输入要搜索的名称', {icon: 2, time: 1500});
+			return;
+		}
+		$.post("{:U('admin/app/get_app_id_html')}",{appname : apppname},function(result){
+			if(!result.error) {
+				$("#app_span").show();
+				if(result.count == 1) {
+					$("#span_web_url").html('{$html_url}' + result.app_id);
+					$("#app_span").html(result.html);
+					$("#app_span").removeClass('select-box');
+				}
+				else {
+					$("#app_span").html(result.html);
+					$("#app_span").addClass('select-box');
+					var app_id = $('#sel_app option:selected').val();
+					$("#span_web_url").html('{$html_url}' + app_id);
+					$('#sel_app').change(function () {
+						app_id = $(this).val();
+						$("#span_web_url").html('{$html_url}' + app_id);
+					});
+				}
+			}
+			else {
+				layer.alert(result.info, {
+					skin: 'layui-layer-lan',
+					closeBtn: 0,
+					anim: 4 //动画类型
+				});
+			}
+		});
+	});
+	$("#form-admin-add").validate({
+		rules:{
+			sel_app:{
+				required:true,
+			},
+			title:{
+				required:true,
+				maxlength:25,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			if($('#sel_app option:selected').val() == '' || typeof ($('#sel_app option:selected').val()) == 'undefined') {
+				layer.alert('请选择游戏', {
+					skin: 'layui-layer-lan',
+					closeBtn: 0,
+					anim: 4 //动画类型
+				});
+			}
+			$(form).ajaxSubmit({
+				type:"post",  //提交方式
+				dataType:"json", //数据类型
+				data:{sc_post:1},
+				url:"{:U('app/app_add')}", //请求url
+				success:function(data){ //提交成功的回调函数
+					layer.alert(data.info, {
+						skin: 'layui-layer-lan',
+						closeBtn: 0,
+						anim: 4 //动画类型
+					});
+					if(!data.error)
+					{
+						window.parent.location.reload();
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+					}
+
+
+				}
+			});
+		}
+	});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

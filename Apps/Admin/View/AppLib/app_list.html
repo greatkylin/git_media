@@ -1,0 +1,233 @@
+<include file='Common:meta'/>
+<title>游戏列表管理</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    游戏列表<if condition="$list_type eq 1">>人气最高<else/>>近期更新 </if>
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/AppLib/app_list')}">
+                <input type="text" name="id_or_name" id="id_or_name" placeholder=" 请输入游戏名称或者游戏id进行搜索" style="width:250px" class="input-text" value="{$idOrName}">
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l c-warning pt-5">
+            温馨提示：编辑完排序请点击'生成列表'按钮才能使前台展示的排序生效
+        </span>
+        <span class="r">
+            <a href="{:U('Admin/AppLib/preview/type/'.$list_type)}" target="_blank"  class="btn btn-success radius"><i class="Hui-iconfont"></i>预览 </a>
+            <a href="javascript:;" onclick="generate_list()" class="btn btn-success radius"><i class="Hui-iconfont"></i>生成列表</a>
+            <a href="javascript:;" onclick="sync_list_from_zhiyu()" class="btn btn-success radius"><i class="Hui-iconfont"></i>更新数据</a>
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>游戏ID</th>
+            <th>游戏名称</th>
+            <th>游戏排序</th>
+            <th>发布状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="app_list" key="i" id="val">
+            <tr class="text-c">
+                <td>{$val.app_id}</td>
+                <td>{$val.app_name}</td>
+                <if condition="$list_type eq 1">
+                    <if condition="$val['pre_hot_sort'] eq 9999999">
+                        <td>--</td>
+                        <else />
+                        <td>{$val.pre_hot_sort}</td>
+                    </if>
+
+                </if>
+                <if condition="$list_type eq 2">
+                    <if condition="$val['pre_new_sort'] eq 9999999">
+                        <td>--</td>
+                        <else />
+                        <td>{$val.pre_new_sort}</td>
+                    </if>
+                </if>
+                <td>
+                    <if condition="$val['status'] eq 0">
+                        未上架
+                        <elseif condition="$val['status'] eq 1"/>
+                        已上架
+                        <elseif condition="$val['status'] eq 2"/>
+                        测试上架
+                        <elseif condition="$val['status'] eq 3"/>
+                        下架
+                        <else />
+                        未知
+                    </if>
+                </td>
+                <td>
+                    <a title="编辑"
+                       href="javascript:;"
+                       onclick="app_sort_edit('排序编辑','{:U(\'Admin/AppLib/app_sort_edit/list_id/\'.$val[id].\'/type/\'.$list_type)}', 300, 300)"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑
+                    </a>
+                    <a title="恢复默认排序"
+                       href="javascript:;"
+                       onclick="recoverDefaultSort('{$val[id]}')"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-chexiao"></i>恢复默认排序
+                    </a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+
+    <div id="page" class="r"></div>
+    <div id="div_pagesize" class="r">
+        <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+    </div>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var pages = "{$pages}";
+    var listType = "{$list_type}";
+    var idOrName = '{$idOrName}';
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: {$pages}, //通过后台拿到的总页数
+            curr: {$page}, //初始化当前页
+
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U('Admin/AppLib/app_list/id_or_name/"+idOrName+"/type/"+listType+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href = new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var url = "{:U('Admin/AppLib/app_list/id_or_name/"+idOrName+"/type/"+listType+"/p/1/pagesize/"+page_size+"/_param_')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+
+    //生成列表操作
+    function generate_list() {
+        layer.confirm('确定要更新前台的列表展示吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/AppLib/ajax_generate_list')}", {type:listType}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //更新列表
+    function sync_list_from_zhiyu() {
+        layer.confirm('确定要同步游戏库列表吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.get("{:U('Admin/AppLib/ajax_sync_app_list_data')}", {}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //恢复列表的默认排序
+    function recoverDefaultSort(listId){
+        layer.confirm('确定要恢复默认排序吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/AppLib/ajax_recover_sort')}", {list_type:listType,list_id:listId}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //搜索表单重置按钮
+    $("#reset").click(function(){
+        $("input[name=id_or_name]").val('');
+    });
+    /*编辑按钮点击弹框*/
+    function app_sort_edit(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
+</script>
+</body>
+</html>

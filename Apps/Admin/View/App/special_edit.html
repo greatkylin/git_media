@@ -1,0 +1,60 @@
+<volist name="game_special_list" key="i" id="val">
+    <php>
+        if($i == 1) $dd_length_name = '一';
+        if($i == 2) $dd_length_name = '二';
+        if($i == 3) $dd_length_name = '三';
+        if($i == 4) $dd_length_name = '四';
+        if($i == 5) $dd_length_name = '五';
+        if($i == 6) $dd_length_name = '六';
+        if($i == 7) $dd_length_name = '七';
+        if($i == 8) $dd_length_name = '八';
+        if($i == 9) $dd_length_name = '九';
+        if($i == 10) $dd_length_name = '十';
+    </php>
+    <dd>
+        <input type="hidden" value="{$val.id}" name="edit_gs_id[]" />
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">专辑游戏{$dd_length_name}：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                <a href="javascript:void(0);" onclick="special_del($(this), 1)" obj-id="{$val.id}" class="btn btn-success radius">
+                <i class="Hui-iconfont Hui-iconfont-del"></i> 删除游戏</a>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">游戏名：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$val.app_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">游戏ID：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$val.app_id}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">游戏ICON：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                <img src="{$val.icon}" style="width:100px;height: 100px;" />
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">游戏类型：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$val.type_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">游戏主标签：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">游戏星级：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$val.start_score|intval}星
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">介绍文案：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <textarea onblur="edit_game_info();" class="textarea radius" autocomplete="off" value="" placeholder="这个游戏简直太好玩，我一上手就停不下来了，巴拉巴拉小魔仙！（文案至多30个字，具体字数限制看UI设计样式）" name="edit_game_info[]">{$val.game_info}</textarea>
+                <span style="color: red;"></span>
+            </div>
+        </div>
+        <div class="hr"></div>
+    </dd>
+</volist>

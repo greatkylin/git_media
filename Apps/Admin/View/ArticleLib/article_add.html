@@ -1,0 +1,311 @@
+<include file='Common:meta'/>
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
+<title>添加文章</title>
+<style>
+</style>
+</head>
+<body>
+<nav class="breadcrumb">
+    游戏详情<span id="nav_app_name"><if condition="!empty($app_info['app_name'])">->{$app_info['app_name']}</if></span>
+</nav>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-add">
+        <h3>基本信息</h3>
+        <input id="app_id" type="hidden" name="app_id" value="{$app_id}" />
+        <input id="short_name" type="hidden" name="short_name" value="{$app_info.short_name}" />
+        <input id="platform" type="hidden" name="platform" value="{$app_info.platform}" />
+        <input id="app_type" type="hidden" name="app_type" value="{$app_info.app_type}" />
+        <input id="app_type2" type="hidden" name="app_type2" value="{$app_info.app_type2}" />
+        <input id="create_time" type="hidden" name="create_time" value="{$app_info.create_time}" />
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏名称：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <input type="text" class="input-text" value="{$app_info.app_name}" placeholder="" id="app_name" name="app_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏厂商：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <input type="text" class="input-text" value="{$app_info.supplier_name}" placeholder="" id="supplier_name" name="supplier_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏星级：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <span class="select-box">
+                    <select id="star_rank" class="select valid" size="1" name="star_rank">
+                        <option value="" selected="">请选择星级</option>
+                        <volist name="star_rank" key="i" id="val">
+                            <option value="{$val}" <if condition="$app_info['star_rank'] eq $val">selected</if>>{$val}</option>
+                        </volist>
+                    </select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏评分：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" value="{$app_info.start_score}" placeholder="" id="start_score" name="start_score">
+            </div>
+        </div>
+        <div class="row cl" id="app_type_box">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏类型：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <span class="select-box">
+                    <select id="app_type1" class="select valid" size="1" name="app_type1">
+                        <option value="" selected="">请选择游戏类型</option>
+                        <volist name="app_type_list" key="i" id="type_val">
+                            <option value="{$type_val['id']}" <if condition="$app_info['app_type1'] eq $type_val['id']">selected</if>>{$type_val['type_name']}</option>
+                        </volist>
+                    </select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏大小：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" value="{$app_info.app_size}" placeholder="" id="app_size" name="app_size">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏版本：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" value="{$app_info.version_code}" placeholder="" id="version_code" name="version_code">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>版本名称：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" value="{$app_info.version_name}" placeholder="" id="version_name" name="version_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>更新时间：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input onfocus="selecttime()" type="text" class="input-text" value="{$app_info.update_time|date='Y-m-d H:i:s',###}" placeholder="" id="update_time" name="update_time">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏简介：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <script id="editor" name="about" type="text/plain">{$app_info.about|htmlspecialchars_decode}</script>
+                </div>
+            </div>
+        </div>
+        <h3>游戏图片</h3>
+        <!--游戏icon图标-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">游戏icon：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+
+                <!--游戏icon图片上传-->
+                <div id="uploader-icon">
+                    <!--用来展示图片-->
+                    <div id="iconPicture" class="uploader-list">
+                        <if condition="!empty($app_info['icon'])">
+                            <img style="width: 128px;height: 128px;" src="{$app_info.icon|format_url}" />
+                        </if>
+                    </div>
+                    <div class="icon-btn-wrap mt-10">
+                        <div id="iconPicker">选择图片</div>
+                        <a id="iconPickerUploadBtn" class="btn btn-default">开始上传</a>
+                        <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--游戏弹框图片-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">弹窗封面：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+
+                <!--游戏icon图片上传-->
+                <div id="uploader-video">
+                    <!--用来展示图片-->
+                    <div id="videoPicture" class="uploader-list">
+                        <if condition="!empty($app_info['cover_img'])">
+                            <img style="width: 128px;height: 128px;" src="{$app_info.cover_img|format_url}" />
+                        </if>
+                    </div>
+                    <div class="icon-btn-wrap mt-10">
+                        <div id="videoPicker">选择图片</div>
+                        <a id="videoPickerUploadBtn" class="btn btn-default">开始上传</a>
+                        <span style="color: #17983b;margin-top: 5px;" class="r"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</article>
+<include file='Common:footer' />
+<script src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script src="__PUBLIC__/H-ui/lib/myjs/myjs.js?v=1"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/vue.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/index.js"></script>
+
+<script type="text/javascript">
+
+    var ue = UE.getEditor('editor',{
+        allowDivTransToP: false,
+    });
+
+    var app_id = '{$app_id}'; //当前编辑的游戏id
+
+    /* 自定义更新时间 时间控件*/
+    function selecttime() {
+        var updateTime = $("#update_time").val();
+
+        if (updateTime != "") {
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm', minDate: update_time});
+        } else {
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm'});
+        }
+    }
+
+</script>
+<script>
+
+    var img_url_icon = [];        // icon图片地址
+    var is_icon_success = false;  // icon图片上传是否成功
+    var no_upload_icon = true;    // 是否有上传icon文件
+    var is_update_icon = false;   // 是否有更新上传icon文件
+
+    /************游戏icon图片上传****************/
+    var thumbnailWidth = 100;       //缩略图宽度
+    var thumbnailHeight = 100;      //缩略图高度
+    // 初始化Web Uploader
+    var uploaderIcon = WebUploader.create({
+        auto: false,    //选完文件后，是否自动上传。false否
+
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
+
+        server: "{:U('Admin/AppLib/ajax_upload_image')}", // 文件接收服务端。
+        formData: {fun : 'upload_icon'},
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: {
+            multiple:false,
+            id:'#iconPicker'
+        },
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+        },
+        fileSizeLimit: 0.5*1024*1024,
+    });
+    // 点击上传
+    $('#iconPickerUploadBtn').click(function () {
+        uploaderIcon.upload();
+    });
+    uploaderIcon.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploaderIcon.on( 'beforeFileQueued', function( file ) {
+        uploaderIcon.reset();
+        no_upload_icon = false;
+        is_update_icon = true;
+    });
+    // 当有文件添加进来的时候
+    uploaderIcon.on( 'fileQueued', function( file ) {
+        file_id = file.id;
+        var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+            ),
+            $img = $li.find('img');
+        // $list为容器jQuery实例
+        $fileList = $("#iconPicture");
+        $fileList.html( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploaderIcon.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, thumbnailWidth, thumbnailHeight );
+    });
+    // 文件上传过程中创建进度条实时显示。
+    uploaderIcon.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    uploaderIcon.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            is_icon_success = true;
+            img_url_icon.push(data.url);
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploaderIcon.on( 'uploadSuccess', function( file ) {
+        is_icon_success = true;
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploaderIcon.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+
+        $error.text('上传失败');
+    });
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploaderIcon.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+
+</script>
+</body>
+</html>

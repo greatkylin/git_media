@@ -1,0 +1,109 @@
+<include file='Common:meta' />
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<title>添加专题</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-edit">
+        <input type="hidden" name="topic_id" value="{$topic.topic_id}"/>
+        <div class="row cl">
+            <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题名称：</label>
+            <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                <input type="text" class="input-text app_list_sort" value="{$topic.topic_name}" placeholder="专题名称" name="topic_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">开始时间：</label>
+            <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                <input id="time_range_start" onfocus="selecttime(this)" type="text" class="input-text app_list_sort" value="{$topic.time_range_start|date='Y-m-d',###}" placeholder="开始时间" name="time_range_start">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">结束时间：</label>
+            <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                <input id="time_range_end" onfocus="selecttime(this)" type="text" class="input-text app_list_sort" value="{$topic.time_range_end|date='Y-m-d',###}" placeholder="结束时间" name="time_range_end">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="提交">
+                <a id="cancel" href="javascript:;" class="btn btn-default radius" >取消</a>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript">
+    $("#form-admin-edit").validate({
+        rules: {
+            topic_name: {
+                required: true,
+            },
+            time_range_start: {
+                required: true,
+            },
+            time_range_end: {
+                required: true,
+            }
+        },
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function (form) {
+            $(form).find(":submit").attr("disabled", true).attr("value", "提交中...");
+            $(form).ajaxSubmit({
+                type: "post",  //提交方式
+                dataType: "json", //数据类型
+                data: {},
+                url: "{:U('Admin/AppTopic/app_topic_add')}", //请求url
+                success: function (data) { //提交成功的回调函数
+                    if (data.error) {
+                        $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                        layer.alert(data.detail, {
+                            skin: 'layui-layer-lan',
+                            closeBtn: 0,
+                            anim: 4 //动画类型
+                        });
+                    }else{
+                        window.parent.location.reload();
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    }
+
+                    //					layer.msg(data.info, {icon: 6,time:2000});
+
+                }
+            });
+        }
+    });
+    $('#cancel').click(function(){
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+
+    /* 自定义时间区间时间 时间控件*/
+    function selecttime(object) {
+        WdatePicker({dateFmt: 'yyyy-MM-dd'});
+/*        var startTime = $('#time_range_start').val();
+        var startTimestamp = Date.parse(new Date(startTime));
+        var endTime = $('#time_range_end').val();
+        var endTimestamp = Date.parse(new Date(endTime));
+        if(startTimestamp>endTimestamp){
+            layer.alert('开始时间要小于结束时间', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }*/
+    }
+
+</script>
+
+</body>
+</html>

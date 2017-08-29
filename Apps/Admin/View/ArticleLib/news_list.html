@@ -1,0 +1,220 @@
+<include file='Common:meta'/>
+<title>新闻中心</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    新闻中心>{$catName}列表
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/ArticleLib/news_list')}">
+                <input type="hidden" name="cat_id" value="{$catId}" />
+                <input type="text" name="title" id="title" placeholder=" 文章标题" style="width:250px" class="input-text" value="{$title}">
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="r ml-10">
+            <a title="新增栏目" href="javascript:;"
+               onclick="layer_show('新增栏目','{:U(\'Admin/ArticleLib/news_top_column_add\')}', 400, 250)"
+               class="btn btn-success radius" style="text-decoration:none">
+                <i class="Hui-iconfont Hui-iconfont-add"></i> 新增栏目
+            </a>
+            <a title="添加子栏目" href="javascript:;"
+               onclick="layer_show('添加子栏目','{:U(\'Admin/ArticleLib/news_child_column_add/cat_id/\'.$catId)}', 400, 350)"
+               class="btn btn-success radius" style="text-decoration:none">
+                <i class="Hui-iconfont Hui-iconfont-add3"></i> 添加子栏目
+            </a>
+            <a title="seo编辑" href="javascript:;"
+               onclick="layer_show('seo编辑','{:U(\'Admin/ArticleLib/news_column_seo_edit/cat_id/\'.$catId)}', 500, 400)"
+               class="btn btn-success radius" style="text-decoration:none">
+                <i class="Hui-iconfont Hui-iconfont-edit"></i> 高级设置
+            </a>
+            <a href="{:C('URL.ZHIYU_ADMIN_URL').U('Admin/Articlelib/add_article')}" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-add"></i> 添加文章</a>
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>序号</th>
+            <th>文章标题</th>
+            <th>状态</th>
+            <th>浏览量</th>
+            <th>创建者</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="articleList" key="i" id="val">
+            <tr class="text-c">
+                <!--<td>{$val.app_id}</td>-->
+                <td>{$i}</td>
+                <td>{$val.title}</td>
+                <td>
+                    <if condition="empty($val[status])">未发布</if>
+                    <if condition="$val[status] eq 1">已发布</if>
+                </td>
+                <td>
+                    <if condition="empty($val[page_view])">
+                        0
+                        <else />
+                        {$val.page_view}
+                    </if>
+                </td>
+                <td>
+                    <if condition="empty($val[nickname])">
+                        --
+                        <else />
+                        {$val.nickname}
+                    </if>
+                </td>
+                <td>
+                    <if condition="empty($val[create_time])">
+                        --
+                        <else />
+                        {$val.create_time|date='Y-m-d H:i:s',###}
+                    </if>
+                </td>
+                <td>
+                    <if condition="empty($val[status])">
+                        <a title="发布"
+                           href="javascript:;"
+                           onclick="shelveArticle('{$val.id}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont"></i>发布
+                        </a>
+                        <else />
+                        <a title="下架"
+                           href="javascript:;"
+                           onclick="unShelveArticle('{$val.id}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont"></i>下架
+                        </a>
+                    </if>
+                    <if condition="empty($val[is_delete])">
+                        <a title="删除"
+                           href="javascript:;"
+                           onclick="articleDeleteChange('{$val.id}', '确定要删除这边文章吗')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont"></i>删除
+                        </a>
+                        <else />
+                        <a title="恢复"
+                           href="javascript:;"
+                           onclick="articleDeleteChange('{$val.id}', '确定要恢复这篇文章吗')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont"></i>恢复
+                        </a>
+                    </if>
+                    <a title="编辑文章"
+                       href="{:C('URL.ZHIYU_ADMIN_URL').U('Admin/Articlelib/edit_article/artid/'.$val[id])}"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑文章
+                    </a>
+                    <a title="预览"
+                       href="{:U('Admin/Articlelib/preview/artid/'.$val[id])}"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-yulan"></i>预览
+                    </a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+
+    <div id="page" class="r"></div>
+    <div id="div_pagesize" class="r">
+        <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+    </div>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var cat_id = '{$catId}';
+    var title = '{$title}';
+    var pages = "{$pages}";
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: {$pages}, //通过后台拿到的总页数
+            curr: {$page}, //初始化当前页
+
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U('Admin/ArticleLib/article_list/p/"+e.curr+"/pagesize/"+pagesize+"/_param_/cat_id/"+cat_id+"/title/"+title+"')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href = new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var url = "{:U('Admin/ArticleLib/article_list/p/1/pagesize/"+page_size+"/_param_/cat_id/"+cat_id+"/title/"+title+"')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+
+    //发布文章
+    function shelveArticle (article_id) {
+        layer.confirm('确定发布该游戏吗？', {icon: 3, title:'提示'}, function(index){
+            $.post("{:U('Admin/ArticleLib/ajax_shelve_article')}",{article_id:article_id},function(data){
+                if(!data.error){
+                    layer.msg(data.detail);
+                    window.location.reload();
+                }else{
+                    layer.msg(data.detail);
+                }
+            });
+            layer.close(index);
+        });
+    }
+
+    //下架文章
+    function unShelveArticle (article_id) {
+        layer.confirm('确定下架该游戏吗？', {icon: 3, title:'提示'}, function(index){
+            $.post("{:U('Admin/ArticleLib/ajax_unshelve_article')}",{article_id:article_id},function(data){
+                if(!data.error){
+                    layer.msg(data.detail);
+                    window.location.reload();
+                }else{
+                    layer.msg(data.detail);
+                }
+            });
+            layer.close(index);
+        });
+    }
+
+    //删除或者恢复文章
+    function articleDeleteChange (article_id,message) {
+        layer.confirm(message, {icon: 3, title:'提示'}, function(index){
+            $.post("{:U('Admin/ArticleLib/article_delete_status_change')}",{article_id:article_id},function(data){
+                if(!data.error){
+                    layer.msg(data.detail);
+                    window.location.reload();
+                }else{
+                    layer.msg(data.detail);
+                }
+            });
+            layer.close(index);
+        });
+    }
+
+    //搜索表单重置按钮
+    $("#reset").click(function(){
+        $("input[name=title]").val('');
+    });
+</script>
+</body>
+</html>

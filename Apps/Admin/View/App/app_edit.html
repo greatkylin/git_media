@@ -1,0 +1,1353 @@
+<include file='Common:meta' />
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
+<title>编辑游戏</title>
+<style>
+    .hr {height:1px; width:100%; border-bottom:1px dashed #000;padding-top: 20px;}
+    dt {padding-left: 100px;}
+</style>
+</head>
+<body>
+<nav class="breadcrumb">
+    落地页编辑：{$app_info.app_name}&nbsp;&nbsp;&nbsp;游戏ID：{$app_info.app_id}
+</nav>
+<div class="codeView docs-example">
+	<form class="form form-horizontal" id="form-admin-add">
+        <legend>页面基础信息</legend>
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-1">页面标题</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-8">-->
+                <!--<input class="input-text" autocomplete="off" value="{$media_info.title}" placeholder="请输入页面标题" id="title" name="title">-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">页面关键词</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input class="input-text" autocomplete="off" value="{$media_info.keywords}" placeholder="请输入页面关键词" id="keywords" name="keywords">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">页面描述</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input class="input-text" autocomplete="off" value="{$media_info.description}" placeholder="请输入页面描述" id="description" name="description">
+            </div>
+        </div>
+        <legend>游戏基础信息</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">游戏名：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$app_info.app_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">开发商：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$app_info.supplier_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">星级：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.start_score|intval}星
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">类型：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$app_info.type_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">大小：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.app_size|byte_to_m}M
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">版本：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.version_name}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">上线：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.sj_time|date='Y-m-d',###}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">{$app_info.game_quality}：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                {$app_info.game_quality_value}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">{$app_info.game_picture}：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.game_picture_value}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">{$app_info.game_gandu}：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.game_gandu_value}
+            </div>
+            <label class="form-label col-xs-3 col-sm-1">{$app_info.game_diff}：</label>
+            <div class="formControls col-xs-3 col-sm-1">
+                {$app_info.game_diff_value}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">安卓下载：</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                {$media_info.android_down_url}
+            </div>
+            <div class="formControls col-xs-8 col-sm-2">
+                <div id="uploader4" class="wu-example">
+                    <!--用来存放文件信息-->
+                    <div id="thelist_app" class="uploader-list"></div>
+                    <div class="btns">
+                        <div id="picker_app">选择文件</div>
+                        <a id="picker_app_ctlBtn" class="btn btn-default r">开始上传</a>
+                    </div>
+                </div>
+            </div>
+            <label class="form-label col-xs-3 col-sm-2">苹果下载：</label>
+            <div class="formControls col-xs-3 col-sm-4">
+                <input type="text" style="width: 400px;" class="input-text" autocomplete="off" value="{$media_info.ios_down_url}" placeholder="苹果下载地址" id="ios_down_url" name="ios_down_url">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">安装包名：</label>
+            <div class="formControls col-xs-3 col-sm-5">
+                {$app_info.app_package}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">高清封面图：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <div class="uploader-demo">
+                    <div id="uploader_pic">
+                        <!--用来存放item-->
+                        <div id="fileList_pic" class="uploader-list">
+                            <img src="{$media_info.cover_imgs_url}" style="width: 100px;height: 100px" />
+                        </div>
+                        <div id="filePicker_pic">上传图片</div>
+                        <a id="filePicker_pic_ctlBtn" class="btn btn-default">开始上传</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row cl" id="video">
+            <label class="form-label col-xs-4 col-sm-1">游戏视频：</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                <el-select v-model="video_id" filterable remote :remote-method="remoteMethod" :loading="loading" placeholder="请选择游戏">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+                <input type="hidden" name="video_id" v-model="video_id"/>
+                <!--<div v-for="(item, index) in video_list">-->
+                    <!--<el-select v-model="value[index]" filterable remote :remote-method="remoteMethod" :loading="loading" placeholder="请选择视频">-->
+                        <!--<el-option-->
+                                <!--v-for="item in options"-->
+                                <!--:key="item.value"-->
+                                <!--:label="item.label"-->
+                                <!--:value="item.value">-->
+                        <!--</el-option>-->
+                    <!--</el-select>-->
+                    <!--<input type="hidden" name="video_id" v-model="value[index]"/>-->
+                <!--</div>-->
+                <!--<span class="select-box" style="width:150px;">-->
+                  <!--<select class="select valid" size="1" name="vidao" id="vidao">-->
+                      <!--<option value="-1">请选择视频</option>-->
+                  <!--</select>-->
+                <!--</span>-->
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">游戏图片：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <if condition="!empty($pic_url)">
+                    <volist name="pic_url" key="pic_i" id="pic_val">
+                        <if condition="$app_info['is_landscape'] eq 0">
+                            <img style="width: 65px;height: 115px;" src="{$pic_val}" />&nbsp;&nbsp;
+                        <else/>
+                            <img style="width: 115px;height: 65px;" src="{$pic_val}" />&nbsp;&nbsp;
+                        </if>
+                    </volist>
+                </if>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">游戏简介：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                {$app_info.introduct}
+            </div>
+        </div>
+
+        <legend>游戏内容</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">板块一：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                编辑信息
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2">板块名：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                玩法介绍
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2">介绍文案：</label>
+            <div class="formControls col-xs-3 col-sm-8">
+                <div class="mt-20 skin-minimal">
+                    <script id="editor" type="text/plain" style="width:100%;height:400px;">{$media_info.play_info|htmlspecialchars_decode}</script>
+                </div>
+            </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">板块二：</label>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2">板块名：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                游戏攻略
+            </div>
+            <if condition="$gl_count elt 10">
+                <a href="javascript:void(0);" id="add_gonglv_info" class="btn btn-success radius">
+                    <i class="Hui-iconfont Hui-iconfont-add"></i> 添加</a>
+            </if>
+        </div>
+
+        <dl id="dl_gonglv">
+            <volist name="gl_list" key="i" id="val">
+                <php>
+                    if($i == 1) $dd_length_name = '一';
+                    if($i == 2) $dd_length_name = '二';
+                    if($i == 3) $dd_length_name = '三';
+                    if($i == 4) $dd_length_name = '四';
+                    if($i == 5) $dd_length_name = '五';
+                    if($i == 6) $dd_length_name = '六';
+                    if($i == 7) $dd_length_name = '七';
+                    if($i == 8) $dd_length_name = '八';
+                    if($i == 9) $dd_length_name = '九';
+                    if($i == 10) $dd_length_name = '十';
+                    if($i == 11) $dd_length_name = '十一';
+                    if($i == 12) $dd_length_name = '十二';
+                    if($i == 13) $dd_length_name = '十三';
+                    if($i == 14) $dd_length_name = '十四';
+                    if($i == 15) $dd_length_name = '十五';
+                    if($i == 16) $dd_length_name = '十六';
+                    if($i == 17) $dd_length_name = '十七';
+                    if($i == 18) $dd_length_name = '十八';
+                    if($i == 19) $dd_length_name = '十九';
+                    if($i == 20) $dd_length_name = '二十';
+                </php>
+                <dt>攻略{$dd_length_name}</dt>
+                <dd>
+                    <input type="hidden" value="{$val.id}" name="edit_gl_id[]" />
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2">攻略名称：</label>
+                        <div class="formControls col-xs-8 col-sm-4">
+                            <input class="input-text" autocomplete="off" value="{$val.gl_title}" placeholder="攻略名称" name="edit_gl_title[]">
+                            </div>
+                        </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-4 col-sm-2">攻略链接：</label>
+                        <div class="formControls col-xs-8 col-sm-4">
+                            <input class="input-text" autocomplete="off" value="{$val.gl_url}" placeholder="攻略链接" name="edit_gl_url[]">
+                            </div>
+                    </div>
+                </dd>
+            </volist>
+        </dl>
+        <div class="hr"></div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-1">板块三：</label>
+            <div class="formControls col-xs-3 col-sm-3">
+                精美图片
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">上传图片：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <div class="uploader-list-container">
+                    <div id="uploader_hd">
+                        <!--用来存放item-->
+                        <div id="fileList_hd" class="uploader-list">
+                            <volist name="fine_arr" key="f_i" id="f_val">
+                                <img style="width:140px;height: 75px" src="{$f_val}" />
+                                &nbsp;&nbsp;
+                            </volist>
+
+                        </div>
+                        <div id="filePicker_hd">上传图片</div>
+                        <a id="filePicker_hd_ctlBtn" class="btn btn-default">开始上传</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <legend>侧边栏游戏信息</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">游戏特点：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                读取自游戏库-游戏标签(以;分割)
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1"></label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input class="input-text" autocomplete="off" value="{$media_info.game_tag}" placeholder="团战;竞技;开黑;操作" id="game_tag" name="game_tag">
+            </div>
+        </div>
+        <legend>厂商介绍</legend>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">厂商名：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="hidden" value="{$app_info.supplier_id}" name="supplier_id" />
+                {$app_info.supplier_name}
+            </div>
+            <label class="form-label col-xs-4 col-sm-1">厂商商标：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <!--dom结构部分-->
+                <div id="uploader-demo">
+                    <!--用来存放item-->
+                    <div id="fileList" class="uploader-list"><if condition="!empty($app_info['supplier_icon'])"><img style="width: 100px;height: 100px;" src="{$app_info.supplier_icon}" /></if></div>
+                    <div id="filePicker">选择图片</div>
+                    <a id="filePicker_ctlBtn" class="btn btn-default">开始上传</a>
+                    <span style="color: #17983b;margin-top: 5px;margin-right: 100px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">其他游戏：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input class="input-text" autocomplete="off" value="{$app_info.other_game}" placeholder="输入游戏名，不同游戏间以;隔开。（至多3款游戏）" id="other_game" name="other_game">
+                <span style="color: red;"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">介绍文案：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <textarea class="textarea radius" autocomplete="off" value="" placeholder="这个工作室可牛啦，到底有多牛其实我也不清楚。（文案至多40个字）" id="supplier_info" name="supplier_info">{$app_info.supplier_info}</textarea>
+            </div>
+        </div>
+
+        <legend>游戏专辑推荐（至多6款游戏）</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">专辑名：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input class="input-text" autocomplete="off" value="{$media_info.special_title}" placeholder="专辑名" id="special_title" name="special_title">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-1">专辑文案：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <textarea class="textarea radius" autocomplete="off" placeholder="这个游戏简直太好玩，我一上手就停不下来了，巴拉巴拉小魔仙！（文案至多30个字，具体字数限制看UI设计样式）" id="special_info" name="special_info">{$media_info.special_info}</textarea>
+            </div>
+        </div>
+        <if condition="$$gs_count elt 10">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-1"></label>
+                <div class="formControls col-xs-8 col-sm-8">
+                    <a href="javascript:void(0);" id="add_game_special" class="btn btn-success radius">
+                        <i class="Hui-iconfont Hui-iconfont-add"></i> 添加游戏</a>
+                </div>
+            </div>
+        </if>
+        <dl id="dl_special">
+            {$gs_html}
+        </dl>
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;确定&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/vue.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/index.js"></script>
+<script>
+
+    new Vue({
+        el: '#video',
+        data: function() {
+
+            var obj =  {
+                loading: false,
+                options: '',
+                video_id:'',
+            };
+
+            return obj;
+        },
+        mounted: function () {
+            this.getList();
+        },
+        methods : {
+            remoteMethod : function (query) {
+                var obj = this;
+                $.post("{:U('app/get_video')}",{v_name:query},function(res){
+                    obj.options = res.list;
+                });
+
+            },
+            getList:function(){
+                var obj = this;
+                var video_id = '{$media_info.video_id}';
+                $.post("{:U('app/get_video')}",{},function(res){
+                    //console.log(res);
+                    obj.video_id = video_id;
+                    obj.options = res.list;
+                });
+            }
+        }
+    })
+</script>
+<script type="application/javascript">
+    /************验证**************/
+//    $('#other_game').blur(function () {
+//        var other_game = $('#other_game').val();
+//        var other_game_arr = other_game.split(";");
+//        if(other_game_arr.length > 3) {
+//
+//            $('#other_game').next().html('最多输入3款游戏,请勿以分号（;）结尾');
+//        }
+//        else {
+//            $('#other_game').next().html('');
+//        }
+//    });
+
+
+
+    var file_url = [];                       // app文件
+    var is_file_success = false;        // 是否上传成功
+    var no_upload_file = true;          // 是否上传
+    var is_update_file = false;          // 是否上传
+
+	var is_cover_pic_success = false;  // 高清封面图上传是否成功
+    var is_fine_pic_success = false;  // 精美图片上传是否成功
+    var is_company_icon_success  = false;  // 公司图标上传是否成功
+
+    var cover_file_url = [];            // 高清封面图地址
+	var fine_pic_url = [];              // 精美图片地址
+    var company_icon_url = [];             // 公司图标地址
+    var fine_thumb_pic_url = [];              // 精美缩略图片地址
+
+    var no_upload_cover_pic = true;    // 是否有上传高清封面
+    var no_upload_fine_pic  = true;    // 是否有上传精美图片
+    var no_upload_company_icon = true;    // 是否有上传公司图标
+
+    var is_update_cover_pic = false;    // 是否有更新上传高清封面
+    var is_update_fine_pic  = false;    // 是否有更新上传截图文件
+    var is_update_company_icon_file = false;    // 是否有更新上传app文件
+
+    var del_arr = [];       // 删除的专辑游戏
+    /***********编辑器***************/
+    var ue = UE.getEditor('editor');
+
+	$(function() {
+        edit_game_info();
+        // 添加攻略
+        $('#add_gonglv_info').click(function () {
+            var gl_dd_length = $('#dl_gonglv').children("dd").length + 1;
+//            if(gl_dd_length > 10) {
+//                layer.alert('攻略最多只能添加十条', {
+//                    skin: 'layui-layer-lan',
+//                    closeBtn: 0,
+//                    anim: 4 //动画类型
+//                });
+//            }
+//            else {
+                var dl_dd_length_name = '';
+                if(gl_dd_length == 1) dl_dd_length_name = '一';
+                if(gl_dd_length == 2) dl_dd_length_name = '二';
+                if(gl_dd_length == 3) dl_dd_length_name = '三';
+                if(gl_dd_length == 4) dl_dd_length_name = '四';
+                if(gl_dd_length == 5) dl_dd_length_name = '五';
+                if(gl_dd_length == 6) dl_dd_length_name = '六';
+                if(gl_dd_length == 7) dl_dd_length_name = '七';
+                if(gl_dd_length == 8) dl_dd_length_name = '八';
+                if(gl_dd_length == 9) dl_dd_length_name = '九';
+                if(gl_dd_length == 10) dl_dd_length_name = '十';
+                if(gl_dd_length == 11) dl_dd_length_name = '十一';
+                if(gl_dd_length == 12) dl_dd_length_name = '十二';
+                if(gl_dd_length == 13) dl_dd_length_name = '十三';
+                if(gl_dd_length == 14) dl_dd_length_name = '十四';
+                if(gl_dd_length == 15) dl_dd_length_name = '十五';
+                if(gl_dd_length == 16) dl_dd_length_name = '十六';
+                if(gl_dd_length == 17) dl_dd_length_name = '十七';
+                if(gl_dd_length == 18) dl_dd_length_name = '十八';
+                if(gl_dd_length == 19) dl_dd_length_name = '十九';
+                if(gl_dd_length == 20) dl_dd_length_name = '二十';
+                var html =  '<dt>攻略'+ dl_dd_length_name +'</dt>'+
+                        '<dd>'+
+                        '<div class="row cl">'+
+                        '<label class="form-label col-xs-4 col-sm-2">攻略名称：</label>'+
+                        '<div class="formControls col-xs-8 col-sm-4">'+
+                        '<input class="input-text" autocomplete="off" value="" placeholder="攻略名称" name="gl_title[]">'+
+                        '</div>'+
+                        '</div>'+
+                        '<div class="row cl">'+
+                        '<label class="form-label col-xs-4 col-sm-2">攻略链接：</label>'+
+                        '<div class="formControls col-xs-8 col-sm-4">'+
+                        '<input class="input-text" autocomplete="off" value="" placeholder="攻略链接" name="gl_url[]">'+
+                        '</div>'+
+                        '</div>'+
+                        '</dd>';
+                $('#dl_gonglv').append(html);
+//            }
+        });
+        // 添加专辑游戏
+
+        $('#add_game_special').click(function () {
+            var dd_length = $('#dl_special').children("dd").length + 1;
+            if(dd_length > 6) {
+                layer.alert('至多只能添加六条专辑游戏', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+            }
+            else {
+                var dd_length_name = '';
+                if(dd_length == 1) dd_length_name = '一';
+                if(dd_length == 2) dd_length_name = '二';
+                if(dd_length == 3) dd_length_name = '三';
+                if(dd_length == 4) dd_length_name = '四';
+                if(dd_length == 5) dd_length_name = '五';
+                if(dd_length == 6) dd_length_name = '六';
+                var _html = '<article class="page-container">' +
+                        '<form class="form form-horizontal" id="form-desc">' +
+                        '<div class="row cl">' +
+                        '<label class="form-label col-xs-4 col-sm-3">游戏名：</label>' +
+                        '<div class="formControls col-xs-8 col-sm-4">'+
+                        '<input class="input-text" style="width:220px;" autocomplete="off" value="" placeholder="游戏名" id="search_name">'+
+                        '</div>' +
+                        '</div>' +
+                        '<div class="row cl">' +
+                        '<label class="form-label col-xs-4 col-sm-3">游戏ID：</label>' +
+                        '<div class="formControls col-xs-8 col-sm-4">'+
+                        '<span class="select-box" style="width:220px;display: none;" id="span_sel">' +
+                        '</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '</form>'+
+                        '</article>';
+                layer.open({
+                    type: 1 //Page层类型
+                    ,area: ['400px', '300px']
+                    ,title: '添加公司名称'
+                    ,shade: 0.6 //遮罩透明度
+                    ,maxmin: false //允许全屏最小化
+                    ,anim: 1 //0-6的动画形式，-1不开启
+                    ,content: _html
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        //按钮【按钮一】的回调
+                        var appid = $('#sel_app').val();
+                        $.post("{:U('app/get_app_special')}",{media_id : {$media_id}, appid : appid, dd_length_name : dd_length_name},function(result){
+                            $('#dl_special').append(result.html);
+                            layer.close(index);
+                        });
+                    },
+                    success: function(layero) {     // 成功调起弹窗执行的js事件
+                        $('#span_sel').hide();
+                        $('#search_name').blur(function () {
+                            var appname = $('#search_name').val();
+                            $.post("{:U('app/get_app_id_html')}",{appname : appname},function(result){
+                                if(!result.error) {
+                                    $('#span_sel').show();
+                                    $('#span_sel').html(result.html);
+                                }
+                                else {
+                                    layer.alert(result.info, {
+                                        skin: 'layui-layer-lan',
+                                        closeBtn: 0,
+                                        anim: 4, //动画类型
+                                        title:'提示',
+                                    });
+                                }
+                            });
+                        });
+                    },
+                });
+            }
+        });
+
+
+        /**************自定义验证 开始*****************/
+        $.validator.addMethod("other_game", function(value, element) {
+            value = value.replace(/(^;*)|(;*$)/g, "");
+            var other_game_arr = value.split(";");
+            if(other_game_arr.length > 3) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多输入3款游戏,请勿以分号“;”结尾");
+
+        $.validator.addMethod("game_tag", function(value, element) {
+            value = value.replace(/(^;*)|(;*$)/g, "");
+            var other_game_arr = value.split(";");
+            if(other_game_arr.length > 6) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多添加6个游戏特点词组,请勿以分号“;”结尾");
+
+        $.validator.addMethod("supplier_info", function(value, element) {
+            if(value.length > 30) {
+                $("#supplier_info").val(value.substring(0,30));
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多30个字");
+
+        $.validator.addMethod("special_title", function(value, element) {
+            if(value.length > 14) {
+                $("#special_title").val(value.substring(0,14));
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多14个字");
+
+        $.validator.addMethod("special_info", function(value, element) {
+            if(value.length > 30) {
+                $("#special_info").val(value.substring(0,30));
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多30个字");
+
+        $.validator.addMethod("keywords", function(value, element) {
+            value = value.replace(/(^\s*)|(\s*$)/g, "");
+            console.log(value);
+            var keywords_arr = value.split(" ");
+            if(keywords_arr.length > 4) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }, "最多4个词组，以空格隔开");
+
+        /**************自定义验证 结束*****************/
+        // 提交
+        $("#form-admin-add").validate({
+            rules: {
+//                game_name: {
+//                    required: true,
+//                },
+//                title:{
+//                    required:true,
+//                    maxlength:25,
+//                },
+                keywords : {
+                    keywords : true
+                },
+                description : {
+                    maxlength : 70
+                },
+
+                other_game : {
+                    other_game : true
+                },
+                game_tag : {
+                    game_tag : true
+                },
+                supplier_info : {
+                    supplier_info : true
+                },
+                special_title : {
+                    special_title : true
+                },
+                special_info : {
+                    special_info : true
+                },
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                var iserror_egi = false;
+                $("textarea[name='edit_game_info[]']").each(function () {
+                    var value = $(this).val();
+                    if(value.length > 38) {
+                        iserror_egi = true;
+                        $(this).next().html('最多38个字');
+                        $(this).val(value.substring(0,38));
+                    }
+                    else {
+                        $(this).next().html('');
+                    }
+                });
+                if(iserror_egi) {
+                    return false;
+                }
+                // 当没有有编辑新图片时
+                if (!is_update_file) {
+                    is_file_success = true;
+                }
+                if (!is_update_cover_pic) {
+                    is_cover_pic_success = true;
+                }
+                if (!is_update_fine_pic) {
+                    is_fine_pic_success = true;
+                }
+                if (!is_update_company_icon_file) {
+                    is_company_icon_success = true;
+                }
+                if (!is_file_success && is_update_file) {
+                    layer.alert('请先上传App包', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    return false;
+                }
+                if (!is_cover_pic_success && is_update_cover_pic) {
+                    layer.alert('请先上传封面图片', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    return false;
+                }
+                if (!is_fine_pic_success && is_update_fine_pic) {
+                    layer.alert('请先上传精美图片', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    return false;
+                }
+                if (is_update_company_icon_file && !is_company_icon_success) {
+                    layer.alert('请先上传公司图标', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    return false;
+                }
+                if (is_cover_pic_success && is_fine_pic_success && is_company_icon_success && is_file_success) {
+                    $(form).find(":submit").attr("disabled", true).attr("value", "提交中...");
+                    $(form).ajaxSubmit({
+                        type: "post",  //提交方式
+                        dataType: "json", //数据类型
+                        data: {
+                            media_id: '{$media_id}',
+                            android_url: file_url[0],
+                            cover_file_url: cover_file_url[0],
+                            fine_pic_url: fine_pic_url,
+                            fine_thumb_pic_url: fine_thumb_pic_url,
+                            company_icon_url: company_icon_url[0],
+                            del_company_icon_url:'{$app_info.old_supplier_icon}',
+                            del_arr : del_arr,
+                        },
+                        url: "{:U('app/app_edit')}", //请求url
+                        success: function (data) { //提交成功的回调函数
+                            if(!data.error) {
+                                window.layer.alert(data.info, {
+                                    skin: 'layui-layer-lan',
+                                    closeBtn: 0,
+                                    anim: 4, //动画类型
+                                    title: '提示',
+                                }, function (index, layero) {
+                                    //按钮【按钮一】的回调
+                                window.location.reload();
+                                });
+                            }
+                            else {
+                                $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                                window.layer.alert(data.info, {
+                                    skin: 'layui-layer-lan',
+                                    closeBtn: 0,
+                                    anim: 4, //动画类型
+                                    title: '提示',
+                                });
+                            }
+                        }
+                    });
+                }
+
+            }
+        });
+
+        /*************************高清封面图上传**********************************/
+        var img_num = 0;
+        // 初始化Web Uploader   | app截图上传
+        var thumbnailWidth = 100;
+        var thumbnailHeight = 100;
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: false,
+
+            // swf文件路径
+            swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+
+            // 文件接收服务端。
+            server: "{:U('app/app_upload')}",
+            formData: {fun: 'cover_upload'},
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker_pic',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'
+            }
+        });
+        uploader.on('error', function (error) {
+            if (error == 'Q_EXCEED_SIZE_LIMIT') {
+                layer.alert('文件大小超过500k，不允许上传', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+            }
+            if (error == 'Q_TYPE_DENIED') {
+                layer.alert('文件类型错误', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+            }
+        });
+        // 当有文件添加进来的时候
+        uploader.on('fileQueued', function (file) {
+            var $li = $(
+                            '<div id="' + file.id + '" class="file-item thumbnail">' +
+                            '<img>' +
+                            '<div class="info">' + file.name + '</div>' +
+                            '</div>'
+                    ),
+                    $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            $fileList_pic = $("#fileList_pic");
+//            $fileList_pic.append($li);
+            $fileList_pic.html($li);
+//            img_num = img_num + 1;
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader.makeThumb(file, function (error, src) {
+                if (error) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr('src', src);
+            }, thumbnailWidth, thumbnailHeight);
+        });
+        // 点击上传
+        $('#filePicker_pic_ctlBtn').click(function () {
+            uploader.upload();
+        });
+        // 当文件被加入队列之前触发
+        uploader.on('beforeFileQueued', function (file) {
+//            if (img_num > 9) {
+//                layer.alert('最多只能添加10张', {
+//                    skin: 'layui-layer-lan',
+//                    closeBtn: 0,
+//                    anim: 4 //动画类型
+//                });
+//                return false;
+//            }
+//            if (img_num == 0) {
+//                $("#fileList_pic").html('');
+//            }
+            no_upload_cover_pic = false;
+            is_update_cover_pic = true;
+            is_cover_pic_success = false;
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+            var $li = $('#' + file.id),
+                    $percent = $li.find('.progress span');
+
+            // 避免重复创建
+            if (!$percent.length) {
+                $percent = $('<p class="progress"><span></span></p>')
+                        .appendTo($li)
+                        .find('span');
+            }
+
+            $percent.css('width', percentage * 100 + '%');
+        });
+
+
+        uploader.on("uploadAccept", function (file, data) {
+            if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+                layer.alert(data.info, {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                is_cover_pic_success = false;
+                return false;
+            }
+            else {
+                cover_file_url.push(data.url);
+                is_cover_pic_success = true;
+            }
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on('uploadSuccess', function (file) {
+            $('#' + file.id).addClass('upload-state-done');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on('uploadError', function (file) {
+            var $li = $('#' + file.id),
+                    $error = $li.find('div.error');
+
+            // 避免重复创建
+            if (!$error.length) {
+                $error = $('<div class="error"></div>').appendTo($li);
+            }
+
+            $error.text('上传失败');
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on('uploadComplete', function (file) {
+            $('#' + file.id).find('.progress').remove();
+        });
+
+        /*************************精美图片上传**********************************/
+        var hd_img_num = 0;
+        // 初始化Web Uploader   | app截图上传
+        var thumbnailWidth = 100;
+        var thumbnailHeight = 100;
+        var uploader2 = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: false,
+
+            // swf文件路径
+            swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+
+            // 文件接收服务端。
+            server: "{:U('app/app_upload')}",
+            formData: {fun: 'fine_upload'},
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker_hd',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'
+            }
+        });
+        uploader2.on('error', function (error) {
+            if (error == 'Q_EXCEED_SIZE_LIMIT') {
+                layer.alert('文件大小超过500k，不允许上传', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+            }
+            if (error == 'Q_TYPE_DENIED') {
+                layer.alert('文件类型错误', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+            }
+        });
+        // 当有文件添加进来的时候
+        uploader2.on('fileQueued', function (file) {
+            var $li = $(
+                            '<div id="' + file.id + '" class="file-item thumbnail">' +
+                            '<img>' +
+                            '<div class="info">' + file.name + '</div>' +
+                            '</div>'
+                    ),
+                    $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            $fileList_hd_pic = $("#fileList_hd");
+            $fileList_hd_pic.append($li);
+            hd_img_num = hd_img_num + 1;
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader2.makeThumb(file, function (error, src) {
+                if (error) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr('src', src);
+            }, thumbnailWidth, thumbnailHeight);
+        });
+        // 点击上传
+        $('#filePicker_hd_ctlBtn').click(function () {
+            uploader2.upload();
+        });
+
+        // 当文件被加入队列之前触发
+        uploader2.on('beforeFileQueued', function (file) {
+            if (hd_img_num > 9) {
+                layer.alert('最多只能添加10张', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                return false;
+            }
+            if (hd_img_num == 0) {
+                $("#fileList_hd").html('');
+            }
+            is_fine_pic_success = false;
+            no_upload_fine_pic = false;
+            is_update_fine_pic = true;
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader2.on('uploadProgress', function (file, percentage) {
+            var $li = $('#' + file.id),
+                    $percent = $li.find('.progress span');
+
+            // 避免重复创建
+            if (!$percent.length) {
+                $percent = $('<p class="progress"><span></span></p>')
+                        .appendTo($li)
+                        .find('span');
+            }
+
+            $percent.css('width', percentage * 100 + '%');
+        });
+
+
+        uploader2.on("uploadAccept", function (file, data) {
+            if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+                layer.alert(data.info, {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                return false;
+            }
+            else {
+                fine_pic_url.push(data.url);
+                fine_thumb_pic_url.push(data.thumb_url);
+                is_fine_pic_success = true;
+            }
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader2.on('uploadSuccess', function (file) {
+            $('#' + file.id).addClass('upload-state-done');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader2.on('uploadError', function (file) {
+            var $li = $('#' + file.id),
+                    $error = $li.find('div.error');
+
+            // 避免重复创建
+            if (!$error.length) {
+                $error = $('<div class="error"></div>').appendTo($li);
+            }
+
+            $error.text('上传失败');
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader2.on('uploadComplete', function (file) {
+            $('#' + file.id).find('.progress').remove();
+        });
+    });
+
+    /************app图标图片上传****************/
+    var thumbnailWidth = 100;
+    var thumbnailHeight = 100;
+    // 初始化Web Uploader
+    var uploader3 = WebUploader.create({
+
+        // 选完文件后，是否自动上传。
+        auto: false,
+        // swf文件路径
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+
+        // 文件接收服务端。
+        server: "{:U('app/app_upload')}",
+        formData: {fun : 'supplier_icon'},
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: {multiple:false,id:'#filePicker'},
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'
+        },
+        fileSizeLimit: 0.5*1024*1024,
+    });
+    // 点击上传
+    $('#filePicker_ctlBtn').click(function () {
+        uploader3.upload();
+    });
+    uploader3.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploader3.on( 'beforeFileQueued', function( file ) {
+        uploader3.reset();
+        no_upload_company_icon = false;
+        is_company_icon_success = false;
+        is_update_company_icon_file = true;
+    });
+    // 当有文件添加进来的时候
+    uploader3.on( 'fileQueued', function( file ) {
+        file_id = file.id;
+        var $li = $(
+                        '<div id="' + file.id + '" class="file-item thumbnail">' +
+                        '<img>' +
+                        '<div class="info">' + file.name + '</div>' +
+                        '</div>'
+                ),
+                $img = $li.find('img');
+
+
+        // $list为容器jQuery实例
+        $fileList = $("#fileList");
+        $fileList.html( $li );
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader3.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+
+            $img.attr( 'src', src );
+        }, thumbnailWidth, thumbnailHeight );
+    });
+
+    // 文件上传过程中创建进度条实时显示。
+    uploader3.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+                $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                    .appendTo( $li )
+                    .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    uploader3.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            is_company_icon_success = true;
+            company_icon_url.push(data.url);
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader3.on( 'uploadSuccess', function( file ) {
+        is_icon_success = true;
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader3.on( 'uploadError', function( file ) {
+        var $li = $( '#'+file.id ),
+                $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader3.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+    /**************app包上传**********************/
+    uploader4 = WebUploader.create({
+
+        // swf文件路径
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+
+        // 文件接收服务端。
+        server: "{:U('app/app_upload')}",
+
+        chunked: true,//开启分片上传
+        chunkSize : 2 * 1024 *1024,  //每个分片的大小
+        threads: 1,//上传并发数
+        //由于Http的无状态特征，在往服务器发送数据过程传递一个进入当前页面是生成的GUID作为标示
+        formData: {guid:"{$app_guid}", fun : 'upload_app'},
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+//        pick: '#picker',
+        pick: {multiple:false,id:'#picker_app'},
+
+        // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+        resize: false
+    });
+    uploader4.on('error', function (error) {
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    $('#picker_app_ctlBtn').click(function () {
+        uploader4.upload();
+    });
+
+    // 当文件被加入队列之前触发
+    uploader4.on( 'beforeFileQueued', function( file ) {
+        uploader4.reset();
+        no_upload_file = false;
+        is_update_file = true;
+    });
+    // 当有文件被添加进队列的时候
+    uploader4.on( 'fileQueued', function( file ) {
+        $thelist = $("#thelist_app");
+        $thelist.html( '<div id="' + file.id + '" class="item">' +
+                '<h4 class="info">' + file.name + '</h4>' +
+                '<p class="state">等待上传...</p>' +
+                '</div>' );
+    });
+
+    // 文件上传过程中创建进度条实时显示。
+    uploader4.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+                $percent = $li.find('.progress .progress-bar');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<div class="progress progress-striped active">' +
+                    '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                    '</div>' +
+                    '</div>').appendTo( $li ).find('.progress-bar');
+        }
+
+        $li.find('p.state').text('上传中');
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    uploader4.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            if(data.code == 0 && data.url != '') {
+                file_url.push(data.url);
+                is_file_success = true;
+            }
+        }
+    });
+
+    uploader4.on( 'uploadSuccess', function( file ) {
+        is_file_success = true;
+        $( '#'+file.id ).find('p.state').text('已上传');
+    });
+
+    uploader4.on( 'uploadError', function( file ) {
+        is_file_success = false;
+        $( '#'+file.id ).find('p.state').text('上传出错');
+    });
+
+    uploader4.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').fadeOut();
+    });
+
+    // 专辑游戏删除
+    function special_del(_this, type) {
+        _this.closest('dd').remove();
+        if(type == 1) {
+            del_arr.push(_this.attr('obj-id'));
+        }
+    }
+
+    function edit_game_info() {
+        $("textarea[name='edit_game_info[]']").each(function () {
+            var value = $(this).val();
+            if(value.length > 38) {
+                $(this).next().html('最多38个字');
+                $(this).val(value.substring(0,38));
+            }
+            else {
+                $(this).next().html('');
+            }
+        });
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

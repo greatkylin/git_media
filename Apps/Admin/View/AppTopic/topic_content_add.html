@@ -1,0 +1,1103 @@
+<include file='Common:meta' />
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
+<title>添加专题内容</title>
+<style>
+    /*上传截图的相关样式*/
+    .game-jt {
+        display: flex;
+        display: -webkit-flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .loadpic-box {
+        display: flex;
+        display: -webkit-flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-flow: row wrap;
+        padding: 10px 0;
+    }
+    .sub-load-box {
+        border: solid 8px #ccc;
+        position: relative;
+        padding: 10px;
+        margin-left: 3px;
+        margin-top: 3px;
+    }
+    .on {
+        border-color: #3bb4f2;
+    }
+    .sub-load-box>div:first-child {
+        width: 100%;
+        height: 100%;
+    }
+    .load-mask {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 25px;
+        line-height: 25px;
+        background: rgba(0, 0, 0, 0.41);
+        color: #fff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-break: break-all;
+    }
+    .close-img {
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
+        width: 25px;
+        height: 25px;
+    }
+    .loadpic-btn {
+        margin-top: 10px;
+    }
+    /*截图上传开始上传按钮样式*/
+    .upload-btn-div{
+        display: inline-block;
+        margin-right: 15px;
+    }
+    .begin-upload-btn {
+        display: inline-block;
+        background: #3bb4f2;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+    .begin-upload-btn:hover{
+        color:#fff;
+        text-decoration: none;
+    }
+    /*添加的app的样式*/
+    #game-container .app-box{
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    #game-container .close-btn{
+        position: absolute;
+        right: 0;
+        top:10px;
+    }
+</style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-edit">
+        <div id="type_change" class="HuiTab">
+            <div class="tabBar clearfix">
+                <span class="topic_type" data-type="1">模板</span>
+                <span class="topic_type" data-type="2">编辑器</span>
+                <span class="topic_type" data-type="3">H5</span>
+            </div>
+            <!--专题的类型-->
+            <input  type="hidden" name="topic_id" value="{$topic.topic_id}">
+            <input id="topic_type" type="hidden" name="topic_type" value="{$topic.topic_type}">
+            <div class="tabCon">
+                <!--封面图片-->
+                <div class="row cl">
+                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题封面：</label>
+                    <div class="formControls col-md-6 col-xs-6 col-sm-6">
+                        <div id="uploader_cover">
+                            <!--用来展示图片-->
+                            <div id="coverPicture" class="uploader-list">
+                                <if condition="!empty($content_list[1]['cover_image_path'])">
+                                    <img style="width: 128px;height: 128px;" src="{$content_list[1]['cover_image_path']|format_url}" />
+                                </if>
+                            </div>
+                            <div class="icon-btn-wrap mt-10">
+                                <div id="coverPicker">选择图片</div>
+                                <a id="coverPickerUploadBtn" class="btn btn-default">开始上传</a>
+                                <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--页面背景-->
+                <div class="row cl">
+                    <lable class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题抬头图：</lable>
+                    <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                        <div id="uploader_bg_pic">
+                            <!--用来存放item-->
+                            <div class="game-jt">
+                                <div>
+                                    <div class="loadpic-box" id="bgPicList">
+                                        <!--记录当前有几张图片-->
+                                        <php>
+                                            if(empty($content_list[1]['background_image_path'])){
+                                                $pic_num = 0;
+                                            }else{
+                                                var_dump();
+                                                $pic_num = count($content_list[1]['background_image_path']);
+                                            }
+                                        </php>
+                                        <volist name="content_list[1]['background_image_path']" key="pic_i" id="pic_val">
+                                            <if condition="!empty($pic_val)">
+                                                <div class="sub-load-box">
+                                                    <div class="upload-state-done"><img alt="" style="width: 115px;height: 65px;" src="{$pic_val|format_url}">
+                                                    </div>
+                                                    <div class="load-mask">
+                                                        {$pic_val|format_url|substr=###,-17}
+                                                    </div>
+                                                    <img alt="" data-url="{$pic_val}" src="__PUBLIC__/imgclose.png" class="close-img">
+                                                </div>
+                                            </if>
+                                        </volist>
+                                    </div>
+                                    <div class="loadpic-btn">
+                                        <div id="bgPicPicker">选择图片</div>
+                                        <div class="upload-btn-div">
+                                            <a id="bgPicPickerUploadBtn" class="begin-upload-btn" href="javascript:void(0);">开始上传</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <span style="color: #17983b;margin-top: 5px;" class="r">(最多可上传10张图，横版最佳显示效果350*262，竖版最佳显示效果130*230，同比例亦可，单张图片大小<500KB)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">简介:</label>
+                    <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                        <textarea class="textarea" name="introduce"  cols="100" rows="10">{$content_list[1]['introduce']}</textarea>
+                    </div>
+                </div>
+                <div class="row cl"><a href="javascript:;" class="btn btn-success radius r" onclick="addAppDetail()">添加游戏</a></div>
+                <div id="game-container">
+                    <php>
+                        if(empty($content_list[1]['content'])){
+                            $currentAppNum = 0;
+                        }else{
+                            $currentAppNum = count($content_list[1]['content']);
+                            //var_dump($content_list[1]['content']);
+                        }
+                    </php>
+                    <if condition="$currentAppNum gt 0">
+                        <php>$i = 0;</php>
+                        <foreach name="content_list[1]['content']" item="appVal">
+                            <div class="row cl app-box" id="game_id_{$i}">
+                                <div class="col-md-11 col-xs-11 col-sm-11 r">
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">游戏ID:</label>
+                                    <div class="formControls col-md-2 col-xs-2 col-sm-2">
+                                        <el-autocomplete class="inline-input" placeholder="请输入游戏名称" v-model="app_name" :fetch-suggestions="querySearch" :trigger-on-focus="false" @select="handleSelect">
+                                        </el-autocomplete>
+                                        <input class="app_id" type="hidden" name="app_id[]"  v-model="app_id">
+                                        <input class="app_name" type="hidden" name="app_name[]"  v-model="app_name">
+                                    </div>
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">视频链接:</label>
+                                    <div class="formControls col-md-2 col-xs-2 col-sm-2">
+                                        <input style="width: 150px;" class="input-text" type="text" name="video_url[]" value="" v-model="video_url">
+                                    </div>
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">详情链接:</label>
+                                    <div class="formControls col-md-2 col-xs-2 col-sm-2">
+                                        <input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="app_id">
+                                    </div>
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">下载包体:</label>
+                                    <div class="formControls col-md-2 col-xs-2 col-sm-2">
+                                        <input style="width: 150px;" class="input-text" type="text" name="download_url[]" value="" v-model="app_file_url">
+                                    </div>
+                                </div>
+                                <div class="col-md-11 col-xs-11 col-sm-11 r mt-5">
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">简介:</label>
+                                    <div class="formControls col-md-8 col-xs-8 col-sm-8">
+                                        <textarea class="textarea" name="app_introduce[]" cols="100" rows="10" v-model="introduce"></textarea>
+                                    </div>
+                                </div>
+                                <span class=" close-btn btn btn-danger-outline size-S radius">删除</span>
+                            </div>
+                            <php>$i++;</php>
+                        </foreach>
+                    </if>
+                <!--游戏的容器-->
+                </div>
+            </div>
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">内容:</label>
+                    <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                        <div class="skin-minimal">
+                            <script id="editor" name="uedit_content" type="text/plain">{$content_list[2]['content']|htmlspecialchars_decode}</script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题名称：</label>
+                    <div class="formControls col-md-6 col-xs-6 col-sm-6">
+                        <div id="uploader_h5">
+                            <!--用来展示图片-->
+                            <div id="h5Picture" class="uploader-list">
+                                <if condition="!empty($content_list[3]['cover_image_path'])">
+                                    <img style="width: 128px;height: 128px;" src="{$content_list[3]['cover_image_path']|format_url}" />
+                                </if>
+                            </div>
+                            <div class="icon-btn-wrap mt-10">
+                                <div id="h5Picker">选择图片</div>
+                                <a id="h5PickerUploadBtn" class="btn btn-default">开始上传</a>
+                                <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">H5链接:</label>
+                    <div class="formControls col-md-6 col-xs-10 col-sm-10">
+                        <input class="input-text" type="text" name="h5_content" value="{$content_list[3]['content']}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">发布时间:</label>
+            <div class="formControls col-md-3 col-xs-3 col-sm-3">
+                <input class="input-text" type="text" name="publish_time" onclick="selecttime(this)" value="{$topic.publish_time|date='Y-m-d H:i:s',###}">
+            </div>
+            <div class="formControls col-md-3 col-xs-3 col-sm-3">
+                <div class="skin-minimal">
+                    <div class="check-box">
+                        <input type="checkbox" name="update_now" id="update-to-now" value="1">
+                        <label for="update-to-now">更新至最新时间</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="提交">
+                <a id="cancel" href="javascript:;" class="btn btn-default radius" >取消</a>
+            </div>
+        </div>
+    </form>
+</article>
+<!--_footer 作为公共模版分离出去-->
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/myjs/myjs.js?v=1"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/vue.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/index.js"></script>
+<script>
+    var currentAppNum = '{$currentAppNum}';//当前已添加的游戏数量
+    //查询游戏
+    function appIdSelect(elemMainId,defAppId,defAppName,defAppIntro,defVedioUrl,defAppFile){
+        new Vue({
+            el: elemMainId,
+            data: function() {
+                return {
+                    apps: [],
+                    app_id: '',
+                    app_name:'',
+                    introduce:'',
+                    video_url:'',
+                    app_file_url:''
+                };
+            },
+            mounted: function () {
+                this.getList();
+            },
+            methods : {
+                querySearch:function(queryString, cb) {
+                    //console.log(this.apps);
+                    var apps = this.apps;
+                    var results = queryString ? apps.filter(this.createFilter(queryString)) : apps;
+                    //console.log(results);
+                    // 调用 callback 返回建议列表的数据
+                    cb(results);
+
+                },
+                createFilter:function(queryString) {
+                    return (app) => {
+                        if(app.value.indexOf(queryString.toLowerCase()) === 0){
+                            return app;
+                        }
+                    }
+                },
+                handleSelect:function(app) {
+                    console.log(app);
+                    //设置表单的值
+                    this.app_id = app.app_id;
+                    this.app_name = app.value;
+                    if (app.m_introduct === null || app.m_introduct === undefined || app.m_introduct === '') {;
+                        this.introduce = app.introduct ;
+                    }else{
+                        this.introduce = app.m_introduct;
+                    }
+                    this.video_url = app.video_id;
+                    this.app_file_url = app.app_file_url;
+                },
+                getList:function(){
+                    var obj = this;
+                    var app_id = '';
+                    if (defAppId !== null || defAppId !== undefined || defAppId !== '') {
+                        app_id = defAppId;
+                    }
+                    var app_name = '';
+                    if (defAppName !== null || defAppName !== undefined || defAppName !== '') {
+                        app_name = defAppName;
+                    }
+                    var introduce = '';
+                    if (defAppIntro !== null || defAppIntro !== undefined || defAppIntro !== '') {
+                        introduce = defAppIntro;
+                    }
+                    var video_url = '';
+                    if (defVedioUrl !== null || defVedioUrl !== undefined || defVedioUrl !== '') {
+                        video_url = defVedioUrl;
+                    }
+                    var app_file_url = '';
+                    if (defAppFile !== null || defAppFile !== undefined || defAppFile !== '') {
+                        app_file_url = defAppFile;
+                    }
+                    $.post("{:U('Admin/AppLib/ajax_get_app')}",{app_id : ''},function(res){
+                        obj.app_id = app_id;
+                        obj.app_name = app_name;
+                        obj.introduce = introduce;
+                        obj.video_url = video_url;
+                        obj.app_file_url = app_file_url;
+                        if(res.error){
+                            layer.alert(res.detail, {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                        }else{
+                            obj.apps = res.data
+                        }
+                    });
+                }
+            }
+        });
+    }
+    //添加游戏, 只能添加已上架的游戏
+    function addAppDetail() {
+        if(currentAppNum>9){
+            layer.alert('最多添加十款游戏', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        var html = '';
+        html +=
+            '<div class="row cl app-box" id="game_id_'+currentAppNum+'">' +
+            '<div class="col-md-11 col-xs-11 col-sm-11 r">'+
+                '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">游戏ID:</label>'+
+                '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
+                    '<el-autocomplete class="inline-input" placeholder="请输入游戏名称"'+
+                        'v-model="app_name"'+
+                        ':fetch-suggestions="querySearch"'+
+                        ':trigger-on-focus="false"'+
+                        '@select="handleSelect"'+
+                    '></el-autocomplete>'+
+                    '<input class="app_id" type="hidden" name="app_id[]"  v-model="app_id">'+
+                    '<input class="app_name" type="hidden" name="app_name[]"  v-model="app_name">'+
+                '</div>'+
+                '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">视频链接:</label>'+
+                '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
+                    '<input style="width: 150px;" class="input-text" type="text" name="video_url[]" value="" v-model="video_url">'+
+                '</div>'+
+                '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">详情链接:</label>'+
+                '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
+                    '<input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="app_id">'+
+                '</div>'+
+                '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">下载包体:</label>'+
+                '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
+                    '<input style="width: 150px;" class="input-text" type="text" name="download_url[]" value="" v-model="app_file_url">'+
+                '</div>'+
+            '</div>'+
+            '<div class="col-md-11 col-xs-11 col-sm-11 r mt-5">'+
+                '<label for="" class="form-label col-md-1 col-xs-1 col-sm-1 text-r">简介:</label>'+
+                '<div class="formControls col-md-8 col-xs-8 col-sm-8">'+
+                    '<textarea class="textarea" name="app_introduce[]" cols="100" rows="10" v-model="introduce"></textarea>'+
+                '</div>'+
+            '</div>'+
+            '<span class=" close-btn btn btn-danger-outline size-S radius">删除</span>'+
+        '</div>';
+        $('#game-container').append(html);
+        var selectAppIdInput = '#game_id_'+currentAppNum;
+        appIdSelect(selectAppIdInput);
+        removeApp();
+        currentAppNum++;
+    }
+    //删除游戏
+    function removeApp() {
+        $('#game-container .close-btn').click(function(){
+            $(this).parent('.app-box').remove()
+        })
+    }
+
+    <if condition="$currentAppNum gt 0">
+        <php>$j = 0;</php>
+        <foreach name="content_list[1]['content']" item="appVal">
+            appIdSelect("#game_id_{$j}","{$appVal[app_id]}","{$appVal[app_name]}","{$appVal[app_introduce]}","{$appVal[video_url]}","{$appVal[download_url]}");
+            <php>$j++;</php>
+        </foreach>
+        removeApp();
+    </if>
+</script>
+<script type="text/javascript">
+    var currentType = '{$topic[topic_type]}';//默认的模板类型
+    $(function(){
+        //标签切换
+        var tabIndex = currentType - 1;
+        changeTab("#type_change .tabBar span","#type_change .tabCon","current","click",tabIndex);
+        /*tab选项卡*/
+        function changeTab(tabBar,tabCon,class_name,tabEvent,i){
+            var $tab_menu=$(tabBar);
+            // 初始化操作
+            $tab_menu.removeClass(class_name);
+            $(tabBar).eq(i).addClass(class_name);
+            $(tabCon).hide();
+            $(tabCon).eq(i).show();
+
+            $tab_menu.on(tabEvent,function(){
+                $tab_menu.removeClass(class_name);
+                $(this).addClass(class_name);
+                var index=$tab_menu.index(this);
+                $(tabCon).hide();
+                $(tabCon).eq(index).show();
+                //通过切换标签修改专题的类型
+                var topicType = $(this).data('type');
+                $('#topic_type').val(topicType);
+                currentType = topicType;
+            });
+        }
+        //更新至最新时间复选框
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        })
+    });
+    //编辑器
+    var ue = UE.getEditor('editor',{
+        allowDivTransToP: false,
+        autoHeightEnabled: true,
+        initialFrameWidth: '100%'
+    });
+
+    /* 自定义时间区间时间 时间控件*/
+    function selecttime(object) {
+        WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
+    }
+</script>
+<script>
+    /************封面图片图片上传****************/
+    var img_url_cover = [];        // 封面图片地址
+    var is_cover_success = false;  // 封面图片上传是否成功
+    var no_upload_cover = true;    // 是否有上传封面图片文件
+    var is_update_cover = false;   // 是否有更新上传封面图片文件
+
+    var thumbnailWidth = 200;       //缩略图宽度
+    var thumbnailHeight = 150;      //缩略图高度
+    // 初始化Web Uploader
+    var uploaderCover = WebUploader.create({
+        auto: false,    //选完文件后，是否自动上传。false否
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
+        server: "{:U('Admin/AppTopic/ajax_upload_image')}", // 文件接收服务端。
+        formData: {fun : 'upload_cover'},
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: {
+            multiple:false,
+            id:'#coverPicker'
+        },
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+        },
+        fileSizeLimit: 2 * 1024 * 1024,
+    });
+    // 点击上传
+    $('#coverPickerUploadBtn').click(function () {
+        uploaderCover.upload();
+    });
+    uploaderCover.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过2M，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploaderCover.on( 'beforeFileQueued', function( file ) {
+        uploaderCover.reset();
+        no_upload_cover = false;
+        is_update_cover = true;
+    });
+    // 当有文件添加进来的时候
+    uploaderCover.on( 'fileQueued', function( file ) {
+        file_id = file.id;
+        var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+            ),
+            $img = $li.find('img');
+        // $list为容器jQuery实例
+        $fileList = $("#coverPicture");
+        $fileList.html( $li );
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploaderCover.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, thumbnailWidth, thumbnailHeight );
+    });
+    // 文件上传过程中创建进度条实时显示。
+    uploaderCover.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    uploaderCover.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            is_cover_success = true;
+            img_url_cover.push(data.url);
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploaderCover.on( 'uploadSuccess', function( file ) {
+        is_cover_success = true;
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploaderCover.on( 'uploadError', function( file ) {
+        is_cover_success = false;
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+        $error.text('上传失败');
+    });
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploaderCover.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+    /****************背景图片******************/
+    var pic_url = [];             // 聚合图片数组
+    var is_pic_success  = true;   // 聚合图片上传是否成功
+    var pic_url_del = [];         // 替换删除的图片
+    var is_update_pic  = false;    // 是否有更新上传聚合图片
+    var no_upload_pic  = true;    // 是否有上传聚合图片
+
+    $('.sub-load-box').click(function () {
+        if($(this).hasClass('on')) {
+            $(this).removeClass('on').siblings().removeClass('on');
+        }
+        else {
+            $(this).addClass('on').siblings().removeClass('on');
+        }
+    });
+    $('.sub-load-box').find('.close-img').click(function (e) {
+        pic_url_del.push($(this).data('url'));
+        $(this).parent().remove();
+    });
+    var img_num = "{$pic_num}"; //记录当前有几张截图
+    //缩略图默认宽高
+    var pic_thumbnailWidth = 100;
+    var pic_thumbnailHeight = 100;
+
+    // 初始化Web Uploader
+    var uploaderBgPic = WebUploader.create({
+        // 选完文件后，是否自动上传。
+        auto: false,
+        // swf文件路径
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+        // 文件接收服务端。
+        server: "{:U('Admin/AppLib/ajax_upload_image')}",
+        formData: {fun : 'upload_bg'},
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#bgPicPicker',
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+        },
+        fileSizeLimit: 2 * 1024 * 1024,
+    });
+    uploaderBgPic.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过2M，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当有文件添加进来的时候
+    uploaderBgPic.on( 'fileQueued', function( file ) {
+        var $li = $(
+                '<div class="sub-load-box">' +
+                '<div id="' + file.id + '"><img alt="" src="__PUBLIC__/imgbcg.png"></div>' +
+                '<div class="load-mask">' + file.name + '</div>' +
+                '<img alt="" src="__PUBLIC__/imgclose.png" class="close-img">' +
+                '</div>'
+            ),
+            $img = $li.find('div:first-child img');
+        $li.click(function () {
+            if($(this).hasClass('on')) {
+                $(this).removeClass('on').siblings().removeClass('on');
+            }
+            else {
+                $(this).addClass('on').siblings().removeClass('on');
+            }
+        });
+        //点击关闭图标删除图片时 记录的截图数量-1
+        $li.find('.close-img').click(function (e) {
+            uploaderBgPic.removeFile(file, true);
+            $li.remove();
+            img_num = parseInt(img_num)  - 1;
+        });
+
+        var $fileList_pic;
+        $fileList_pic = $("#bgPicList");
+        // 替换
+        if($('#bgPicList .sub-load-box').length > 0) {
+            $('#bgPicList .sub-load-box').each(function(z,that){
+                if($(this).hasClass('on')) {
+                    // 判断是否已上传成功
+                    //console.log(pic_url);
+                    if($(this).find('div:first').hasClass('upload-state-done')) {
+                        if($(this).find('div:first').attr('id')) {
+                            // 替换删除文件如果是添加则去除数组对应的值
+                            pic_url_del.push(pic_url[$(this).find('div:first').attr('id')]);
+                            // 调用删除图片
+                            delete  pic_url[$(this).find('div:first').attr('id')];
+                        }
+                        if($(this).find('.close-img').data('url')) {
+                            pic_url_del.push($(this).find('.close-img').data('url'));
+                        }
+                    }
+                    //console.log(pic_url_del);
+                    if($(this).find('div:first').attr('id')) {
+                        uploaderBgPic.removeFile($(this).find('div:first').attr('id'), true);
+                    }
+                    $(this).before($li);
+                    $fileList_pic = $('#bgPicList').eq($(this).index()+1);
+                    $(this).remove();
+                }
+            });
+        }
+
+        $fileList_pic.append( $li );
+        img_num = parseInt(img_num) + 1;
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploaderBgPic.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, pic_thumbnailWidth, pic_thumbnailHeight );
+    });
+    // 点击上传
+    $('#bgPicPickerUploadBtn').click(function () {
+        uploaderBgPic.upload();
+    });
+    uploaderBgPic.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploaderBgPic.on( 'beforeFileQueued', function( file ) {
+        if(img_num > 9){
+            layer.alert('最多只能添加10张', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        no_upload_pic = true;
+    });
+
+    // 文件上传过程中创建进度条实时显示。
+    uploaderBgPic.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+
+    uploaderBgPic.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            pic_url[file.file.id] = data.url;
+            //console.log(pic_url);
+            is_pic_success = true;
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploaderBgPic.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploaderBgPic.on( 'uploadError', function( file ) {
+        is_pic_success = false;
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploaderBgPic.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+
+
+    /************H5封面图片图片上传****************/
+    var img_url_h5 = [];        // H5封面图片地址
+    var is_h5_success = false;  // H5封面图片上传是否成功
+    var no_upload_h5 = true;    // 是否有上传H5封面图片文件
+    var is_update_h5 = false;   // 是否有更新H5封面图片文件
+
+    var h5ThumbnailWidth = 200;       //缩略图宽度
+    var h5ThumbnailHeight = 150;      //缩略图高度
+    // 初始化Web Uploader
+    var uploaderH5 = WebUploader.create({
+        auto: false,    //选完文件后，是否自动上传。false否
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
+        server: "{:U('Admin/AppTopic/ajax_upload_image')}", // 文件接收服务端。
+        formData: {fun : 'upload_h5'},
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: {
+            multiple:false,
+            id:'#h5Picker'
+        },
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+        },
+        fileSizeLimit: 2*1024*1024,
+    });
+    // 点击上传
+    $('#h5PickerUploadBtn').click(function () {
+        uploaderH5.upload();
+    });
+    uploaderH5.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploaderH5.on( 'beforeFileQueued', function( file ) {
+        uploaderH5.reset();
+        no_upload_h5 = false;
+        is_update_h5 = true;
+    });
+    // 当有文件添加进来的时候
+    uploaderH5.on( 'fileQueued', function( file ) {
+        file_id = file.id;
+        var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+            ),
+            $img = $li.find('img');
+        // $list为容器jQuery实例
+        $fileList = $("#h5Picture");
+        $fileList.html( $li );
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploaderH5.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, h5ThumbnailWidth, h5ThumbnailHeight );
+    });
+    // 文件上传过程中创建进度条实时显示。
+    uploaderH5.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+    uploaderH5.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else{
+            is_h5_success = true;
+            img_url_h5.push(data.url);
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploaderH5.on( 'uploadSuccess', function( file ) {
+        is_h5_success = true;
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploaderH5.on( 'uploadError', function( file ) {
+        is_h5_success = false;
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+        $error.text('上传失败');
+    });
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploaderH5.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+</script>
+<script>
+    // 表单提交
+    function form_submit(form,type) {
+        var pic_url_post = [];//抬头的图片路径
+        for(var key in pic_url) {
+            pic_url_post.push(pic_url[key]);
+        }
+        $(form).ajaxSubmit({
+            type:"post",  //提交方式
+            dataType:"json", //数据类型
+            data:{img_url_cover : img_url_cover[0], pic_url : pic_url_post, pic_url_del : pic_url_del,img_url_h5:img_url_h5[0],topic_status : type},
+            url:"{:U('Admin/AppTopic/topic_content_add')}", //请求url
+            success:function(data){ //提交成功的回调函数
+                if(!data.error) {
+                    window.layer.alert(data.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title:'提示',
+                    },function(index, layero){
+                        //按钮【按钮一】的回调
+                        window.location.replace("{$reload_url}");
+                    });
+                }
+                else {
+                    $(form).find(":submit").attr("disabled", false).attr("value",
+                        "提交");
+                    window.layer.alert(data.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title:'提示',
+                    });
+                }
+            }
+        });
+    }
+
+    $("#form-admin-edit").validate({
+        rules:{
+            topic_type:{
+                required:true,
+                number:true
+            }
+        },
+        onkeyup:false,
+        focusCleanup:true,
+        success:"valid",
+        submitHandler:function(form){
+            //$(form).find(":submit").attr("disabled", true).attr("value", "提交中...");
+            if($("#coverPicture").html() == '')
+            {
+                is_cover_success = false;
+                no_upload_cover = true;
+            } else {
+                no_upload_cover = false;
+            }
+            if($("#h5Picture").html() == '')
+            {
+                is_h5_success = false;
+                no_upload_h5 = true;
+            } else {
+                no_upload_h5 = false;
+            }
+            if($("#bgPicList").html() == '')
+            {
+                is_pic_success = false;
+                no_upload_pic = true;
+            } else {
+                no_upload_pic = false;
+            }
+
+
+            // 当有编辑新图片时
+            if(!is_update_cover) {
+                is_cover_success = true;
+            }
+            if(!is_update_h5) {
+                is_h5_success = true;
+            }
+            if(!is_update_pic) {
+                is_pic_success = true;
+            }
+
+            if(currentType == 1){
+                if(!is_cover_success && !no_upload_cover && is_update_cover) {
+                    layer.alert('请先上传模板封面', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                    return false;
+                }
+                if(!is_pic_success && !no_upload_pic && is_update_pic) {
+                    layer.alert('请先上传抬头图', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                    return false;
+                }
+            } else if(currentType == 3){
+                if(!is_h5_success && !no_upload_h5 && is_update_h5) {
+                    layer.alert('请先上传H5封面图', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                    return false;
+                }
+            }
+
+
+            window.layer.alert('请选择更新或发布', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4, //动画类型
+                title: '提示',
+                btn: ['更新', '发布'],
+                btn2: function (index) {
+                    //按钮【按钮二】
+                    window.layer.close(index);
+                    form_submit(form,1);
+                }
+            }, function (index, layero) {
+                //按钮【按钮一】的回调
+                window.layer.close(index);
+                form_submit(form,0);
+            });
+        }
+    });
+</script>
+</body>
+</html>

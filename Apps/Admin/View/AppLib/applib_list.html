@@ -1,0 +1,123 @@
+<include file='Common:meta'/>
+<title>游戏详情页列表管理</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    游戏详情页列表管理
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/AppLib/applib_list')}">
+                <input type="text" name="app_name" id="app_name" placeholder=" 游戏名称" style="width:250px" class="input-text" value="{$app_name}">
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="r">
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>序号</th>
+            <th>游戏ID</th>
+            <th>游戏名称</th>
+            <th>
+                <select id="status_order" name="status_order">
+                    <option value="0" <if condition="$status_order eq 0">selected</if>>上架状态</option>
+                    <option value="1" <if condition="$status_order eq 1">selected</if>>未上架</option>
+                    <option value="2" <if condition="$status_order eq 2">selected</if>>已上架</option>
+                </select>
+            </th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="app_list" key="i" id="val">
+            <tr class="text-c">
+                <td><if condition="$val['lib_create_time'] neq 9999999999">{$i}<else/>--</if></td>
+                <td>{$val.app_id}</td>
+                <td>{$val.app_name}</td>
+                <td>
+                    <if condition="$val['status'] eq 0">
+                        未上架
+                        <elseif condition="$val['status'] eq 1"/>
+                        已上架
+                        <elseif condition="$val['status'] eq 2"/>
+                        测试上架
+                        <elseif condition="$val['status'] eq 3"/>
+                        下架
+                        <else />
+                        未知
+                    </if>
+                </td>
+                <td>
+                    <a title="编辑" href="{:U('Admin/AppLib/applib_edit/app_id/'.$val[app_id])}" class="btn btn-success radius" style="text-decoration:none"><i class="Hui-iconfont Hui-iconfont-edit"></i>编辑</a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+
+    <div id="page" class="r"></div>
+    <div id="div_pagesize" class="r">
+        <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+    </div>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var pages = "{$pages}";
+    var status_order = '{$status_order}';
+    var app_name = "{$app_name}";
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: {$pages}, //通过后台拿到的总页数
+            curr: {$page}, //初始化当前页
+
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U('Admin/AppLib/applib_list/p/"+e.curr+"/pagesize/"+pagesize+"/_param_/status_order/"+status_order+"/app_name/"+app_name+"')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href = new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var status_order = $('#status_order').val();
+        var url = "{:U('Admin/AppLib/applib_list/p/1/pagesize/"+page_size+"/_param_/status_order/"+status_order+"/app_name/"+app_name+"')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+
+    //修改发布状态进行状态排序
+    $('#status_order').change(function () {
+        var status_order = $('#status_order').val();
+        var page_size = $('#pagesize').val();
+        var url = "{:U('Admin/AppLib/applib_list/p/1/pagesize/"+page_size+"/_param_/status_order/"+status_order+"/app_name/"+app_name+"')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+    //搜索表单重置按钮
+    $("#reset").click(function(){
+        $("input[name=app_name]").val('');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<style>
+	.span-p {margin-left: 10px;font-weight: bold;color: #666;}
+	.Hui-aside .menu_dropdown li:hover{background-color: #fafafa; color: #148cf1;cursor:pointer;}
+	.span-p.on {margin-left: 10px; color: #148cf1}
+	.child_menu {display: none;}
+	.child_menu.show{display: block;}
+
+</style>
+<aside class="Hui-aside">
+	<input runat="server" id="divScrollValue" type="hidden" value="" />
+	<if condition="$type eq 3">
+		<div id="search-game-box" class="text-c" style="position: relative;height: 30px;">
+			<div class="search-box" style="position: fixed;left: 2px;z-index: 1">
+				<input type="text" name="app-name" id="app-name" placeholder=" 游戏名称" style="width:130px" class="input-text">
+				<button name="search-game" id="search-game" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i></button>
+			</div>
+		</div>
+	</if>
+	<div class="menu_dropdown bk_2" id="menu-container">
+		<volist name="leftMenu" id="vo">
+			<dl id="menu-{$vo.id}">
+				<dt>
+					<if condition="!empty($vo['css'])">
+						<i class="Hui-iconfont {$vo.css}"></i>
+						<else />
+						<i class="Hui-iconfont Hui-iconfont-system"></i>
+					</if>
+					<if condition="$vo['has_child'] eq 1">
+						{$vo.title}<i class="Hui-iconfont menu_dropdown-arrow Hui-iconfont-arrow2-bottom"></i>
+						<else />
+						<a style="font-weight: bold;"
+						<php>
+							echo "data-href='".$vo['name']."'"
+						</php>
+						data-title="{$vo.title}" >&nbsp;&nbsp;{$vo.title}</a>
+					</if>
+
+				</dt>
+				<dd>
+					<if condition="$vo['has_child'] eq 1">
+						<ul>
+							<volist name="vo['menu_child']" id="mc_vo" >
+								<li>
+									<if condition="$mc_vo['has_child'] eq 1">
+										<span class="span-p" data-title="{$mc_vo.title}" href="javascript:void(0);"><i class="Hui-iconfont Hui-iconfont-add"></i>&nbsp;&nbsp;{$mc_vo.title}</span>
+									<else/>
+										<a style="font-weight: bold;"
+										<php>echo "data-href='".U($mc_vo['name'])."'"</php>
+										data-title="{$mc_vo.title}" >&nbsp;&nbsp;{$mc_vo.title}</a>
+									</if>
+									<if condition="$mc_vo['has_child'] eq 1">
+										<ul class="child_menu">
+										<volist name="mc_vo['menu_child']" id="mcc_vo" >
+											<li><a
+												<php>echo "data-href='".U($mcc_vo['name'])."'"</php>
+												data-title="{$mcc_vo.title}" href="javascript:void(0);"><i class="Hui-iconfont Hui-iconfont-arrow2-right"></i>&nbsp;&nbsp;{$mcc_vo.title}</a></li>
+										</volist>
+										</ul>
+									</if>
+								</li>
+							</volist>
+						</ul>
+					</if>
+				</dd>
+			</dl>
+		</volist>
+	</div>
+</aside>
+<script>
+	$('.span-p').click(function () {
+		var _this = $(this);
+		var _parent = $(this).parent();
+		if(_this.hasClass('on')) {
+			_this.removeClass('on');
+			_this.next('.child_menu.show').removeClass('show');
+			_this.find('i.Hui-iconfont-jianhao').removeClass('Hui-iconfont-jianhao').addClass('Hui-iconfont-add');
+		}
+		else {
+			_parent.siblings().find('span.span-p').removeClass('on');
+			_this.addClass('on');
+			_parent.siblings().find('span.span-p').find('i.Hui-iconfont-jianhao').removeClass('Hui-iconfont-jianhao').addClass('Hui-iconfont-add');
+			_parent.siblings().find('span.span-p').next('.child_menu.show').removeClass('show');
+			_this.next('.child_menu').addClass('show');
+			_this.find('i.Hui-iconfont-add').removeClass('Hui-iconfont-add').addClass('Hui-iconfont-jianhao');
+		}
+	});
+
+
+
+    $(function(){
+        /**
+         * 默认显示第一个菜单链接
+         */
+        openTheUrl('.menu_dropdown');
+
+        function openTheUrl(className){
+            var obj = $(className).find('a').first();
+            var href = obj.data('href');
+            var title = obj.data('title');
+            $('#min_title_list').find('li').first().children('span').first().empty().html(title);
+            $('#iframe_box .show_iframe').find('iframe').first().attr('src', href);
+        }
+
+        /**
+		 * 执行ajax获取游戏专题菜单
+         */
+		$('#search-game').click(function(){
+		    var inputVal = $.trim($('#app-name').val());
+
+            $.ajax({
+                url: '<?php echo U("Admin/Index/ajax_get_article_column");?>',
+                type: 'POST',
+                data: {app_name : inputVal},
+                success: function(json) {
+                    if (!json.error) {
+						$('#menu-container').empty().html(json.data.html);
+                    } else {
+                        layer.msg(json.detail, {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+		});
+	});
+</script>

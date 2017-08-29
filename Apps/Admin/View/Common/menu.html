@@ -1,0 +1,65 @@
+<style>
+	.span-p {margin-left: 10px;font-weight: bold;color: #666;}
+	.Hui-aside .menu_dropdown li:hover{background-color: #fafafa; color: #148cf1;cursor:pointer;}
+	.span-p.on {margin-left: 10px; color: #148cf1}
+	.child_menu {display: none;}
+	.child_menu.show{display: block;}
+</style>
+<aside class="Hui-aside">
+	<input runat="server" id="divScrollValue" type="hidden" value="" />
+	<div class="menu_dropdown bk_2">
+		<volist name="left_menu" id="vo">
+			<dl id="menu-{$vo.id}">
+				<dt><if condition="!empty($vo['css'])"><i class="Hui-iconfont {$vo.css}"></i>
+					<else /> <i class="Hui-iconfont Hui-iconfont-system"></i>
+					</if> {$vo.title}<i class="Hui-iconfont menu_dropdown-arrow Hui-iconfont-arrow2-bottom"></i></dt>
+				<dd>
+					<if condition="$vo['has_child'] eq 1">
+						<ul>
+							<volist name="vo['menu_child']" id="mc_vo" >
+								<li>
+									<if condition="$mc_vo['has_child'] eq 1">
+										<span class="span-p" data-title="{$mc_vo.title}" href="javascript:void(0);"><i class="Hui-iconfont Hui-iconfont-add"></i>&nbsp;&nbsp;{$mc_vo.title}</span>
+									<else/>
+										<a style="font-weight: bold;"
+										<php>echo "data-href='".U($mc_vo['name'])."'"</php>
+										data-title="{$mc_vo.title}" >&nbsp;&nbsp;{$mc_vo.title}</a>
+									</if>
+								<!--<li><a <if condition="$mc_vo['has_child'] neq 1">data-href="{:U($mc_vo['name'])}"</if> data-title="{$mc_vo.title}" href="javascript:void(0);"> <if condition="$mc_vo['has_child'] eq 1"><i class="Hui-iconfont Hui-iconfont-add"></i>&nbsp;&nbsp;<else/><i class="Hui-iconfont Hui-iconfont-jianhao"></i>&nbsp;&nbsp;</if>{$mc_vo.title}</a>-->
+								<if condition="$mc_vo['has_child'] eq 1">
+									<ul class="child_menu">
+									<volist name="mc_vo['menu_child']" id="mcc_vo" >
+										<li><a
+											<php>echo "data-href='".U($mcc_vo['name'])."'"</php>
+											data-title="{$mcc_vo.title}" href="javascript:void(0);"><i class="Hui-iconfont Hui-iconfont-arrow2-right"></i>&nbsp;&nbsp;{$mcc_vo.title}</a></li>
+									</volist>
+									</ul>
+								</if>
+								</li>
+							</volist>
+						</ul>
+					</if>
+				</dd>
+			</dl>
+		</volist>
+	</div>
+</aside>
+<script>
+	$('.span-p').click(function () {
+		var _this = $(this);
+		var _parent = $(this).parent();
+		if(_this.hasClass('on')) {
+			_this.removeClass('on');
+			_this.next('.child_menu.show').removeClass('show');
+			_this.find('i.Hui-iconfont-jianhao').removeClass('Hui-iconfont-jianhao').addClass('Hui-iconfont-add');
+		}
+		else {
+			_parent.siblings().find('span.span-p').removeClass('on');
+			_this.addClass('on');
+			_parent.siblings().find('span.span-p').find('i.Hui-iconfont-jianhao').removeClass('Hui-iconfont-jianhao').addClass('Hui-iconfont-add');
+			_parent.siblings().find('span.span-p').next('.child_menu.show').removeClass('show');
+			_this.next('.child_menu').addClass('show');
+			_this.find('i.Hui-iconfont-add').removeClass('Hui-iconfont-add').addClass('Hui-iconfont-jianhao');
+		}
+	});
+</script>

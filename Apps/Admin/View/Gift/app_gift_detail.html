@@ -1,0 +1,206 @@
+<include file='Common:meta'/>
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<script src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<title>礼包管理</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    礼包中心>游戏礼包页<if condition="!empty($appInfo[app_name])">>{$appInfo.app_name}礼包页</if>
+</nav>
+<div class="page-container">
+    <h4>基本信息</h4>
+    <form class="form form-horizontal" id="form-admin-edit">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">游戏名称：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                {$appInfo.app_name}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">游戏icon：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <img src="{$appInfo.icon|format_url}" alt="游戏icon" style="width: 100px;height: 100px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">专区链接：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                待确认
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">下载链接：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                {$appInfo.app_file_url|format_url}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">游戏Banner：</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <php>
+                    $serverUrl = U("Admin/Gift/ajax_upload_image");
+                    if(empty($bannerPath)){
+                        $bannerPath='';
+                    }
+                </php>
+                {:W('Upload/upload_one',array(
+                    array(
+                        'serverUrl' => $serverUrl,
+                        'uploadMethod' => 'upload_gift_banner',
+                        'thumbnailWidth' => 400,
+                        'thumbnailHeight' => 150,
+                        'imgUrl' => 'banner_url',
+                        'imagePath' => $bannerPath,
+                        'imageWidth' => 1920,
+                        'imageHeight' => 500
+                    ),
+                ))}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"></label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <button name="submit" id="submit" class="btn btn-success" type="submit"> 保存</button>
+            </div>
+        </div>
+    </form>
+
+    <h4>游戏礼包</h4>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/Gift/app_gift_detail')}">
+                <input type="hidden" name="app_id" value="{$appId}">
+                <input type="text" name="gift_name" id="gift_name" placeholder=" 请输入礼包名称进行搜索" style="width:250px" class="input-text" value="{$giftName}">
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg mb-30">
+        <thead>
+        <tr class="text-c">
+            <th>礼包ID</th>
+            <th>礼包名称</th>
+            <th>库总量</th>
+            <th>上限数量</th>
+            <th>剩余数量</th>
+            <th>消耗数量</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="giftList" key="i" id="val">
+            <php>
+                //剩余量
+                $residualNum = $val[code_num] - $val[code_use_num];
+            </php>
+            <tr class="text-c">
+                <td>{$val.gift_id}</td>
+                <td>{$val.gift_full_name}</td>
+                <td>{$val.all_code_num}</td>
+                <td>
+                    <if condition="empty($val[limited_count])">
+                        0
+                        <else/>
+                        {$val.limited_count}
+                    </if>
+                </td>
+                <td>
+                    <if condition="empty($residualNum)">
+                        0
+                        <else/>
+                        {$residualNum}
+                    </if>
+
+                </td>
+                <td>
+                    <if condition="empty($val[code_use_num])">
+                        0
+                        <else/>
+                        {$val.code_use_num}
+                    </if>
+
+                </td>
+                <td>
+                    <a title="申请"
+                       href="javascript:;"
+                       onclick="layer_show('申请礼包','{:U(\'Admin/Gift/apply_gift/gift_id/\'.$val[gift_id])}', 400, 540)"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont"></i>申请
+                    </a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var appId = '{$appInfo.app_id}';
+
+    //点击保存按钮保存上传的图片到数据库
+    $("#form-admin-edit").validate({
+        rules: {},
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function (form) {
+            //判读是否有上传图片，有上传图片才允许提交
+            if($("#imageContainer").html() == '')
+            {
+                is_success = false;
+                no_upload = true;
+            } else {
+                no_upload = false;
+            }
+            // 当没有编辑新图片时
+            if(!is_update) {
+                is_success = true;
+            }
+            if(!is_success && is_update) {
+                layer.alert('请先上传banner', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                return false;
+            }
+
+            if(is_success){
+                $(form).find(":submit").attr("disabled", true).attr("value", "提交中...");
+                $(form).ajaxSubmit({
+                    type: "post",  //提交方式
+                    dataType: "json", //数据类型
+                    data: {app_id:appId, img_url:banner_url[0]},
+                    url: "{:U('Admin/Gift/app_gift_detail')}", //请求url
+                    success: function (data) { //提交成功的回调函数
+                        if (data.error) {
+                            $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                        }
+                        layer.alert(data.detail, {
+                            skin: 'layui-layer-lan',
+                            closeBtn: 0,
+                            anim: 4 //动画类型
+                        });
+                        //layer.msg(data.info, {icon: 6,time:2000});
+                        if (!data.error) {
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+
+                    }
+                });
+            }
+
+        }
+    });
+    $('#reset').click(function(){
+        $('input[name=gift_name]').val('');
+    })
+</script>
+</body>
+</html>

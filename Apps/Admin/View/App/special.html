@@ -1,0 +1,45 @@
+<dd>
+    <input type="hidden" value="{$app_info.app_id}" name="special_app_id[]" />
+    <div class="row cl">
+        <label class="form-label col-xs-3 col-sm-1">专辑游戏{$dd_length_name}：</label>
+        <div class="formControls col-xs-3 col-sm-3">
+            <a href="javascript:void(0);" onclick="special_del($(this), 0)" obj-id="{$app_info.app_id}" class="btn btn-success radius">
+            <i class="Hui-iconfont Hui-iconfont-del"></i> 删除游戏</a>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-3 col-sm-1">游戏名：</label>
+        <div class="formControls col-xs-3 col-sm-3">
+            {$app_info.app_name}
+        </div>
+        <label class="form-label col-xs-3 col-sm-1">游戏ID：</label>
+        <div class="formControls col-xs-3 col-sm-3">
+            {$app_info.app_id}
+        </div>
+        <label class="form-label col-xs-3 col-sm-1">游戏ICON：</label>
+        <div class="formControls col-xs-3 col-sm-1">
+            <img src="{$app_info.icon}" style="width:100px;height: 100px;" />
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-3 col-sm-1">游戏类型：</label>
+        <div class="formControls col-xs-3 col-sm-3">
+            {$app_info.type_name}
+        </div>
+        <label class="form-label col-xs-3 col-sm-1">游戏主标签：</label>
+        <div class="formControls col-xs-3 col-sm-3">
+
+        </div>
+        <label class="form-label col-xs-3 col-sm-1">游戏星级：</label>
+        <div class="formControls col-xs-3 col-sm-1">
+            {$app_info.start_score|intval}星
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-1">介绍文案：</label>
+        <div class="formControls col-xs-8 col-sm-4">
+            <textarea class="textarea radius" autocomplete="off" value="" placeholder="这个游戏简直太好玩，我一上手就停不下来了，巴拉巴拉小魔仙！（文案至多30个字，具体字数限制看UI设计样式）" id="game_info[]" name="game_info[]"></textarea>
+        </div>
+    </div>
+    <div class="hr"></div>
+</dd>

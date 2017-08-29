@@ -1,0 +1,135 @@
+<include file='Common:meta' />
+<link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
+<title>添加二级栏目</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-edit">
+        <div class="row cl">
+            <label class="form-label col-md-4 col-xs-4 col-sm-4  text-r">栏目名称：</label>
+            <div class="formControls col-md-6 col-xs-8 col-sm-8">
+                <input type="text" class="input-text app_list_sort" value="" placeholder="请输入栏目名称" name="cat_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-md-4 col-xs-4 col-sm-4  text-r">栏目排序：</label>
+            <div class="formControls col-md-6 col-xs-8 col-sm-8">
+                <input type="text" class="input-text app_list_sort" value="" placeholder="请输入栏目排序" name="sort">
+            </div>
+        </div>
+        <div class="row cl" id="parent_category">
+            <label class="form-label col-md-4 col-xs-4 col-sm-4  text-r">父级栏目：</label>
+            <div class="formControls col-md-6 col-xs-8 col-sm-8">
+                <div class="skin-minimal">
+                    <el-select v-model="cat_name" filterable :loading="loading" placeholder="请选择">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.cat_name"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <input type="hidden" value="" name="cat_id" v-model="cat_id" />
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/vue/vue.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/vue/index.js"></script>
+<script type="text/javascript">
+    $("#form-admin-edit").validate({
+        rules: {
+            cat_id: {
+                required: true,
+                number: true
+            },
+            cat_name: {
+                required: true,
+                maxlength: 10
+            },
+            sort: {
+                number: true
+            }
+        },
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function (form) {
+            //$(form).find(":submit").attr("disabled", true).attr("value", "提交中...");
+            $(form).ajaxSubmit({
+                type: "post",  //提交方式
+                dataType: "json", //数据类型
+                data: {},
+                url: "{:U('Admin/ArticleLib/news_child_column_add')}", //请求url
+                success: function (data) { //提交成功的回调函数
+                    if (data.error) {
+                        $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                    }
+                    layer.alert(data.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    //					layer.msg(data.info, {icon: 6,time:2000});
+                    window.parent.location.reload();
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                }
+            });
+        }
+    });
+</script>
+<script>
+    new Vue({
+        el: '#parent_category',
+        data: function () {
+            return {
+                loading: false,
+                options: [],
+                cat_id: '{$catId}',
+                cat_name: '{$catName}'
+            }
+        },
+        mounted: function () {
+            this.options = this.getList();
+        },
+        methods:{
+            handleSelect:function(option) {
+                //设置表单的值
+                //this.cat_id = option.value;
+                //this.cat_name = option.cat_name;
+            },
+            getList:function(){
+                var obj = this;
+                $.post("{:U('Admin/ArticleLib/ajax_get_level_one_column')}",{cat_id:this.cat_id, type:1},function(res){
+                    if(res.error){
+                        layer.alert(res.detail, {
+                            skin: 'layui-layer-lan',
+                            closeBtn: 0,
+                            anim: 4 //动画类型
+                        });
+                    }else{
+                        obj.options = res.data
+                    }
+                });
+            }
+        }
+    });
+
+</script>
+</body>
+</html>
