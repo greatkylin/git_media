@@ -1,0 +1,548 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+body{
+    min-width:1174px;
+    background: #f8f8f8;
+    position: relative;
+}
+a{
+    cursor: pointer;
+}
+a:link{
+    color:#fff;
+    text-decoration: none;
+}
+a:visited{
+    color:#fff;
+}
+a:hover{
+    color:#04e4cb;
+}
+.header-up{
+    width:100%;
+    line-height:40px;
+    background:#404952;
+    position:relative;
+    color:#fff;
+    text-align: center;
+    font-size:13px;
+
+    display:flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+.header-up-game{
+    width:350px;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-left:19%;
+}
+.header-up-login{
+    width:160px;
+    display:flex;
+    display:-webkit-flex;
+    justify-content: space-around;
+    align-items: center;
+    color:#fff;
+    margin-right:19%;
+}
+#header-sign{
+    color:#04e4cb;
+    text-decoration: underline;
+}
+.nav{
+    width:100%;
+    height:120px;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.nav-nav{
+    width:30%;
+    display:flex;
+    display:-webkit-flex;
+    justify-content: space-around;
+    align-items: center;
+    color:#999;
+    font-size:20px;
+}
+.nav-nav a{
+    width: 25%;
+    border-right: solid 3px #04e4cb;
+    text-align: center;
+    line-height:1;
+    color:#999;
+}
+.nav-nav a:hover{
+    color:#04e4cb;
+}
+.nav-nav a:last-child{
+    border:none;
+}
+.nav-nav a.active{
+    color:#000;
+}
+.nav-search{
+    width:26%;
+}
+.nav>div:first-child{
+    width:14%;
+}
+.nav-search-input{
+    width:100%;
+    height:40px;
+    line-height: 40px;
+    position: relative;
+
+}
+.nav-search-input1{
+    width:100%;
+    height:100%;
+    border:solid 1px #a5aaae;
+    padding-left:40px;
+    font-size:14px;
+    outline-color:#04e4cb;
+}
+.search-img{
+    position: absolute;
+    top:8px;
+    left:10px;
+    cursor:pointer;
+}
+.nav-search-input2{
+    width:90px;
+    height:100%;
+    position: absolute;
+    top:0;
+    right:0;
+    border:none;
+    color:#fff;
+    background:#04e4cb;
+    font-size:18px;
+    cursor: pointer;
+    outline:none;
+}
+.nav-advice{
+    font-size:14px;
+    color:#999;
+    margin-top:10px;
+}
+.nav-advice a:first-child{
+    color:red;
+}
+.nav-advice a:last-child{
+    color:#04e4cb;
+}
+.nav-advice a{
+    padding-right:10px;
+}
+.swiper-container {
+    width: 100%;
+    height: 480px;
+}
+.swiper-pagination-bullet.swiper-pagination-bullet-active{
+
+}
+.swiper-wrapper a{
+    width:100%;
+    height:100%;
+}
+span img{
+    margin-top:-10px;
+}
+.swiper-pagination div{
+    display: inline-block;
+    margin: 0 6px;
+}
+.swiper-pagination-bullet{
+    background: #fff;
+    opacity:1;
+}
+.swiper-pagination.swiper-pagination-custom>div{
+    line-height:50px;
+}
+.swiper-pagination.swiper-pagination-custom img{
+    vertical-align: middle;
+}
+main{
+    width:63%;
+    min-width: 1200px;
+    margin:0 auto;
+    padding:0 25px;
+    position: relative;
+    background:#fff;
+    padding-bottom:30px;
+}
+.game-advice{
+    width:100%;
+    height:250px;
+    background:#fff;
+}
+.game-advice-title{
+    width: 100%;
+    margin: 0 auto;
+    height:50px;
+    display:flex;
+    display:-webkit-flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom:solid 1px #eee;
+    margin-top:20px;
+    padding-left:15px;
+    color:#666;
+}
+.game-advice-title>div{
+    display:inline-block;
+    cursor:pointer;
+}
+.game-advice-title img{
+    vertical-align: middle;
+    padding-right:6px;
+}
+.hotgame-box{
+    text-align: center;
+    border-top:none;
+    font-size:20px;
+    color:#666;
+    padding-top: 30px;
+
+    display: flex;
+    display:-webkit-flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.gameNews{
+    width:100%;
+    height:462px;
+    display: flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.gameNews-swiper{
+    width:35%;
+    height:100%;
+    overflow: hidden;
+    position: relative;
+}
+.gameNews-detail{
+    width:35%;
+    height:100%;
+    padding:5px 20px;
+    color:#666;
+    padding-right:30px;
+}
+.gameNews-gift{
+    width:25%;
+    height:100%;
+}
+.gameNews-swiper img{
+    width:100%;
+}
+.gameNews .swiper-pagination.swiper-pagination-custom img{
+    width:22px;
+}
+.gameNews-detail>div{
+    width:100%;
+}
+.gameNews-detail a:link{
+    color:#666;
+}
+.gameNews-detail a:visited{
+    color:#666;
+}
+.gameNews-detail a:hover{
+    color:#666;
+}
+.nowrap-line2{
+    width:100%;
+    color:#ff6a28;
+    display:flex;
+    display:-webkit-flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.nowrap-line2>div:last-child{
+    width: 80%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.nowrap-line2 a:hover{
+    color:#ff6a28;
+}
+.nowrap-line2 img{
+    margin-right:10px;
+}
+.nowrap{
+    width:100%;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 28px;
+    line-height: 28px;
+    color:#666;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.bigger{
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    box-shadow: 3px 2px 5px 2px #bfbfbf;
+    padding: 4px;
+    display:none;
+}
+.nowrap-box{
+    width:100%;
+    height:28px;
+    line-height: 28px;
+    z-index: 0;
+    position: relative;
+}
+.out{
+    width:100%;
+    font-weight: bold;
+    text-overflow: inherit;
+    white-space: normal;
+    box-shadow: 3px 2px 5px 2px #bfbfbf;
+    padding: 4px 0;
+    padding-right:6px;
+    position:absolute;
+    left:0;
+    z-index: 2;
+}
+.gameNews-gift-title{
+    width:100%;
+    height:52px;
+    line-height:40px;
+}
+.left-border{
+    width:8px;
+    height:20px;
+    border-radius:4px;
+    background:#04e4cb;
+}
+.gameNews-gift-title{
+    display: flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.gameNews-detail ul {
+    width: 100%;
+}
+.gameNews-detail li {
+    height: 31px;
+    line-height: 30px;
+    position: relative;
+}
+.gameNews-detail ul  a {
+    padding: 2px 10px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 30px;
+    color: #999;
+    font-size:14px;
+    padding-right:0;
+}
+.gameNews-detail ul a:hover {
+    width: 100%;
+    height: auto;
+    line-height: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    text-overflow: inherit;
+    white-space: normal;
+    background-color: #fff;
+    transition: height 0.2s ease;
+    box-shadow: 3px 2px 5px 2px #bfbfbf;
+    box-shadow: 0 2px 8px 3px rgba(18, 18, 18, 0.14);
+}
+.gameNews-gift-title{
+    display:flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gameNews-gift-title>div:first-child{
+     display:flex;
+     display:-webkit-flex;
+     justify-content: space-between;
+     align-items: center;
+     font-size:20px;
+     color:#666;
+ }
+.gameNews-gift-title>div:last-child{
+    font-size:16px;
+    color:#999;
+    cursor:pointer;
+}
+.gameNews-gift-container a:link{
+    color:#666;
+}
+.gameNews-gift-container a:visited{
+    color:#666;
+}
+.gameNews-gift-container li{
+    color:#666;
+    margin-left: 15px;
+    list-style-type: none;
+    height:30px;
+    line-height: 30px;
+}
+.gift-line{
+    display:flex;
+    display:-webkit-flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    padding:3px 5px;
+    border:solid 1px #eee;
+}
+.gameNews-gift-container li a{
+    display: block;
+}
+.gameNews-gift-container li{
+    position: relative;
+}
+.gift-get{
+    position:absolute;
+    bottom:2px;
+    right:13px;
+    color:#ff6a28;
+    font-size:13px;
+}
+.gift-num{
+    color:#f4dd1f;
+    font-size:24px;
+    float:left;
+    margin-right:10px;
+}
+.gift-line img{
+    margin-right:8px;
+}
+.gift-li-box{
+    display:none;
+}
+.gameNews-gift-container a{
+    display:block;
+    width:100%;
+    height:30px;
+    line-height:30px;
+}
+ul .gift-li-show .giftshow{
+    width:100%;
+    height:60px;
+    line-height:1.4;
+    position: absolute;
+    left:0;
+    top:0;
+    z-index: 2;
+    background:#fff;
+    transition: all .3s ease;
+    word-break: break-all;
+    border:solid 1px red;
+    white-space: normal;
+}
+.gameStrategy{
+    display: flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: stretch;
+    width:100%;
+    /*padding-top:40px;*/
+    padding-bottom:40px;
+}
+.game-strategy{
+    width:70%;
+}
+.newgame-test{
+    width:25%;
+}
+section{
+    background:#fff;
+}
+.game-strategy-detail-box{
+    display: flex;
+    display:-webkit-flex;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    height: 185px;
+    border: solid 1px #eee;
+}
+.game-strategy-img-box{
+    width:36%;
+    height:100%;
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.game-strategy-img-box img{
+    width:100%;
+}
+.game-strategy-news-box{
+    width:100%;
+    height:125%;
+    color:#666;
+}
+.game-strategy-img-box>div{
+    width:100%;
+}
+.game-strategy-news-box>div img{
+    vertical-align: middle;
+    margin-right:10px;
+}
+.game-strategy-news-box li{
+    width: 100%;
+    height: 25px;
+    position: relative;
+    margin-top: 10px;
+    list-style-type: none;
+}
+.game-strategy-news-box li a{
+    display:block;
+    width:100%;
+    height:30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.game-strategy-news-box li a:hover{
+    width:98%;
+    color:#666;
+    height:auto;
+    line-height:1.5;
+    white-space: normal;
+    position: absolute;
+    left:5px;
+    top:0;
+    z-index: 2;
+    background: #fff;
+    /*box-shadow: 6px 6px 10px #bfbfbf;*/
+    padding:5px 6px 5px 3px;
+    transition: height 0.2s ease;
+    box-shadow: 3px 2px 5px 2px #bfbfbf;
+    box-shadow: 0 2px 8px 3px rgba(18, 18, 18, 0.14);
+}

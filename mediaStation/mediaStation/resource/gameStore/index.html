@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../static/css/swiper-3.4.2.min.css">
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <link rel="stylesheet" href="../../static/css/main.css">
+    <link rel="stylesheet" href="../../static/gulp/lessToCss/base.css">
+    <title>游戏库首页</title>
+</head>
+<body>
+<div class="header-up">
+    <div class="header-up-game">
+        <span>指娱游戏</span><span>玩好游戏</span><img alt="" src="../../static/img/sina.png"><img alt="" src="../../static/img/wechat.png"><span>指娱游戏APP</span>
+    </div>
+    <div class="header-up-login"><img alt="" src="../../static/img/pcenter.png"><a href="#">登录</a><a href="#" id="header-sign">立即注册</a></div>
+</div>
+<div class="nav">
+    <div><img alt="" src="../../static/img/logo.png"></div>
+    <div class="nav-nav">
+        <a href="../index/index.html">首页</a>
+        <a class="active" href="index.html">游戏库</a>
+        <a href="../newsCenter/index.html">资讯中心</a>
+        <a>模拟器</a>
+    </div>
+    <div class="nav-search">
+        <div class="nav-search-input">
+            <img alt="" src="../../static/img/search.png" class="search-img">
+            <input type="text" class="nav-search-input1">
+            <input type="button" value="搜索" class="nav-search-input2">
+        </div>
+        <div class="nav-advice">
+            <a>王者荣誉</a>
+            <a>我有上将</a>
+            <a>王者荣誉</a>
+            <a>我有上将</a>
+        </div>
+    </div>
+</div>
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a class="active" href="index.html">游戏库</a>
+        <a href="hotgameRank.html">热游排行榜</a>
+        <a href="giftCenter.html">礼包中心</a>
+    </div>
+</div>
+<main class="game-store-box">
+    <div class="bread-tag">
+        <img src="../../static/img/dengpao.png" alt="">您现在的位置是：<a href="">游戏库</a>
+    </div>
+    <div class="gs-class">
+        <div>分类筛选</div>
+        <div>共计<span>699</span>款游戏，本周更新<span>18</span>款</div>
+    </div>
+    <div class="gs-class-desp">
+        <div>游戏类型</div>
+        <div class="gcd-tag">
+            <div class="all-checked">全部</div>
+            <div id="js">角色扮演</div>
+            <div id="dz">动作冒险</div>
+            <div id="cl">策略战棋</div>
+            <div id="yz">益智休闲</div>
+            <div id="fx">飞行射击</div>
+            <div id="ty">体育竞速</div>
+            <div id="ml">模拟经营</div>
+            <div id="gd">格斗竞技</div>
+            <div id="hh">回合卡牌</div>
+        </div>
+    </div>
+    <div class="gs-rank-class">
+        <div class="grc-link">
+            <div class="link1 active" data-num="1">人气最高</div>
+            <div class="link2" data-num="0">近期更新</div>
+            <div class="link3" data-num="0">新建专区</div>
+        </div>
+        <div class="grc-icon">
+            <div class="active" id="list"><img src="../../static/img/list-er.png" alt=""></div>
+            <div id="simple"><img src="../../static/img/pu.png" alt=""></div>
+        </div>
+    </div>
+    <div class="gs-rank-container">
+        <div class="gsrc-people">
+            <div class="people-list">
+                <a href="gameDesp.html" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">阴阳师</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <!--写点击的时候注意return false，限制默认跳转-->
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="dz">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="cl">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="dz">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="people-simple" style="display: none;">
+                <div class="for-flexbox">
+                    <a href="http://www.baidu.com" target="_blank" class="rank-icon-tag" data-role="js">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨角色</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a href="http://www.baidu.com" target="_blank" class="rank-icon-tag" data-role="js">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨角色</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a class="rank-icon-tag" target="_blank" data-role="dz">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨动作</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a class="rank-icon-tag" target="_blank" data-role="cl">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨策略</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="gsrc-yesterday" style="display: none;">
+            <div class="people-list">
+                <a href="#" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="dz">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="cl">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="people-simple" style="display: none;">
+                <div class="for-flexbox">
+                    <a target="_blank" class="rank-icon-tag" data-role="js">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨角色</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a target="_blank" class="rank-icon-tag" data-role="dz">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div>花千骨动作</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a target="_blank" class="rank-icon-tag" data-role="cl">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div>花千骨策略</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="gsrc-new" style="display: none;">
+            <div class="people-list">
+                <a href="#" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="js">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="dz">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" target="_blank" class="rank-list-tag" data-role="cl">
+                    <div class="icon"><img src="../../static/img/news-tag.png" alt=""></div>
+                    <div class="desp">
+                        <div class="name-time">
+                            <div class="name">精灵宝可梦角色</div>
+                            <div class="time">更新时间：<span>2016-12-17</span></div>
+                        </div>
+                        <div class="platform">
+                            <div>平台：<span>IOS&nbsp;&nbsp;Android</span></div>
+                            <div>类型：<span>角色 3D</span></div>
+                            <div>状态：<span>公测</span></div>
+                        </div>
+                        <div class="jianjie">简介：<span>《让你轻松打败戏，飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的飞一般的战飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作飞一般的战斗模式搭配特有的技能操作斗模式搭配特有的技能操作，让你轻松打败对手！高度还原的成长体验，</span></div>
+                        <div class="icon-link">
+                            <div><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</div>
+                            <div><img src="../../static/img/gift-icon-little.png" alt="">领取礼包</div>
+                            <div><img src="../../static/img/download-icon-little.png" alt="">点击下载</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="people-simple" style="display: none;">
+                <div class="for-flexbox">
+                    <a target="_blank" class="rank-icon-tag" data-role="js">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div class="rit-name">花千骨角色</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a target="_blank" class="rank-icon-tag" data-role="dz">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div>花千骨动作</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                    <a target="_blank" class="rank-icon-tag" data-role="cl">
+                        <div><img src="../../static/img/d.png" alt=""></div>
+                        <div>花千骨策略</div>
+                        <div class="enter-zq">进入专区</div>
+                        <div class="down-link">
+                            <img src="../../static/img/anzhuo-icon.png" alt="">
+                            <img src="../../static/img/apple-icon.png" alt="">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-box">
+        <div class="font">首页</div>
+        <div class="font">上一页</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+        <div>...</div>
+        <div class="font">下一页</div>
+        <div class="font">尾页</div>
+    </div>
+</main>
+<div class="friend-link">
+    <div class="link-box">
+        <div>友情链接</div>
+        <div>
+            <a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a>
+            <a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="footer-innerbox">
+        <div>
+            <div>关于我们</div>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+        </div>
+        <div>
+            <div>联系我们</div>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+        </div>
+        <div>
+            <div>招贤纳士</div>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+        </div>
+        <div>
+            <div>客服&反馈</div>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+        </div>
+        <div>
+            <div>网站地图</div>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+            <a href="#">关于我们</a>
+        </div>
+    </div>
+    <div class="copyright">Copyright © 2004-2017 Downjoy. All Rights Reserved.</div>
+</footer>
+<script src="../../static/js/jquery-2.1.4.min.js"></script>
+<script>
+    $(function () {
+        //分页
+        $(".page-box div.num").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $("#list").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".people-list").show().siblings().hide();
+        });
+        $("#simple").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".people-simple").show().siblings().hide();
+        })
+        
+        $(".gcd-tag>div").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $(".grc-link>div").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(this).attr("data-num",1).siblings().attr("data-num",0);
+        });
+
+
+
+
+
+        //点击关键字
+        //全选
+        $(".all-checked").click(function () {
+            $(".rank-list-tag").show();
+            $(".rank-icon-tag").show();
+        });
+        //关键词
+        $("#js,#dz,#cl,#yz,#fx,#ty,#ml,#gd,#hh").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            var id=$(this).attr("id");
+            $(".people-list,.people-simple").find(".rank-list-tag").each(function (i,self) {
+                if($(self).attr("data-role")==id){
+                    $(self).show();
+                }else{
+                    $(self).hide();
+                }
+            });
+            $(".people-list,.people-simple").find(".rank-icon-tag").each(function (i,self) {
+                if($(self).attr("data-role")==id){
+                    $(self).show();
+                }else{
+                    $(self).hide();
+                }
+            });
+        })
+
+    })
+</script>
+</body>
