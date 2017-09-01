@@ -53,7 +53,7 @@ class MenuService extends BaseService
      * @return array|mixed
      */
     protected function getIndexMenu(){
-        $category = M('ad_column_category')
+        $category = M('index_column_category')
             ->field('id, keyword, is_delete, name')
             ->where('is_delete = 1')->select();
         if(!empty($category)){
@@ -61,7 +61,7 @@ class MenuService extends BaseService
             foreach ($category as $key => $value){
                 $newCategory[$key]['id'] = $value['id'];
                 $newCategory[$key]['title'] = $value['name'];
-                $newCategory[$key]['name'] = U('Admin/Ad/image_list/category_id/'.$value['id']);
+                $newCategory[$key]['name'] = U('Admin/IndexCont/content_list/category_id/'.$value['id']);
                 $newCategory[$key]['menu_type'] = '';
                 $newCategory[$key]['css'] = '';
                 $newCategory[$key]['sort'] = $key;

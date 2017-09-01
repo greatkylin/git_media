@@ -432,8 +432,7 @@ class AppLibController extends AdminBaseController
             }
             //游戏类型
             if(!empty($appInfo['app_type'])){
-                $appTypeIdArray = explode(',',$appInfo['app_type']);
-                $this->assign('appTypeIdArray',$appTypeIdArray);
+                $this->assign('appTypeIdArray',$appInfo['app_type']);
 
             }
 
@@ -514,6 +513,24 @@ class AppLibController extends AdminBaseController
         $service = new AppService();
         $appId = trim(I('app_id'));
         $appList = $service->getAppInfoByAppId($appId);
+        if($appList === false){
+            $this->outputJSON(true,'100001',$service->getError());
+        }
+        if($appList === NULL){
+            $this->outputJSON(true,'100001','未找到对应数据');
+        }
+        $this->outputJSON(false,'000000','成功',$appList);
+    }
+
+    /**
+     * ajax通过游戏名称获取游戏app列表
+     * @author xy
+     * @since 2017/07/10 18:00
+     */
+    public function ajax_get_all_app(){
+        $service = new AppService();
+        $appId = trim(I('app_id'));
+        $appList = $service->getAllAppInfoByAppId($appId);
         if($appList === false){
             $this->outputJSON(true,'100001',$service->getError());
         }

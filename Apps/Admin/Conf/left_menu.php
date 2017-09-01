@@ -7,7 +7,7 @@
 return
     array(
         /*array(
-            'name' => 'Ad/category_list',
+            'name' => 'IndexCont/category_list',
             'title' => '首页管理',
             'menu_type' => 4,
             'css' => 'Hui-iconfont-home',
@@ -17,7 +17,7 @@ return
             "has_child" => 1,
             "menu_child" => array(
                 array(
-                    'name' => 'Ad/category_list',
+                    'name' => 'IndexCont/category_list',
                     'title' => '栏目分类',
                     'menu_type' => 4,
                     'css' => 'Hui-iconfont-home',
@@ -29,7 +29,7 @@ return
                     ),
                 ),
                 array(
-                    'name' => 'Ad/image_list',
+                    'name' => 'IndexCont/content_list',
                     'title' => '图片分类',
                     'menu_type' => 4,
                     'css' => 'Hui-iconfont-home',

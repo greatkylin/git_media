@@ -804,6 +804,33 @@ class AppService extends BaseService
     }
 
     /**
+     * 根据游戏id获取游戏 相关信息
+     * @author xy
+     * @since 2017/08/18 15:43
+     * @param $appId
+     * @return bool
+     */
+    public function getAllAppInfoByAppId($appId){
+        $where = array();
+        if(!empty($appId)){
+            $where['alist.app_id '] = $appId;
+        }
+        //媒体站有游戏详情的优先读取详情数据，没有的话则读取库的数据
+        $result = M('app_list')->alias('alist')
+            ->field('alist.app_id, alib.app_name, alib.app_name as value')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list a on a.app_id=alist.app_id')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')//关联游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib malib on malib.app_id=alist.app_id')//关联媒体库游戏库表
+            ->where($where)
+            ->select();
+
+        if(!$result){
+            return $this->setError('未找到对应数据');
+        }
+        return $result;
+    }
+
+    /**
      * 根据条件获取app下载量月榜的数据的条数
      * @author xy
      * @since 2017/07/20 14:11

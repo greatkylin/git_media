@@ -10,27 +10,907 @@
 <!--菜单栏开始-->
 <include file='Common:nav'/>
 <!--菜单栏end-->
+<style>
+    /*精选游戏游戏a标签添加左margin*/
+    #index-main .specialselect-box .alphabet-game-box .abox a{
+        margin-right: 4px;
+    }
+    #index-main .specialselect-box .alphabet-game-box .abox a:nth-child(4) {
+        margin-right: 0
+    }
+    #index-main .specialselect-box .alphabet-game-box .abox a:nth-child(6) {
+        margin-right: 0
+    }
+    /*排行榜游戏名称太长，改成太长则隐藏*/
+    .game-rank .gr-desp-box .hotgame-bag .hotgame-list .nameer{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 75px;
+    }
+</style>
 <div class="swiper-container" id="mySwiper">
+    <if condition = "count($topBanner) gt 0">
     <div class="swiper-wrapper">
-        <div class="swiper-slide"><a href=""><img alt="" src="__PUBLIC__/Home/static/img/banner1.png"></a></div>
-        <div class="swiper-slide"><a><img alt="" src="__PUBLIC__/Home/static/img/banner2.png"></a></div>
-        <div class="swiper-slide"><a><img alt="" src="__PUBLIC__/Home/static/img/banner1.png"></a></div>
+        <volist name="topBanner" id="tbanner" >
+        <div class="swiper-slide"><a href="{$tbanner.href_link}"><img alt="" src="{$tbanner.image_path|format_url}"></a></div>
+        </volist>
     </div>
     <!-- 如果需要分页器 -->
     <div class="swiper-pagination"></div>
+    </if>
 </div>
+<main id="index-main" style="background:none;padding:0;">
+    <!--热门推荐，精选游戏，新游一览 开始-->
+    <section class="game-advice">
+        <header class="game-advice-title">
+            <div id="hot-game" class="active"><img alt="" src="__PUBLIC__/Home/static/img/hot-game.png">热游推荐</div><span>//</span>
+            <div id="special-select"><img alt="" src="__PUBLIC__/Home/static/img/special-select.png">精选游戏</div><span>//</span>
+            <div id="new-game"><img alt="" src="__PUBLIC__/Home/static/img/new-game.png">新游一览</div>
+        </header>
+        <div>
+            <div class="hotgame-box">
+                <if condition = "count($hotAppRecommend) gt 0">
+                    <volist name="hotAppRecommend" id="hotApp">
+                        <a href="#">
+                            <img alt="" src="{$hotApp.icon|format_url}">
+                            <div>{$hotApp.app_name}</div>
+                        </a>
+                    </volist>
+                </if>
+            </div>
+            <div class="specialselect-box" style="display: none;">
+                <div class="alphabet-box">
+                    <volist name="carefulChoiceApp" id="careAppArr" key="i">
+                        <div  data-sort="{$i}" <if condition="$i eq 1">class="active"</if>><span>{$key}</span></div>
+                    </volist>
+                    <div><span class="check-all">查看全部</span></div>
+                </div>
+                <volist name="carefulChoiceApp" id="careAppArr" key="j">
+                    <div class="alphabet-game-box" data-sort="{$j}" <if condition="$j neq 1">style="display:none"</if>>
+                        <volist name="careAppArr" id="careAppLetter">
+                            <div class="abox">
+                                <div class="tag-yellow">
+                                    <img alt="" src="__PUBLIC__/Home/static/img/tag-yellow.png"><span>{$key}</span>
+                                </div>
+                                <volist name="careAppLetter" id="careApp" offset="1" length="5">
+                                    <a>{$careApp.app_name}</a>
+                                </volist>
+                            </div>
+                        </volist>
+                    </div>
+                </volist>
+            </div>
+            <div class="newgame-box" style="display:none;">
+                <img class="show" alt="" src="__PUBLIC__/Home/static/img/new-yellow.png">
+                <if condition="count($newAppView) gt 0 ">
+                    <volist name="newAppView" id="newApp">
+                        <a>{$newApp.app_name}</a>
+                    </volist>
+                </if>
+            </div>
+        </div>
+    </section>
+    <!--热门推荐，精选游戏，新游一览 结束-->
+    <!--左侧轮播，热门文章，推荐文章，礼包列表 开始-->
+    <section class="gameNews" id="gameNews">
+        <div class="gameNews-swiper">
+            <div class="swiper-container-gameNews" id="mySwiper-gameNews">
+                <if condition="count($leftBanner) gt 0">
+                <div class="swiper-wrapper">
+                    <volist name="leftBanner" id="lbanner">
+                        <div class="swiper-slide"><a href="{$lbanner.href_link}"><img alt="" src="{$lbanner.image_path|format_url}"></a></div>
+                    </volist>
+                </div>
+                </if>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <div class="gameNews-detail">
+            <if condition="count($topArticle) gt 0">
+                <volist name="topArticle" id="tarticle">
+                    <div>
+                        <a href="{$tarticle.href_link}"><div class="nowrap-line2"><div><img alt="" src="__PUBLIC__/Home/static/img/hotest.png"></div><div>{$tarticle.title}</div></div></a>
+                    </div>
+                </volist>
+            </if>
+            <if condition="count($recommendArtList) gt 0">
+                <ul>
+                    <volist name="recommendArtList" id="rarticle">
+                        <li style="display: block"><a href="{$rarticle.href_link}">{$rarticle.title}</a></li>
+                    </volist>
+                </ul>
+            </if>
+        </div>
+        <div class="gameNews-gift">
+            <div class="gameNews-gift-title">
+                <div>
+                    <div class="left-border"></div>
+                    <div style="margin-left:15px;">游戏礼包</div>
+                </div>
+                <div>查看更多+</div>
+            </div>
+            <div class="gameNews-gift-container">
+                <div class="for-hidden">
+                    <volist name="indexGiftList" id="gift" key="k">
+                    <div class="tag-gift <if condition='$k eq 1'>active</if>">
+                        <span class="num">{$k}</span>
+                        <div class="content">
+                            <div class="img-box"><img alt="" src="{$gift.icon|format_url}"></div>
+                            <div class="desp">{$gift.full_gift_name}</div>
+                            <span class="get-gift">领取</span>
+                        </div>
+                    </div>
+                    </volist>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--左侧轮播，热门文章，推荐文章，礼包列表 结束-->
+    <section class="gameStrategy" id="gameStrategy">
+        <div class="game-strategy">
+            <div class="gameNews-gift-title">
+                <div>
+                    <div class="left-border"></div>
+                    <div style="margin-left:15px;">游戏攻略</div>
+                </div>
+                <div style="font-size:12px;">查看更多+</div>
+            </div>
+            <div class="game-strategy-detail-box">
+                <div class="game-strategy-img-box">
+                    <volist name="hotAppGuide" id="appGuide" key="o">
+                    <div class="<if condition='$o eq 1'>active</if>" id="gsib-box{$o}" data-type="{$o}"><img alt="" src="{$appGuide.image_path}"><div class="gsib-mask">{$appGuide.title}</div></div>
+                    </volist>
+                </div>
+                <div style="width:66%;">
+                    <volist name="hotAppGuide" id="appGuide2" key="o2">
+                    <div class="game-strategy-news-box" data-type="{$o2}" id="gsnb-box{$o2}" <if condition='$o2 neq 1'>style="display:none;"</if>>
+                        <ul>
+                            <volist name="appGuide2[article]" id="guideArt">
+                            <li><a><img alt="" src="__PUBLIC__/Home/static/img/news-icon.png"><span>{$guideArt.title}</span></a></li>
+                            </volist>
+                        </ul>
+                    </div>
+                    </volist>
+                </div>
+
+            </div>
+        </div>
+        <div class="newgame-test">
+            <div class="gameNews-gift-title">
+                <div>
+                    <div class="left-border"></div>
+                    <div style="margin-left:15px;font-size:20px;color:#666;">新游测评</div>
+                </div>
+            </div>
+            <div class="nt-game-box">
+                <if condition="count($newGameTest) gt 0">
+                    <volist name="newGameTest" id="testGame" key="l">
+                        <a class="ngb1" href="{$testGame.href_link}" style="background:url('{$testGame.image_path|format_url}');">
+                            <div class="ngb-mask">
+                                <div class="ngb-score">
+                                    <div class="water-circle water-circle{$l}">
+                                        <img class="water-inner" alt="" src="__PUBLIC__/Home/static/img/water-inner.png">
+                                        <img class="water-outer" alt="" src="__PUBLIC__/Home/static/img/water-outer.png">
+                                        <div class="water-score"><span class="nbg-score">8.6</span>分</div>
+                                    </div>
+                                </div>
+                                <div class="ngb1-name">{$testGame.title}</div>
+                                <div class="ngb1-test">{$testGame.description}</div>
+                            </div>
+                        </a>
+                    </volist>
+                </if>
+            </div>
+        </div>
+    </section>
+    <!--热门攻略，新游测评结束-->
+    <!--每日一题 开服测试-->
+    <section class="daily-topic" id="daily-topic">
+        <div class="daily-l">
+            <div class="name">
+                <div><span></span>每日一题</div>
+                <div>查看更多+</div>
+            </div>
+            <div class="desp">
+                <if condition="count($everyDayQuesImg) gt 0">
+                    <div class="imgbox"><img src="{$everyDayQuesImg[0][image_path]}" alt=""></div>
+                </if>
+                <div class="news">
+                    <if condition="count($questionList) gt 0">
+                        <volist name="questionList" id="ques">
+                            <a><div><img src="__PUBLIC__/Home/static/img/yesorno.png" alt="">{$ques.title}</div></a>
+                        </volist>
+                    </if>
+                </div>
+            </div>
+            <div class="imgbox">
+                <div class="imgbox-l">
+                        <img src="{$everyDayQuesImg[1][image_path]}" alt="">
+                </div>
+                <div class="imgbox-r">
+                    <div class="imgbox-rtop">
+                        <div class="img1">
+                            <div class="imgzzx"></div>
+                            <div>
+                                <div>{$everyDayQuesImg[1][title]}</div>
+                                <div>每日一题合集</div>
+                            </div>
+                        </div>
+                        <div class="img2"><img src="{$everyDayQuesImg[3][image_path]}" alt=""></div>
+                        <div class="img3">
+                            <div class="imgzzx"></div>
+                            <div>
+                                <div>{$everyDayQuesImg[3][title]}</div>
+                                <div>每日一题合集</div>
+                            </div>
+                        </div>
+                        <div class="img4">
+                            <div class="imgzzx"></div>
+                            <div>
+                                <div>{$everyDayQuesImg[4][title]}</div>
+                                <div>每日一题合集</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="imgbox-rbottom">
+                        <div class="img1"><img src="{$everyDayQuesImg[2][image_path]}" alt=""></div>
+                        <div class="img2">
+                            <div class="imgzzx"></div>
+                            <div>
+                                <div>{$everyDayQuesImg[2][title]}</div>
+                                <div>每日一题合集</div>
+                            </div>
+                        </div>
+                        <div class="img3"><img src="{$everyDayQuesImg[4][image_path]}" alt=""></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="daily-r">
+            <div class="title">
+                <div class="kace-tag active">开测游戏</div>
+                <div class="kafu-tag">开服游戏</div>
+            </div>
+            <div class="kckf-box">
+                <div id="kace-box">
+                    <if condition="count($newAppPreview) gt 0">
+                        <volist name="newAppPreview" id="appPreview" key="m">
+                            <a class="kc-tag <if condition = '$m eq 1' >active</if>">
+                                <div class="for-boxshadow">
+                                    <div class="top">
+                                        <div>{$appPreview.app_publish_time}</div>
+                                        <div class="topname">{$appPreview.app_name}</div>
+                                        <div class="icons"><if condition="$appPreview[app_platform] eq 1"><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"><else /><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></if></div>
+                                    </div>
+                                    <div class="bottom">
+                                        <div>{$appPreview.app_name}</div>
+                                        <!--<div>拳皇97OL</div>-->
+                                    </div>
+                                </div>
+                            </a>
+                        </volist>
+                    </if>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--每日一题 ，新游预测结束-->
+    <section class="wonderful-top">
+        <div class="name">
+            <div><span></span>精彩专题</div>
+            <div>查看更多+</div>
+        </div>
+        <div class="img-desp-box">
+            <if condition="count($greatTopic) gt 0">
+                <volist name="greatTopic" id="topic" key="t">
+                    <div>
+                        <div class="idp-for-hover"><img src="{$topic.image_path}" alt=""><div class="idp-mask"></div></div>
+                        <div>{$topic.title}</div>
+                        <div>{$topic.description}</div>
+                    </div>
+                </volist>
+            </if>
+        </div>
+    </section>
+    <!--精彩专题结束-->
+    <!--热门活动开始-->
+    <section class="hot-activity" id="hot-activity">
+        <div class="name">
+            <div><span></span>热门活动</div>
+            <div></div>
+        </div>
+        <div class="img-box">
+            <if condition="count(hotActivity) gt 0">
+                <div class="img-boxl">
+                    <div class="forbacg"><img src="{$hotActivity[0][image_path]}" alt=""></div>
+                    <div class="mask">
+                        <div class="mask-innerbox">
+                            <div>{$hotActivity[0][title]}</div>
+                            <!--<div>这里有一行字</div>-->
+                            <!--<div>这里有一行字</div>-->
+                            <div class="ac-time">活动时间：{$hotActivity[0][description]}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="img-boxr">
+                    <div class="img-boxr-top">
+                        <div class="img1"><img src="{$hotActivity[1][image_path]}" alt=""><div class="mask">{$hotActivity[1][title]}</div></div>
+                        <div class="img2"><img src="{$hotActivity[2][image_path]}" alt=""><div class="mask">{$hotActivity[2][title]}</div></div>
+                    </div>
+                    <div class="img-boxr-bottom">
+                        <div class="img1"><img src="{$hotActivity[3][image_path]}" alt=""><div class="mask">{$hotActivity[3][title]}</div></div>
+                        <div class="img2"><img src="{$hotActivity[4][image_path]}" alt=""><div class="mask">{$hotActivity[4][title]}</div></div>
+                    </div>
+                </div>
+            </if>
+        </div>
+    </section>
+    <!--热门活动 结束-->
+    <!--排行榜开始-->
+    <section class="game-rank">
+        <div class="name">
+            <div><span></span>游戏排行榜</div>
+            <div>查看更多+</div>
+        </div>
+        <div class="gr-desp-box">
+            <!--热游榜-->
+            <div class="hotgame-bag hotgame-number">
+                <div class="hotgame-title">
+                    <div>热游榜</div>
+                    <div><span id="week-rank" class="lightColor">周榜</span><span id="month-rank">月榜</span><span id="all-rank">总榜</span></div>
+                </div>
+                <div class="week-rank">
+                    <volist name="downloadWeek" id="appdw">
+                        <div class="hotgame-list" data-num="0" data-url="{$appdw.icon|format_url}">
+                            <div class="num"></div>
+                            <div class="name-and-type"><div class="nameer">{$appdw.app_name}</div><div class="type">卡牌、角色</div></div>
+                            <div class="download"><if condition="empty($appdw[app_down_num])">0<else />{$appdw.app_down_num}</if>人下载</div>
+                        </div>
+                    </volist>
+                </div>
+                <div class="month-rank">
+                    <volist name="downloadMonth" id="appdm">
+                    <div class="hotgame-list" data-num="0" data-url="{$appdm.icon|format_url}">
+                        <div class="num"></div>
+                        <div class="name-and-type"><div class="nameer">{$appdm.app_name}</div><div class="type">卡牌、角色</div></div>
+                        <div class="download"><if condition="empty($appdm[app_down_num])">0<else />{$appdm.app_down_num}人下载</if></div>
+                    </div>
+                    </volist>
+                </div>
+                <div class="all-rank">
+                    <volist name="downloadTotal" id="appdt">
+                    <div class="hotgame-list" data-num="0" data-url="{$appdt.icon|format_url}">
+                        <div class="num"></div>
+                        <div class="name-and-type"><div class="nameer">{$appdt.app_name}</div><div class="type">卡牌、角色</div></div>
+                        <div class="download"><if condition="empty($appdt[app_down_num])">0<else />{$appdt.app_down_num}人下载</if></div>
+                    </div>
+                    </volist>
+                </div>
+            </div>
+            <!--畅销榜-->
+            <div class="hotgame-bag goodsale-number">
+                <div class="hotgame-title">
+                    <div>畅销榜</div>
+                    <div><span id="week-rank-sale" class="lightColor">周榜</span><span id="month-rank-sale">月榜</span><span id="all-rank-sale">总榜</span></div>
+                </div>
+                <div class="week-rank-sale">
+                    <volist name="popularWeek" id="apppw">
+                        <div class="hotgame-list" data-num="0" data-url="{$apppw.icon|format_url}">
+                            <div class="num"></div>
+                            <div class="name-and-type"><div class="nameer">{$apppw.app_name}</div><div class="type">卡牌、角色</div></div>
+                            <div class="download" data-huomiaonum="3">
+                                <i class="iconfont icon-huomiao"></i>
+                                <i class="iconfont icon-huomiao"></i>
+                                <i class="iconfont icon-huomiao"></i>
+                                <i class="iconfont icon-huomiao"></i>
+                                <i class="iconfont icon-huomiao"></i>
+                            </div>
+                        </div>
+                    </volist>
+                </div>
+                <div class="month-rank-sale">
+                    <volist name="popularMonth" id="apppm">
+                    <div class="hotgame-list" data-num="0" data-url="{$appnm.icon|format_url}">
+                        <div class="num"></div>
+                        <div class="name-and-type"><div class="nameer">{$apppm.app_name}</div><div class="type">卡牌、角色</div></div>
+                        <div class="download" data-huomiaonum="3">
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                        </div>
+                    </div>
+                    </volist>
+                </div>
+                <div class="all-rank-sale">
+                    <volist name="popularTotal" id="apppt">
+                    <div class="hotgame-list" data-num="0" data-url="{$apppt.icon|format_url}">
+                        <div class="num"></div>
+                        <div class="name-and-type"><div class="nameer">{$apppt.app_name}</div><div class="type">卡牌、角色</div></div>
+                        <div class="download" data-huomiaonum="2">
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                            <i class="iconfont icon-huomiao"></i>
+                        </div>
+                    </div>
+                    </volist>
+                </div>
+            </div>
+            <!--新游榜-->
+            <div class="hotgame-bag newgame-number">
+                <div class="hotgame-title">
+                    <div>新游榜</div>
+                    <div><span>上线时间</span></div>
+                </div>
+                <volist name="newRankTotal" id="appnt">
+                <div class="hotgame-list" data-num="0" data-url="{$appnt.icon|format_url}">
+                    <div class="num"></div>
+                    <div class="name-and-type"><div class="nameer">{$appnt.app_name}</div><div class="type">卡牌、角色</div></div>
+                    <div class="download">{$appnt.sj_time|date='Y-m-d',###}</div>
+                </div>
+                </volist>
+            </div>
+        </div>
+    </section>
+    <div id="sub-main">
+    <div id="fixed1"><a><img alt="" src="__PUBLIC__/Home/static/img/point1.png"></a></div>
+    <div id="fixed2"><a><img alt="" src="__PUBLIC__/Home/static/img/point2.png"></a></div>
+    <div id="fixed3"><a><img alt="" src="__PUBLIC__/Home/static/img/point3.png"></a></div>
+    <div id="fixed4"><a><img alt="" src="__PUBLIC__/Home/static/img/point4.png"></a></div>
+    <div id="fixed5"><a><img alt="" src="__PUBLIC__/Home/static/img/point5.png"></a></div>
+    <div id="fixed6"><a><img alt="" src="__PUBLIC__/Home/static/img/point6.png"></a></div>
+    </div>
+</main>
 <!--友情链接开始-->
 <include file='Common:friend_link'/>
 <!--友情链接结束-->
 <!--底部导航开始-->
 <include file='Common:footer'/>
 <!--底部导航结束-->
-<script src="../../static/js/swiper-3.4.2.min.js"></script>
-<script src="../../static/js/less.min.js"></script>
-<script src="../../static/js/underscore-min.js"></script>
-<script src="../../static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/less.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/underscore-min.js"></script>
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script>
+    $(function () {
+        //初始化新游测评水柱高
+        function waterImgHeight(dom){
+            var n=$(dom).find(".nbg-score").text();
+            $(dom).find("img").css("height",n*10+"%");
+        }
+        waterImgHeight(".water-circle1");
+        waterImgHeight(".water-circle2");
+        waterImgHeight(".water-circle3");
+        //点击某个模块滑动到顶端
+        function toTarget(dom) {
+            var h=$(dom).offset().top;
+            $("body,html").stop().animate({scrollTop:h},500);
+        }
 
+
+        var clickFixed1=function(){
+            toTarget(".gameNews");
+        };
+        var clickFixed3=function(){
+            toTarget("#gameStrategy")
+        };
+        var clickFixed4=function(){
+            toTarget("#daily-topic");
+        };
+        var clickFixed5=function(){
+            toTarget("#hot-activity");
+        };
+        var clickFixed6=function(){
+            toTarget("body");
+        };
+        var throttled1 = _.throttle(clickFixed1, 500);//500毫秒之后执行clickFixed1这上函数，而不是立刻执行
+        var throttled3 = _.throttle(clickFixed3, 500);
+        var throttled4 = _.throttle(clickFixed4, 500);
+        var throttled5 = _.throttle(clickFixed5, 500);
+        var throttled6 = _.throttle(clickFixed6, 500);
+        $("#fixed1,#fixed2").click(function(){
+            throttled1();
+        });
+        $("#fixed3").click(function(){
+            throttled3();
+        });
+        $("#fixed4").click(function(){
+            throttled4();
+        });
+        $("#fixed5").click(function(){
+            throttled5();
+        });
+        $("#fixed6").click(function(){
+            throttled6();
+        });
+
+
+        //第一个大的轮播图
+        var mySwiper = new Swiper('.swiper-container',{
+            pagination: '#mySwiper .swiper-pagination',
+            autoplay:3000,
+            autoplayDisableOnInteraction:false,
+            speed:1000,
+            paginationType : 'custom',
+            paginationClickable :true,
+            //设置自定义分页器的内容
+            paginationCustomRender: function (swiper, current, total) {
+                var _html = '';
+                for (var i = 1; i <= total; i++) {
+                    if (current == i) {
+                        if(current==1){
+                            _html='<div id="page1"><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==2){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==3){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>';
+                        }
+                    }else{
+                        if(current==1){
+                            _html='<div id="page1"><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==2){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==3){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>';
+                        }
+                    }
+                }
+                return _html;
+            }
+        });
+        $(".page1").hover(function(){
+            console.log(111)
+            mySwiper.slideTo(0, 500, false);
+        })
+        $(".page2").hover(function(){
+            console.log(222)
+            mySwiper.slideTo(1, 500, false);
+        })
+        $(".page3").hover(function(){
+            console.log(333)
+            mySwiper.slideTo(2, 500, false);
+        })
+
+        //菜单切换
+        $("#hot-game").click(function () {
+            $(".hotgame-box").show().siblings().hide();
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $("#special-select").click(function () {
+            $(".specialselect-box").show().siblings().hide();
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $("#new-game").click(function () {
+            $(".newgame-box").show().siblings().hide();
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        //第二个轮播图
+        var mySwiperGameNews = new Swiper('.swiper-container-gameNews',{
+            pagination: '.swiper-container-gameNews .swiper-pagination',
+            paginationClickable: true,
+            autoplay:5000,
+            initialSlide:0,
+            autoplayDisableOnInteraction:false,
+            speed:1000,
+            paginationType : 'custom',
+            //设置自定义分页器的内容
+            paginationCustomRender: function (swiper, current, total) {
+                var _html = '';
+                for (var i = 1; i <= total; i++) {
+                    if (current == i) {
+                        if(current==1){
+                            _html='<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==2){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==3){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>';
+                        }
+                    }else{
+                        if(current==1){
+                            _html='<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==2){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>'+
+                                '<div class="swiper-pagination-bullet page3"></div>';
+                        }else if(current==3){
+                            _html='<div class="swiper-pagination-bullet page1"></div>'+
+                                '<div class="swiper-pagination-bullet page2"></div>'+
+                                '<div><img alt="" src="__PUBLIC__/Home/static/img/master.png"></div>';
+                        }
+                    }
+                }
+                return _html;
+            }
+        });
+
+        //游戏排行榜里 热游榜hover
+        //自动出现序号
+        function autoTurn(dom){
+            $(dom).each(function (index,ele) {
+                $(ele).find(".num").text(index+1);
+            })
+        }
+        autoTurn($(".hotgame-number .week-rank .hotgame-list"));
+        autoTurn($(".hotgame-number .month-rank .hotgame-list"));
+        autoTurn($(".hotgame-number .all-rank .hotgame-list"));
+
+        autoTurn($(".goodsale-number .week-rank-sale .hotgame-list"));
+        autoTurn($(".goodsale-number .month-rank-sale .hotgame-list"));
+        autoTurn($(".goodsale-number .all-rank-sale .hotgame-list"));
+
+        autoTurn($(".newgame-number .hotgame-list"));
+        //根据传的数字加火苗
+        $(".download").each(function (index,ele) {
+            var huoNum=$(ele).data("huomiaonum");
+            if(huoNum==1){
+                $(ele).find("i:gt(0)").hide();
+            }else if(huoNum==2){
+                $(ele).find("i:gt(1)").hide();
+            }else if(huoNum==3){
+                $(ele).find("i:gt(2)").hide();
+            }else if(huoNum==4){
+                $(ele).find("i:gt(3)").hide();
+            }
+        })
+
+        //三个榜里每个小条被hover时的状态
+        $(".hotgame-list").hover(function(){
+            var imgUrl=$(this).attr("data-url");
+            var type=$(this).find(".type").text();
+            if($(this).data("num")==0){
+                $(this).addClass("active");
+                var imgbox='<div class="list-img-box"><img alt="" src='+imgUrl+'></div>';
+                $(this).find(".num").after(imgbox);
+                $(this).find(".type").text("类型："+type);
+                $(this).data("num",1);
+            }else{
+                $(this).removeClass("active");
+                $(this).find(".list-img-box").remove();
+                var notype=type.substr(3,type.length);
+                $(this).find(".type").text(notype);
+                $(this).data("num",0);
+            }
+        })
+        //点击周榜样等显示不同
+        $("#week-rank").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank").show();
+            $(".month-rank").hide();
+            $(".all-rank").hide();
+        })
+        $("#month-rank").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank").hide();
+            $(".month-rank").show();
+            $(".all-rank").hide();
+        })
+        $("#all-rank").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank").hide();
+            $(".month-rank").hide();
+            $(".all-rank").show();
+        })
+
+        $("#week-rank-sale").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank-sale").show();
+            $(".month-rank-sale").hide();
+            $(".all-rank-sale").hide();
+        })
+        $("#month-rank-sale").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank-sale").hide();
+            $(".month-rank-sale").show();
+            $(".all-rank-sale").hide();
+        })
+        $("#all-rank-sale").click(function(){
+            $(this).addClass("lightColor").siblings().removeClass("lightColor");
+            $(".week-rank-sale").hide();
+            $(".month-rank-sale").hide();
+            $(".all-rank-sale").show();
+        })
+        //开测hover
+        $(".kace-list-tag").hover(function(){
+            var time=$(this).find(".time-and-name .kace-time").text();
+            var gameName=$(this).find(".time-and-name .kace-name").text();
+            var gameDesp=$(this).data("desp");
+            if($(this).attr("data-num")==0){
+                $(this).addClass("active").siblings().removeClass("active");
+                $(".time-and-name",this).html(
+                    '<div class="zzx-kace"></div>'+
+                    '<div>'+
+                    '<div class="newtime">'+time+'</div>'+
+                    '<div>'+gameDesp+'</div>'+
+                    '</div>'+
+                    '<div>'+
+                    '<div>'+
+                    '<img src="__PUBLIC__/Home/static/img/anzhuo-icon.png" alt="">'+
+                    '<img src="__PUBLIC__/Home/static/img/apple-icon.png" alt="">'+
+                    '</div>'+
+                    '<div class="newname">'+gameName+'</div>'+
+                    ' </div>'
+                );
+                $(this).attr("data-num",1)
+            }else{
+                var newtime=$(".newtime",this).text();
+                var newName=$(".newname",this).text();
+                $(".time-and-name",this).html(
+                    '<div class="kace-time">'+newtime+'</div>'+
+                    '<div class="kace-name">'+newName+'</div>'
+                );
+                $(this).removeClass("active");
+                $(this).attr("data-num",0)
+            }
+        })
+        //切换开测开服
+        $(".kace-tag").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $("#kace-box").show().siblings().hide();
+        })
+        $(".kafu-tag").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $("#kafu-box").show().siblings().hide();
+        })
+
+        //游戏攻略
+        $(".game-strategy-img-box>div").mouseenter(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            var dataType=$(this).data("type");
+            $('.game-strategy-news-box[data-type='+dataType+']').show().siblings().hide();
+        })
+
+
+        //注册
+        $("#input-account,#input-pwd,#input-pwd2").change(function(){
+            $(this).attr("data-num",1);
+            $("#input-account").blur(function(){
+                if($(this).attr("data-num")==1){
+                    var valuer=$(this).val();
+                    var vlength=valuer.length;
+                    var reg=/^[a-zA-Z0-9_\.]{3,20}$/;
+                    var flag=reg.test(valuer);
+                    if(vlength==0){
+                        $(this).parent().find(".no").hide();
+                    }else if(flag){
+                        $(this).parent().find(".no").hide();
+                    }else{
+                        $(this).parent().find(".no").show();
+                    }
+                }
+            });
+            $("#input-pwd").blur(function(){
+                if($(this).attr("data-num")==1){
+                    var valuer=$(this).val();
+                    var vlength=valuer.length;
+                    if(vlength<6&&vlength>0||vlength>16){
+                        $(this).parent().find(".no").show();
+                    }else{
+                        $(this).parent().find(".no").hide();
+                    }
+                }
+            })
+            $("#input-pwd2").blur(function(){
+                if($(this).attr("data-num")==1){
+                    var pwd=$("#input-pwd").val();
+                    var pwd2=$("#input-pwd2").val();
+                    if(pwd2.length==0){
+                        $(this).parent().find(".no").hide();
+                    }else if(pwd!=pwd2){
+                        console.log(222)
+                        $("#input-pwd2").parent().find(".no").show();
+                    }else{
+                        $("#input-pwd2").parent().find(".no").hide();
+                        $("#input-pwd2").parent().find(".yes").show();
+                    }
+                }
+            })
+        });
+
+
+        $("#input-account,#input-pwd,#input-pwd2").focus(function(){
+            $(this).parent().find(".no,.yes").hide();
+        });
+
+
+        //ABCD的应该在加载的时候就调用
+        //切换菜单
+        $(".alphabet-box>div").click(function(){
+            var sort = $(this).data('sort');
+            $(this).addClass("active").siblings().removeClass("active");
+            $(this).prev().find("span").addClass("active");
+            $(this).prev().siblings().find("span").removeClass("active");
+            $('.alphabet-game-box').each(function(index){
+                if(index === (sort-1)){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
+            /*$.ajax({
+                type:"",
+                url:"",
+                data:"",
+                dataType:"json",
+                success:function(res){
+                    console.log(res);
+                }
+            })*/
+        })
+        $(".gameNews-gift-container .for-hidden>.tag-gift").each(function(i,self){
+            $(self).find(".num").text(i+1);
+            if(i>9){
+                $(self).remove();
+            }
+        });
+        $(".gameNews-detail ul>li").each(function(i,self){
+            if(i>8){
+                $(self).remove();
+            }
+        });
+        //最多限制几条，超过的会移除
+        function hideMore(dom,n){
+            $(dom).each(function(i,self){
+                if(i>n){
+                    $(self).remove();
+                }
+            })
+        }
+        hideMore("#gsnb-box1 li",4);
+        hideMore("#gsnb-box2 li",4);
+        hideMore("#gsnb-box3 li",4);
+        hideMore("#gsnb-box4 li",4);
+        hideMore(".daily-l .desp .news a",8);
+        $("#kace-box .kc-tag").each(function (i,self) {
+            if(i>12){
+                $(self).remove();
+            }
+        });
+        var kacetagArr=$.makeArray($("#kace-box .kc-tag"));
+        $("#kace-box .kc-tag").each(function (i,self) {
+            if(i==kacetagArr.length-1){
+                $(self).css("border-left","none");
+            }
+        });
+        $("#kafu-box .kc-tag").each(function (i,self) {
+            if(i>12){
+                $(self).remove();
+            }
+        });
+        var kafutagArr=$.makeArray($("#kafu-box .kc-tag"));
+        $("#kafu-box .kc-tag").each(function (i,self) {
+            if(i==kafutagArr.length-1){
+                $(self).css("border-left","none");
+            }
+        });
+
+
+
+    })
 </script>
 </body>
 </html>

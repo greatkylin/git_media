@@ -1,0 +1,276 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <include file='Common:meta' />
+    <link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet">
+    <link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
+    <title>添加新游预告</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/IndexCont/new_app_add')}">
+        <input type="hidden" class="input-text" value="{$category.id}"  id="category_id" name="category_id" style="width: 300px">
+        <div class="row cl" id="app_name_box">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="hidden" class="input-text" value="" placeholder="" id="title" name="title" style="width: 300px" v-model="app_name">
+                <input type="hidden" class="input-text" value="" placeholder="" id="app_name" name="app_name" style="width: 300px" v-model="app_name">
+                <input type="hidden" class="input-text" value="" placeholder="" id="app_id" name="app_id" style="width: 300px" v-model="app_id">
+                <el-autocomplete
+                        class="inline-input"
+                        v-model="app_name"
+                        :fetch-suggestions="querySearch"
+                        placeholder="请输入内容"
+                        @select="handleSelect"
+                        icon="close"
+                        :on-icon-click="closeIconClick"
+                ></el-autocomplete>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>时间：</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input onfocus="selectTime($(this))" type="text" class="input-text" value="" placeholder="" id="open_test_time" name="open_test_time" style="width: 300px">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏平台：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <div class="radio-box">
+                        <input type="radio" name="platform" id="radio-android" checked="checked">
+                        <label for="radio-android">Android</label>
+                    </div>
+                    <div class="radio-box">
+                        <input type="radio" name="platform" id="radio-ios">
+                        <label for="radio-ios">IOS</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否发布：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box" style="width: 300px">
+                    <select id="is_publish" name="is_publish" class="select valid" aria-required="true" aria-invalid="false">
+                        <option value="1">发布</option>
+                        <option value="2">下架</option>
+                    </select>
+                    <label id="is_publish-error" class="error valid" style="display: block;"></label>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入整数" id="sort" name="sort" style="width: 300px">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button  class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</article>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/vue.js"></script>
+<script src="__PUBLIC__/H-ui/lib/vue/index.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app_name_box',
+        data: function() {
+            return {
+                loading: false,
+                options: [],
+                app_id: '',
+                app_name: ''
+            };
+        },
+        mounted: function () {
+            this.getList();
+        },
+        methods : {
+            handleSelect:function(item) {
+                //设置表单的值
+                this.app_id = item.app_id;
+                this.app_name = item.app_name;
+            },
+            querySearch:function(queryString, cb) {
+                var options = this.options;
+                var results = queryString ? options.filter(this.createFilter(queryString)) : options;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter:function(queryString) {
+                return (options) => {
+                    return (options.app_name.indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+            closeIconClick:function(ev) {
+                this.app_id = '';
+                this.app_name = '';
+            },
+            getList:function(){
+                var obj = this;
+                $.post("{:U('Admin/AppLib/ajax_get_all_app')}",{app_id : ''},function(res){
+                    if(res.error){
+                        layer.alert(res.detail, {
+                            skin: 'layui-layer-lan',
+                            closeBtn: 0,
+                            anim: 4 //动画类型
+                        });
+                    }else{
+                        obj.options = res.data
+                    }
+                });
+            }
+        }
+    });
+    $('.skin-minimal input').iCheck({
+        checkboxClass: 'icheckbox-blue',
+        radioClass: 'iradio-blue',
+        increaseArea: '20%'
+    });
+    $(function() {
+        //表单验证
+        $("#form-add").validate({
+            rules: {
+                app_name: {
+                    required: true
+                },
+                app_id: {
+                    required: true,
+                    number: true
+                },
+                category_id:{
+                    required: true,
+                    remote:{
+                        url: "{:U('Admin/IndexCont/ajax_check_image_limit')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            category_id: function () {
+                                return $("#category_id").val();　　　　//这个是取要验证的密码
+                            }
+                        },
+                        dataFilter: function (data) {　　　　//判断控制器返回的内容
+                            data = $.parseJSON(data);
+                            if (data.error) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }
+                },
+                app_publish_time: {
+                    required: true
+                },
+                sort: {
+                    number: true
+                }
+            },
+            messages: {
+                app_name: {
+                    required: "请填写游戏名称！"
+                },
+                app_id: {
+                    required: "请填写游戏名称！"
+                },
+                category_id: {
+                    required: "请选择所属栏目分类",
+                    remote: "该分类下图片数量超出限制"
+                },
+                href_link: {
+                    remote: "跳转链接格式不正确"
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: "post",  //提交方式
+                    dataType: "json", //数据类型
+                    data: {},
+                    url: "{:U('Admin/IndexCont/content_add')}", //请求url
+                    success: function (data) { //提交成功的回调函数
+                        if (data.error) {
+                            $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                            layer.alert(data.detail, {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                        } else {
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+                    }
+                });
+
+            }
+        });
+
+    });
+
+    /* 自定义更新时间 时间控件*/
+    function selectTime(object) {
+        var updateTime = object.val();
+
+        if (updateTime != "") {
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss', minDate: updateTime});
+        } else {
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
+        }
+    }
+
+    //获取分类的备注信息
+    var cateId = $('#category_id').val();
+    if( !(cateId == ''|| typeof (cateId) == 'undefined' || cateId ==0) ){
+        ajaxGetCategoryInfo(cateId);
+    } else {
+        $('#pic_info').empty();
+    }
+
+    //获取分类的备注信息
+    $('#category_id').change(function(){
+        var cateId = $(this).val();
+        if( !(cateId == ''|| typeof (cateId) == 'undefined' || cateId ==0) ){
+            ajaxGetCategoryInfo(cateId);
+        } else {
+            $('#pic_info').empty();
+        }
+    });
+
+    //获取图片分类的备注信息
+    function ajaxGetCategoryInfo(cateId) {
+        $.ajax({
+            type: "post",  //提交方式
+            dataType: "json", //数据类型
+            data: {id:cateId},
+            url: "{:U('Admin/IndexCont/ajax_get_category_info')}", //请求url
+            success: function (data) { //提交成功的回调函数
+                if (!data.error) {
+                    $('#pic_info').empty().html(data.data.image_size)
+                }
+            }
+        });
+    }
+
+    //关闭窗口
+    function removeIframe(){
+        var index = parent.layer.getFrameIndex(window.name);
+        // parent.$('.btn-refresh').click();
+        parent.layer.close(index);
+    }
+</script>
+</body>
+</html>

@@ -115,6 +115,38 @@ class BaseService
     }
 
     /**
+     * 获取文章的所有栏目分类，并存在redis中
+     * @author xy
+     * @since 2017/07/31 13:59
+     * @return bool|mixed
+     */
+    public static function getAllColumnInfoFromRedis(){
+        $columns = S('media_article_category');
+        if(empty($columns)){
+            return $columns = self::updateColumnInfoInRedis();
+        }else{
+            return $columns;
+        }
+
+    }
+
+    /**
+     * 更新redis缓存中的所有栏目分类
+     * @author xy
+     * @since 2017/08/22 14:00
+     */
+    public static function updateColumnInfoInRedis(){
+        $columns = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+            ->field('catid, cat_name, parent_id')
+            ->select();
+        if(!empty($columns)){
+            S('media_article_category', $columns, array('expire'=>86400));
+            return $columns;
+        }
+        return false;
+    }
+
+    /**
      * 获取用户信息
      * @author xy
      * @since 2017/07/25 17:05
@@ -155,6 +187,7 @@ class BaseService
         }
         return $return_res;
     }
+
 
     /**
      * 爱奇艺视频状态

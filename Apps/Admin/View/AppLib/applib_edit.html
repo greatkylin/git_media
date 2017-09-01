@@ -685,9 +685,11 @@
                     $('#short_name').val(result.data.app_info.short_name);
                     vm.supplier_name = result.data.app_info.supplier_name;
                     vm.supplier_id = result.data.app_info.supplier_id;
-                    var app_type = result.data.app_info.app_type.split(',');
-                    vm2.default_check_key = app_type;
-                    vm2.default_expand_key = app_type;
+                    var app_type = $.trim(result.data.app_info.app_type);
+                    if(app_type !== null || app_type !== '' || app_type !== 'undefined' ){
+                        vm2.default_check_key = app_type.split(',');
+                        vm2.default_expand_key = app_type.split(',');
+                    }
                     $('#start_score').val(result.data.app_info.start_score);
                     $('#platform').val(result.data.app_info.platform);
                     $('#app_type').val(result.data.app_info.app_type);
@@ -840,7 +842,7 @@
         var updateTime = $("#update_time").val();
 
         if (updateTime != "") {
-            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm', minDate: update_time});
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm', minDate: updateTime});
         } else {
             WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm'});
         }
