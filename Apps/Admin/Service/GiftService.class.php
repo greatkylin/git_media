@@ -64,9 +64,9 @@ class GiftService extends BaseService
             return false;
         }
         if ($type == 1) {
-            $orderBy = ' pre_hot_sort ASC, down_num DESC ';
+            $orderBy = 'list.is_publish ASC, pre_hot_sort ASC, down_num DESC ';
         } else {
-            $orderBy = ' pre_new_sort ASC, alist.sj_time DESC ';
+            $orderBy = 'list.is_publish ASC, pre_new_sort ASC, list.publish_time DESC ';
         }
         //礼包库中有效的未删除的礼包
         $where['gl.start_time'] = array('lt', time());
@@ -119,9 +119,9 @@ class GiftService extends BaseService
             return false;
         }
         if ($type == 1) {
-            $orderBy = ' pre_hot_sort ASC, down_num DESC ';
+            $orderBy = 'list.is_publish ASC, pre_hot_sort ASC, down_num DESC ';
         } else {
-            $orderBy = ' pre_new_sort ASC, alist.sj_time DESC ';
+            $orderBy = 'list.is_publish ASC, pre_new_sort ASC, list.publish_time DESC ';
         }
         //礼包库中有效的未删除的礼包
         $where['gl.start_time'] = array('lt', time());
@@ -379,17 +379,17 @@ class GiftService extends BaseService
         $where['gl.end_time'] = array('gt', time());
         $where['gl.is_del'] = array('neq', 1);
 
-        $giftInfoList = M('app_list')->alias('mal')
-            ->field('mal.app_id, alib.app_name, GROUP_CONCAT(gl.gift_id) AS gift_ids, sum(gn.code_num) AS total_num')
+        $giftInfoList = M('app_list')->alias('alist')
+            ->field('alist.app_id, alib.app_name, GROUP_CONCAT(gl.gift_id) AS gift_ids, sum(gn.code_num) AS total_num')
             //关联获取游戏名称
-            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = mal.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = alist.`app_id`')
             //关联获取游戏礼包名称
-            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS gl ON mal.`app_id` = gl.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS gl ON alist.`app_id` = gl.`app_id`')
             //关联 有设置媒体站礼包的礼包
             ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS sgl ON sgl.`gift_id` = gl.`gift_id`')
             ->join('LEFT JOIN (' . $subQueryOne . ') AS gn ON gn.`gift_id` = gl.gift_id')
             ->where($where)
-            ->group('mal.app_id')
+            ->group('alist.app_id')
             ->select();
 
         if ($giftInfoList === false) {
@@ -439,17 +439,17 @@ class GiftService extends BaseService
          * residue_rate 指游戏对应媒体站礼包码的剩余率
          */
 
-        $giftInfoList = M('app_list')->alias('mal')
-            ->field('mal.app_id, alib.app_name, GROUP_CONCAT(gl.gift_id) AS gift_ids, IFNULL(sum(gn.code_num),0) AS total_num, IFNULL(sum(gnt.code_use_num),0) AS total_use_num, ( 1 - IFNULL(sum(gnt.code_use_num),0) / sum(gn.code_num) * 1.000 ) AS residue_rate ')
-            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = mal.`app_id`')
-            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS alist ON alist.`app_id` = mal.`app_id`')
-            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS gl ON mal.`app_id` = gl.`app_id`')
+        $giftInfoList = M('app_list')->alias('alist')
+            ->field('alist.app_id, alib.app_name, GROUP_CONCAT(gl.gift_id) AS gift_ids, IFNULL(sum(gn.code_num),0) AS total_num, IFNULL(sum(gnt.code_use_num),0) AS total_use_num, ( 1 - IFNULL(sum(gnt.code_use_num),0) / sum(gn.code_num) * 1.000 ) AS residue_rate ')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = alist.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS list ON list.`app_id` = alist.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS gl ON alist.`app_id` = gl.`app_id`')
             ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS sgl ON sgl.`gift_id` = gl.`gift_id`')
             ->join('LEFT JOIN (' . $subQueryOne . ') AS gn ON gn.`gift_id` = gl.gift_id')
             ->join('LEFT JOIN (' . $subQueryTwo . ') AS gnt ON gnt.`gift_id` = gl.gift_id')
             ->where($where)
             ->order($order)
-            ->group('mal.app_id')
+            ->group('alist.app_id')
             ->limit($currentPage, $pageSize)
             ->select();
 

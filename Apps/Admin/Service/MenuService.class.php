@@ -95,12 +95,13 @@ class MenuService extends BaseService
             ' SELECT app_id, COUNT(*) as total_num FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'article'.
             ' WHERE FIND_IN_SET(\'2\',show_position) AND app_id <> 0'.
             ' GROUP BY `app_id` ';
-        $appList = M(C('DB_ZHIYU.DB_NAME').'.'.'app_list', C('DB_ZHIYU.DB_PREFIX'))->alias('alist')->cache(true,3600)
+        $appList = M('app_list')->alias('list')->cache(true,3600)
             ->field('alist.id, alist.app_id, alib.app_name')
-            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list alist on alist.app_id=list.app_id')
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib alib on alib.app_id=list.app_id')
             ->join('LEFT JOIN ('.$subQuery.') AS an ON an.app_id = alist.app_id')
             ->where($where)
-            ->order('(alist.app_down_num + alist.cardinal) DESC')
+            ->order('(alist.app_down_num + alist.cardinal) DESC, list.is_publish ASC')
             ->select();
 
         if(!empty($appList)){

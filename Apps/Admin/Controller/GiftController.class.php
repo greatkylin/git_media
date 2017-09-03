@@ -20,7 +20,7 @@ class GiftController extends AdminBaseController
      * @since 2017/08/08 14:13
      */
     public function gift_list(){
-        $listType = intval(I('list_type')); //1人气排行，2近期更新
+        $listType = intval(I('list_type')); //热门礼包，2新游礼包
         if(!in_array($listType,array(1,2))){
             $listType = 1;
         }
@@ -340,7 +340,7 @@ class GiftController extends AdminBaseController
         //游戏id获取游戏名称
         $appIdOrAppName = I('id_or_name');
         if(!empty($appIdOrAppName)){
-            $where['_string'] = '( mal.app_id = "'.$appIdOrAppName.'" OR alib.app_name like "%'.$appIdOrAppName.'%" )';
+            $where['_string'] = '( alist.app_id = "'.$appIdOrAppName.'" OR alib.app_name like "%'.$appIdOrAppName.'%" )';
         }
 
         // 分页
@@ -420,16 +420,17 @@ class GiftController extends AdminBaseController
             }
             //礼包名称名称
             $giftName = trim(I('gift_name'));
+            $where = array();
             if(!empty($giftName)){
                 $where['_string'] = '( CONCAT(alib.app_name, \'-\', gl.gift_name, \'-\', gl.original_name) like "%'.$giftName.'%" )';
             }
             /* 1.先判断媒体站游戏详情表是否有对应游戏id的数据，有则获取；
              * 2.无则判断游戏库是否有对应游戏id的数据，有则获取，无则报错
              */
-            $appInfo = M('app_lib')->alias('mal')
-                ->field('mal.*, alib.app_file_url')
-                ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib alib on alib.app_id=mal.app_id')
-                ->where('mal.app_id = '.$appId)->find();
+            $appInfo = M('app_lib')->alias('alist')
+                ->field('alist.*, alib.app_file_url')
+                ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')
+                ->where('alist.app_id = '.$appId)->find();
             if(empty($appInfo)){
                 $appInfo = M(C('DB_ZHIYU.DB_NAME').'.'.'app_lib', C('DB_ZHIYU.DB_PREFIX'))->where('app_id = '.$appId)->find();
                 if(empty($appInfo)){

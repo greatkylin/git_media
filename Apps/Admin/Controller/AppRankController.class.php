@@ -62,8 +62,8 @@ class AppRankController extends AdminBaseController
             $where['_logic'] = 'OR';
             $where['alist.`app_id`'] = $appIdOrName;
         }
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //媒体站游戏库已上架与未上架的游戏
+        $where['alist.is_publish'] = array('IN', array(1, 2));
         //榜单类型 周榜，月榜，总榜
         $dataSource = intval(I('data_source'));
         if(!in_array($dataSource,$this->getDataSourceArr())){
@@ -124,8 +124,8 @@ class AppRankController extends AdminBaseController
             $where['_logic'] = 'OR';
             $where['alist.`app_id`'] = $appIdOrName;
         }
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //媒体站游戏库已上架与未上架的游戏
+        $where['alist.is_publish'] = array('IN', array(1, 2));
 
         //榜单类型 周榜，月榜，总榜
         $dataSource = intval(I('data_source'));
@@ -187,8 +187,8 @@ class AppRankController extends AdminBaseController
             $where['_logic'] = 'OR';
             $where['alist.`app_id`'] = $appIdOrName;
         }
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //媒体站游戏库已上架与未上架的游戏
+        $where['alist.is_publish'] = array('IN', array(1, 2));
         //榜单类型总榜
         $dataSource = self::DATA_SOURCE_TOTAL;
         // 翻页

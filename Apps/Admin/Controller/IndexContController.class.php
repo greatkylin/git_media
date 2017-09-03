@@ -12,9 +12,11 @@ use Admin\Controller\AdminBaseController;
 class IndexContController extends AdminBaseController
 {
     //添加的分类关键字
-    const CATEGORY_KEYWORD = array(
+    public static $category_keyword = array(
         'HOT_GUIDE'=>'HOT_GUIDE',                 //热门攻略分类关键字
-        'NEW_APP_NOTICE'=>'NEW_APP_NOTICE',            //新游预告
+        'GREAT_TOPIC' => 'GREAT_TOPIC',           //精彩专题
+        'NEW_GAME_TEST' => 'NEW_GAME_TEST',       //新游测评
+        'NEW_APP_NOTICE'=>'NEW_APP_NOTICE',       //新游预告
     );
 
     public function __construct()
@@ -283,7 +285,7 @@ class IndexContController extends AdminBaseController
                 $this->outputJSON(true,'100001','请选择图片分类');
             }
             //判断当前图片的数量是否超过限制
-            if(!$this->checkImageNumLimit($categoryId)){
+            if(!$this->checkContentNumLimit($categoryId)){
                 $this->outputJSON(true,'100001','请上传的图片数量超过限制');
             }
             //获取当前选择分类的关键词
@@ -295,6 +297,7 @@ class IndexContController extends AdminBaseController
             $hrefLink = trim(I('href_link'));
             $sort = intval(I('sort'));
             $isPublish = intval(I('is_publish'));
+            $description = trim(I('description'));
             //$isDelete = intval(I('is_delete'));
 
             $data['category_id'] = $categoryId;
@@ -303,19 +306,19 @@ class IndexContController extends AdminBaseController
             $data['href_link'] = $hrefLink;
             $data['sort'] = $sort;
             $data['is_publish'] = $isPublish;
-
+            $data['description'] = $description;
             //默认未删除
             $data['is_delete'] = 1;
             $data['create_time'] = time();
             $data['update_time'] = time();
 
 
-            if($keyword == self::CATEGORY_KEYWORD['HOT_GUIDE']){
+            if($keyword == self::$category_keyword['HOT_GUIDE']){
                 //热门攻略需要指定文章分类id的图片
                 $artCategoryId = intval(I('art_category_id'));
                 $extend['art_category_id'] = $artCategoryId;
-                $data['extend'] = unserialize($extend);
-            }else if($keyword == self::CATEGORY_KEYWORD['NEW_APP_NOTICE']){
+                $data['extend'] = serialize($extend);
+            }else if($keyword == self::$category_keyword['NEW_APP_NOTICE'] or $keyword == self::$category_keyword['HOT_ACTIVITY']){
                 //添加新游预告
                 $appName = trim(I('app_name'));
                 $appId = intval(I('app_id'));
@@ -328,6 +331,21 @@ class IndexContController extends AdminBaseController
                     'app_name' => $appName,
                     'app_platform' => intval(I('platform')),
                 );
+            }else if($keyword == self::$category_keyword['GREAT_TOPIC']){
+                //热门活动的开始时间与结束时间
+                $activityStartTime = strtotime(I('activity_start_time'));
+                $activityEndTime = strtotime(I('activity_end_time'));
+                if($activityStartTime > $activityEndTime){
+                    $this->outputJSON(true,'100001','开始时间要小于结束时间');
+                }
+                $extend['activity_start_time'] = $activityStartTime;
+                $extend['activity_end_time'] = $activityStartTime;
+                $data['extend'] = serialize($extend);
+            }else if($keyword == self::$category_keyword['NEW_GAME_TEST']){
+                //新游测评评分
+                $testAppScore = floatval(I('test_app_score'));
+                $extend['test_app_score'] = $testAppScore;
+                $data['extend'] = serialize($extend);
             }
             M()->startTrans();
             $contentId = M('index_column_content')->add($data);
@@ -335,13 +353,15 @@ class IndexContController extends AdminBaseController
                 M()->rollback();
                 $this->outputJSON(true,'100001','添加失败');
             }
-            if(!empty($appInfo)){
-                //添加新游预告
-                $appInfo['index_content_id'] = $contentId;
-                $result = M('index_app_test_open')->add($appInfo);
-                if(empty($result)){
-                    M()->rollback();
-                    $this->outputJSON(true,'100001','添加失败');
+            if($keyword == self::$category_keyword['NEW_APP_NOTICE']){
+                if(!empty($appInfo)){
+                    //添加新游预告
+                    $appInfo['index_content_id'] = $contentId;
+                    $result = M('index_app_test_open')->add($appInfo);
+                    if(empty($result)){
+                        M()->rollback();
+                        $this->outputJSON(true,'100001','添加失败');
+                    }
                 }
             }
             M()->commit();
@@ -356,7 +376,7 @@ class IndexContController extends AdminBaseController
                 $this->error('请先添加图片分类',U('Admin/IndexCont/category_list'));
             }
             $tplName = 'content_add';
-            if($category['keyword'] == self::CATEGORY_KEYWORD['NEW_APP_NOTICE']){
+            if($category['keyword'] == self::$category_keyword['NEW_APP_NOTICE']){
                 $tplName = 'new_app_add';
             }
             $this->assign('category',$category);
@@ -400,6 +420,10 @@ class IndexContController extends AdminBaseController
             if(!empty($hrefLink)){
                 $data['href_link'] = $hrefLink;
             }
+            $description = trim(I('description'));
+            if(!empty($description)){
+                $data['description'] = $description;
+            }
             $data['is_publish'] = $isPublish;
             $data['sort'] = $sort;
             //默认未删除
@@ -407,11 +431,11 @@ class IndexContController extends AdminBaseController
             $data['update_time'] = time();
 
             //热门攻略需要指定文章分类id的图片
-            if($keyword == self::CATEGORY_KEYWORD['HOT_GUIDE']){
+            if($keyword == self::$category_keyword['HOT_GUIDE']){
                 $artCategoryId = intval(I('art_category_id'));
                 $extend['art_category_id'] = $artCategoryId;
-                $data['extend'] = unserialize($extend);
-            }else if($keyword == self::CATEGORY_KEYWORD['NEW_APP_NOTICE']){
+                $data['extend'] = serialize($extend);
+            }else if($keyword == self::$category_keyword['NEW_APP_NOTICE']){
                 //添加新游预告
                 $appName = trim(I('app_name'));
                 $appId = intval(I('app_id'));
@@ -424,6 +448,21 @@ class IndexContController extends AdminBaseController
                     'app_name' => $appName,
                     'app_platform' => intval(I('platform')),
                 );
+            }else if($keyword == self::$category_keyword['GREAT_TOPIC'] or $keyword == self::$category_keyword['HOT_ACTIVITY']){
+                //热门活动的开始时间与结束时间
+                $activityStartTime = strtotime(I('activity_start_time'));
+                $activityEndTime = strtotime(I('activity_end_time'));
+                if($activityStartTime > $activityEndTime){
+                    $this->outputJSON(true,'100001','开始时间要小于结束时间');
+                }
+                $extend['activity_start_time'] = $activityStartTime;
+                $extend['activity_end_time'] = $activityEndTime;
+                $data['extend'] = serialize($extend);
+            }else if($keyword == self::$category_keyword['NEW_GAME_TEST']){
+                //新游测评评分
+                $testAppScore = floatval(I('test_app_score'));
+                $extend['test_app_score'] = $testAppScore;
+                $data['extend'] = serialize($extend);
             }
             M()->startTrans();
             $result = M('index_column_content')->where(array('id'=>$id))->save($data);
@@ -431,12 +470,14 @@ class IndexContController extends AdminBaseController
                 M()->rollback();
                 $this->outputJSON(true,'100001','编辑失败1');
             }
-            if(!empty($appInfo)){
-                //添加新游预告
-                $result = M('index_app_test_open')->where('index_content_id = '.$id)->save($appInfo);
-                if($result === false ){
-                    M()->rollback();
-                    $this->outputJSON(true,'100001','编辑失败2');
+            if($keyword == self::$category_keyword['NEW_APP_NOTICE']){
+                if(!empty($appInfo)){
+                    //添加新游预告
+                    $result = M('index_app_test_open')->where('index_content_id = '.$id)->save($appInfo);
+                    if($result === false ){
+                        M()->rollback();
+                        $this->outputJSON(true,'100001','编辑失败2');
+                    }
                 }
             }
             M()->commit();
@@ -457,13 +498,14 @@ class IndexContController extends AdminBaseController
                 $this->error('请先添加分类',U('Admin/IndexCont/category_list'));
             }
             $tplName = 'content_edit';
-            if($category['keyword'] == self::CATEGORY_KEYWORD['NEW_APP_NOTICE']){
+            if($category['keyword'] == self::$category_keyword['NEW_APP_NOTICE']){
                 $tplName = 'new_app_edit';
                 $appInfo = M('index_app_test_open')->where(array('index_content_id'=>$content['id']))->find();
                 $this->assign('appInfo',$appInfo);
             }
             $this->assign('content',$content);
             $this->assign('category',$category);
+            $this->assign('currentTime',time());
             $this->display($tplName);
         }
     }
@@ -485,7 +527,7 @@ class IndexContController extends AdminBaseController
                 $this->outputJSON(true,'100001','请选择分类');
             }
             //判断当前图片的数量是否超过限制
-            if(!$this->checkImageNumLimit($categoryId)){
+            if(!$this->checkContentNumLimit($categoryId)){
                 $this->outputJSON(true,'100001','请分类下内容数量超过限制');
             }
             $sort = intval(I('sort'));
@@ -642,16 +684,17 @@ class IndexContController extends AdminBaseController
      * @author xy
      * @since 2017/07/24 15:27
      */
-    public function image_status_change(){
+    public function content_status_change(){
         $id = intval(I('id'));
         if(empty($id)){
             $this->outputJSON(true,'100001','id不能为空');
         }
-        $image = M('index_column_content')->where(array('id'=>$id))->find();
-        if(empty($image)){
+        $content = M('index_column_content')->where(array('id'=>$id))->find();
+        if(empty($content)){
             $this->outputJSON(true,'100001','未找到id为'.$id.'的图片,无法删除');
         }
-        $currentStatus = $image['is_delete'];
+        $keyword = $this->getKeywordByCategoryId($content['category_id']);
+        $currentStatus = $content['is_delete'];
         if($currentStatus == 1){
             $data['is_delete'] = 2;
         }else{
@@ -663,6 +706,13 @@ class IndexContController extends AdminBaseController
             M()->rollback();
             $this->outputJSON(true,'100001','删除失败');
         }else{
+            if($keyword == self::$category_keyword['NEW_APP_NOTICE']){
+                $result = M('index_app_test_open')->where('index_content_id = '.$content['id'])->save(array('is_delete' => 2));
+                if($result === false){
+                    M()->rollback();
+                    $this->outputJSON(true,'100001','删除新游预告内容失败');
+                }
+            }
             M()->commit();
             $this->outputJSON(false,'000000','删除成功');
         }
@@ -762,7 +812,7 @@ class IndexContController extends AdminBaseController
         if(empty($categoryId)){
             $this->outputJSON(true,'100001','请选择分类');
         }
-        if(!$this->checkImageNumLimit($categoryId)){
+        if(!$this->checkContentNumLimit($categoryId)){
             $this->outputJSON(true,'100001','该分类下图片超过限制');
         }
         $this->outputJSON(false,'000000','验证通过');
@@ -796,7 +846,7 @@ class IndexContController extends AdminBaseController
      * @param integer $categoryId 图片分类表ID
      * @return boolean
      */
-    private function checkImageNumLimit($categoryId){
+    private function checkContentNumLimit($categoryId){
         //判断分类是否符合要求
         if(empty($categoryId) || !is_numeric($categoryId)){
             return false;

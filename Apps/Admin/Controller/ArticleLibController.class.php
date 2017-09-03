@@ -31,8 +31,8 @@ class ArticleLibController extends AdminBaseController
      * @since 2017/07/25 14:26
      */
     public function app_list() {
-        //已上架与测试上架的游戏
-        $where['alist.status'] = array('IN', array(1, 2));
+        //媒体站已上架的游戏
+        $where['alist.is_publish'] = array('IN', array(1));
         // 分页
         $service = new AppService();
         $totalCount = $service->getAppListFromMediaTotalCount($where); //获取总条数

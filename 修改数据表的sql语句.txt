@@ -1,0 +1,9 @@
+/*20170902 添加发布状态字段*/
+ALTER TABLE `zy_media_app_list`
+ADD COLUMN `is_publish`  tinyint(1) NULL DEFAULT 1 COMMENT '媒体站游戏发布状态 1发布，2下架' ,
+ADD COLUMN `publish_time`  int(11) UNSIGNED NULL DEFAULT 0 COMMENT '媒体站游戏发布时间' ;
+ALTER TABLE `zy_media_index_app_test_open`
+ADD COLUMN `is_delete`  tinyint(1) NULL DEFAULT 1 COMMENT '是否删除 1否，2是' AFTER `index_content_id`;
+
+
+

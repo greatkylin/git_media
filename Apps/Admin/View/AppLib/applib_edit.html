@@ -2314,12 +2314,16 @@
                         closeBtn: 0,
                         anim: 4, //动画类型
                         title: '提示',
-                        btn: ['更新'],
-                        btn1: function (index) {
+                        btn: ['上架', '更新'],
+                        btn2: function (index) {
                             //按钮【按钮二】
                             window.layer.close(index);
                             form_submit(form, 0);
                         }
+                    }, function (index, layero) {
+                            //按钮【按钮一】的回调
+                            window.layer.close(index);
+                            form_submit(form, 1);
                     });
                 }else{
                     layer.alert('上限数量不符合要求', {

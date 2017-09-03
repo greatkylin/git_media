@@ -83,4 +83,41 @@ class IndexService extends BaseService
         return $adImageList;
     }
 
+
+    /**
+     * 通过分类关键字选取指定数量的新游测评内容
+     * @author xy
+     * @since 2017/09/03 20:29
+     * @param string $keyword 分类关键字
+     * @param int $limit 选取数量
+     * @return bool
+     */
+    public function getNewAppPreviewByCategoryKeyword($keyword, $limit = 3){
+        if(empty($keyword)){
+            $this->setError('请填写分类关键字');
+            return false;
+        }
+
+        $where = array(
+            'acc.is_delete' => 1, //分类未删除
+            'c.is_delete' => 1, //未删除
+            'c.is_publish' => 1, //已发布
+            'acc.keyword' => strtoupper($keyword), //指定的分类
+        );
+
+        $contentList = M('index_column_category')->alias('acc')
+            ->field('acc.keyword, c.*, IF(c.sort=0, 9999999, c.sort) AS sort, app.*')
+            ->join('INNER JOIN '. C('DB_NAME') . '.' . C('DB_PREFIX') . 'index_column_content as c ON c.category_id = acc.id')
+            ->join('INNER JOIN '. C('DB_NAME') . '.' . C('DB_PREFIX') . 'index_app_test_open as app ON app.index_content_id = c.id')
+            ->where($where)
+            ->limit($limit)
+            ->order('sort ASC')
+            ->select();
+
+        if($contentList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $contentList;
+    }
 }

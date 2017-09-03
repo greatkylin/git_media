@@ -193,7 +193,7 @@
                                     <div class="water-circle water-circle{$l}">
                                         <img class="water-inner" alt="" src="__PUBLIC__/Home/static/img/water-inner.png">
                                         <img class="water-outer" alt="" src="__PUBLIC__/Home/static/img/water-outer.png">
-                                        <div class="water-score"><span class="nbg-score">8.6</span>分</div>
+                                        <div class="water-score"><span class="nbg-score">{$testGame.test_app_score}</span>分</div>
                                     </div>
                                 </div>
                                 <div class="ngb1-name">{$testGame.title}</div>
@@ -308,7 +308,7 @@
                     <div>
                         <div class="idp-for-hover"><img src="{$topic.image_path}" alt=""><div class="idp-mask"></div></div>
                         <div>{$topic.title}</div>
-                        <div>{$topic.description}</div>
+                        <div>{$topic.activity_start_time}-{$topic.activity_end_time}</div>
                     </div>
                 </volist>
             </if>
@@ -330,7 +330,7 @@
                             <div>{$hotActivity[0][title]}</div>
                             <!--<div>这里有一行字</div>-->
                             <!--<div>这里有一行字</div>-->
-                            <div class="ac-time">活动时间：{$hotActivity[0][description]}</div>
+                            <div class="ac-time">活动时间：{$hotActivity[0][activity_start_time]}-{$hotActivity[0][activity_end_time]}</div>
                         </div>
                     </div>
                 </div>

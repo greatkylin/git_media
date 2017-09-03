@@ -22,16 +22,8 @@
                 <input type="text" class="input-text" disabled value="{$category.name}" placeholder="请输入专题分类ID" style="width: 300px">
             </div>
         </div>
-        <if condition = "$category[keyword] eq 'HOT_GUIDE'">
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>专题分类ID：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text" value="{$content.extend.art_category_id}" placeholder="请输入专题分类ID" id="art_category_id" name="art_category_id" style="width: 300px">
-                </div>
-            </div>
-        </if>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>背景图片：</label>
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>图片：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <!--攻略图片上传6-->
                 <div id="uploader-image">
@@ -56,6 +48,42 @@
                 <span style="color: #17983b;margin-top: 5px; display: block">格式：http://www.baidu.com</span>
             </div>
         </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">描述信息：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <textarea id="description" name="description" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*0-150">{$content.description}</textarea>
+                </div>
+            </div>
+        </div>
+        <if condition = "$category[keyword] eq 'HOT_GUIDE'">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>专题分类ID：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="{$content.extend.art_category_id}" placeholder="请输入专题分类ID" id="art_category_id" name="art_category_id" style="width: 300px">
+                </div>
+            </div>
+            <elseif condition = "($category[keyword] eq 'GREAT_TOPIC') OR ($category[keyword] eq 'HOT_ACTIVITY')" />
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>开始时间：</label>
+                <div class="formControls col-xs-8 col-sm-4">
+                    <input onfocus="selectTime(1)" type="text" class="input-text" value="<if condition='empty($content[extend][activity_start_time])'>{$currentTime|date='Y-m-d',###}<else />{$content.extend.activity_start_time|date='Y-m-d',###}</if>" placeholder="" id="activity_start_time" name="activity_start_time" style="width: 300px">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>结束时间：</label>
+                <div class="formControls col-xs-8 col-sm-4">
+                    <input onfocus="selectTime(2)" type="text" class="input-text" value="<if condition='empty($content[extend][activity_end_time])'>{$currentTime|date='Y-m-d',###}<else />{$content.extend.activity_end_time|date='Y-m-d',###}</if>" placeholder="" id="activity_end_time" name="activity_end_time" style="width: 300px">
+                </div>
+            </div>
+            <elseif condition = "$category[keyword] eq 'NEW_GAME_TEST'" />
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>新游评分：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="{$content.extend.test_app_score}" placeholder="请输入新游测评评分" id="test_app_score" name="test_app_score" style="width: 300px">
+                </div>
+            </div>
+        </if>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">是否发布：</label>
             <div class="formControls col-xs-8 col-sm-9">
@@ -122,10 +150,14 @@
                 },
                 sort: {
                     number: true
+                },
+                description: {
+                    minlength: 0,
+                    maxlength : 150
                 }
             },
             messages: {
-                banner_name: {
+                title: {
                     required: "请填写标题名称！"
                 },
                 category_id: {
@@ -193,6 +225,25 @@
         }
     });
 
+    /*活动开始时间与结束时间*/
+    function selectTime(flag){
+        if(flag==1){
+            var endTime = $("#activity_end_time").val();
+            if (endTime != "") {
+                WdatePicker({dateFmt: 'yyyy-MM-dd', maxDate: endTime})
+            } else {
+                WdatePicker({dateFmt: 'yyyy-MM-dd'})
+            }
+        }else{
+            var startTime = $("#activity_start_time").val();
+            if (startTime != "") {
+                WdatePicker({dateFmt: 'yyyy-MM-dd', minDate: startTime})
+            } else {
+                WdatePicker({dateFmt: 'yyyy-MM-dd'})
+            }
+        }
+    }
+
     //关闭窗口
     function removeIframe(){
         var index = parent.layer.getFrameIndex(window.name);
@@ -221,7 +272,7 @@
 
         swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
 
-        server: "{:U('Admin/Banner/ajax_upload_image')}", // 文件接收服务端。
+        server: "{:U('Admin/IndexCont/ajax_upload_image')}", // 文件接收服务端。
         formData: {fun: 'upload_ad_image'},
 
         // 选择文件的按钮。可选。

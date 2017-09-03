@@ -329,11 +329,7 @@
                     //设置表单的值
                     this.app_id = app.app_id;
                     this.app_name = app.value;
-                    if (app.m_introduct === null || app.m_introduct === undefined || app.m_introduct === '') {;
-                        this.introduce = app.introduct ;
-                    }else{
-                        this.introduce = app.m_introduct;
-                    }
+                    this.introduce = app.introduct ;
                     this.video_url = app.video_id;
                     this.app_file_url = app.app_file_url;
                 },

@@ -53,10 +53,17 @@ class AppLibController extends AdminBaseController
         $where = array();
         $idOrName = I('id_or_name');
         if(!empty($idOrName)){
-            $where['_string'] = 'mal.app_id = \''.$idOrName.'\' OR alib.app_name like \'%'.$idOrName.'%\'';
+            $where['_string'] = 'alist.app_id = \''.$idOrName.'\' OR alib.app_name like \'%'.$idOrName.'%\' OR lib.app_name like \'%'.$idOrName.'%\'';
         }
-        //默认已上架或测试上架的游戏
-        $where['alist.status'] = array('IN', array(1, 2));
+        $isPublish = intval(I('is_publish'));
+        if(!empty($isPublish)){
+            //根据上架状态进行查询
+            $where['alist.is_publish'] = array('IN', array($isPublish));
+        }else{
+            //媒体站已上架和未上架的游戏
+            $where['alist.is_publish'] = array('IN', array(1, 2));
+        }
+
         // 分页
         $service = new AppService();
         $totalCount = $service->getAppListFromMediaTotalCount($where); //获取总条数
@@ -75,6 +82,7 @@ class AppLibController extends AdminBaseController
         $appList = $service-> getAppSortListFromMediaByPage($listType, $currentPage, $pageSize, $where);
         //var_dump($appList);die;
         $this->assign('idOrName',$idOrName);
+        $this->assign('isPublish', $isPublish);
         $this->assign('list_type',$listType);
         $this->assign('app_list', $appList);
         $this->display('app_list');
@@ -187,17 +195,18 @@ class AppLibController extends AdminBaseController
         }
         $orderBy = '';
         if($statusOrder == 1){
-            $orderBy = 'alist.status ASC';
+            $orderBy = 'alist.is_publish ASC';
         }else if($statusOrder == 2){
-            $orderBy = 'alist.status DESC';
+            $orderBy = 'alist.is_publish DESC';
         }
         //判断是否有通过游戏名称搜索游戏
         $appName = trim(I('app_name'));
         if(!empty($appName)){
             $where['alib.app_name'] = array('like', '%'.$appName.'%');
+            $where['lib.app_name'] = array('like', '%'.$appName.'%');
         }
-        //已上架或者测试上架的游戏
-        $where['alist.status'] = array('IN', array(1, 2));
+        //媒体站已上架和未上架的游戏
+        $where['alist.is_publish'] = array('IN', array(1, 2));
 
         // 分页
         $service = new AppService();
@@ -248,8 +257,8 @@ class AppLibController extends AdminBaseController
             $data['app_name'] = $appName;
             $data['short_name'] = trim(I('short_name'));
             $data['supplier_id'] = intval(I('supplier_id'));
-            //$data['star_rank'] = empty(trim(I('star_rank'))) ? '0' : trim(I('star_rank'));
-            $data['start_score'] = empty(trim(I('start_score'))) ? '' : trim(I('start_score'));
+            //$data['star_rank'] = empty(trim(I('star_rank'))) ? '0' : trim(I('star_rank'));//游戏星级
+            $data['start_score'] = empty(trim(I('start_score'))) ? '' : trim(I('start_score'));//游戏评分
             $platform = trim(I('platform'));
             if(!in_array($platform,array(1,2,3))){
                 $this->outputJSON(true,'100001','游戏平台错误');
@@ -352,11 +361,11 @@ class AppLibController extends AdminBaseController
                 $guideData[$key]['create_time'] = time();
             }
             //是否更新游戏发布状态
-            //$publish = empty(trim(I('app_list_status')))?'0':trim(I('app_list_status'));
-            $result = $service->saveAppLibDetainInfo($appId,$data,$guideData);
+            $publish = empty(trim(I('app_list_status')))?'0':trim(I('app_list_status'));
+            $result = $service->saveAppLibDetainInfo($appId, $data, $guideData, $publish);
             if($result === false){
                 //echo $service->getFirstError();
-                $this->outputJSON(true,'100001','保存信息失败');
+                $this->outputJSON(true,'100001', $service->getFirstError());
             }else{
                 //删除原来的图片
                 if($icon != $appInfo['icon'] && !empty($icon)) {
@@ -375,6 +384,7 @@ class AppLibController extends AdminBaseController
                 $giftLimitNum = I('limited_count');
 
                 if(!empty($giftLimitNum)){
+                    M()->startTrans();
                     foreach($giftLimitNum as $giftId => $limitNum){
                         if(!empty($limitNum)){
                             $data = array(
@@ -383,21 +393,31 @@ class AppLibController extends AdminBaseController
                                 'edit_time' => time()
                             );
                             if(!empty(M('sync_gift_lib')->where('gift_id = '.$giftId )->find())){
-                                M('sync_gift_lib')->where('gift_id = '.$giftId )->save($data);
+                                $result = M('sync_gift_lib')->where('gift_id = '.$giftId )->save($data);
                             }else{
                                 $data['gift_id'] = $giftId;
-                                M('sync_gift_lib')->where('gift_id = '.$giftId )->add($data);
+                                $result = M('sync_gift_lib')->where('gift_id = '.$giftId )->add($data);
                             }
-                            //媒体站记录礼包动态
-                            $optData = array(
-                                'gift_id' => $giftId,
-                                'opt_count' => 0,
-                                'opt_type' => 0, //申请礼包
-                                'admin_id' => $this->user_info['id'],
-                                'remark' => '设置礼包上限数量为' . $limitNum,
-                                'create_time' => time(),
-                            );
-                            M('gift_opt_record')->add($optData);
+                            if($result === false){
+                                M()->rollback();
+                                $this->outputJSON(false,'000000','保存游戏信息成功，设置礼包id为'.$giftId.'的礼包上限数量失败');
+                            }else{
+                                //媒体站记录礼包动态
+                                $optData = array(
+                                    'gift_id' => $giftId,
+                                    'opt_count' => 0,
+                                    'opt_type' => 0, //申请礼包
+                                    'admin_id' => $this->user_info['id'],
+                                    'remark' => '设置礼包上限数量为' . $limitNum,
+                                    'create_time' => time(),
+                                );
+                                $result = M('gift_opt_record')->add($optData);
+                                if($result === false){
+                                    M()->rollback();
+                                    $this->outputJSON(false,'000000','保存游戏信息成功，保存礼包id为'.$giftId.'的操作记录失败');
+                                }
+                                M()->commit();
+                            }
                         }
                     }
                 }

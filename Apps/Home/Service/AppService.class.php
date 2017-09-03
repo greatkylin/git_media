@@ -56,12 +56,12 @@ class AppService extends BaseService
      */
     public function getPublishAppIdArray(){
         $where = array(
-            'zy_list.status' => array('IN', array(1, 2)), //默认已上架或测试上架的游戏
-            'zy_list.sj_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.is_delete' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
         //获取已经上架的游戏的id
-        $appIdList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'app_list', C('DB_ZHIYU.DB_PREFIX'))->alias('zy_list')
-            ->field('zy_list.app_id')
+        $appIdList = M('app_list')->alias('alist')
+            ->field('alist.app_id')
             ->where($where)
             ->select();
         $appIdArr = array();
@@ -82,8 +82,8 @@ class AppService extends BaseService
     public function getIndexHotRecommendAppNameAndIcon($limit = 8){
         //获取已上架游戏的appid
         $where = array(
-            'list.status' => array('IN', array(1, 2)), //默认已上架或测试上架的游戏
-            'list.sj_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
 
         $hotAppList = M('app_list')->alias('alist')
@@ -124,8 +124,8 @@ class AppService extends BaseService
     public function getIndexNewAppNameAndIcon($limit = 18){
         //获取已上架游戏的appid
         $where = array(
-            'list.status' => array('IN', array(1, 2)), //默认已上架或测试上架的游戏
-            'list.sj_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
         $newAppList = M('app_list')->alias('alist')
             ->field('list.app_id, list.status, lib.app_name as zy_app_name, lib.icon as zy_icon, alib.app_name, alib.icon, IF(alist.final_new_sort=0, 9999999, alist.final_new_sort) as final_new_sort, list.sj_time')
@@ -162,11 +162,11 @@ class AppService extends BaseService
      * @return array|bool
      */
     public function getIndexCarefulChoiceAppNameAndIcon() {
-        //获取已上架游戏的appid
+        //获取媒体站已上架游戏的appid
         $where = array(
             '_string' => '(lib.start_score >= 4.5 OR alib.start_score >= 4.5)' ,//游戏评分超过4.5的为精选游戏
-            'list.status' => array('IN', array(1, 2)), //默认已上架或测试上架的游戏
-            'list.sj_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
         $appList = M('app_list')->alias('alist')
             ->field('list.app_id, list.status, lib.app_name as zy_app_name, lib.icon as zy_icon, lib.start_score as yz_start_score, lib.update_time as zy_update_time, alib.app_name, alib.icon, alib.start_score, alib.update_time')
@@ -268,8 +268,8 @@ class AppService extends BaseService
         $where['gl.start_time'] = array('lt', time());
         $where['gl.end_time'] = array('gt', time());
         $where['gl.is_del'] = array('neq', 1);
-        //已上架和测试上架的游戏
-        $where['alist.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['list.is_publish'] = array('IN', array(1));
 
         //礼包码表中被媒体站占用的游戏礼包
         $subQueryOne = ' SELECT gift_id, count(*) AS total_code_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 GROUP BY gift_id ';
@@ -316,8 +316,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getHotAppRankWeek($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $where['app_down_num'] = array('neq', 0);
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
@@ -346,8 +346,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getHotAppRankMonth($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $where['app_down_num'] = array('neq', 0);
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
@@ -376,8 +376,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getHotAppRankTotal($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $where['app_down_num'] = array('neq', 0);
 
         $result = M('app_list')->alias('alist')
@@ -431,8 +431,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getPopularAppRankWeek($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -460,8 +460,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getPopularAppRankMonth($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF( arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -489,8 +489,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getPopularAppRankTotal($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
@@ -534,8 +534,8 @@ class AppService extends BaseService
      * @return bool
      */
     public function getNewAppRankTotal($limit = 10){
-        //游戏库已上架与测试上架的游戏
-        $where['list.status'] = array('IN', array(1, 2));
+        //获取媒体站已上架的游戏的礼包
+        $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, arank.`rank_id`, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表

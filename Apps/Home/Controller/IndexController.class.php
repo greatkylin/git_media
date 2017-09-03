@@ -20,21 +20,40 @@ class IndexController extends HomeBaseController {
         $recommendArtList = $indexService->getAdContentListByCategoryKeyword('RECOMMEND_LIST', 9);
         //新游测评
         $newGameTest = $indexService->getAdContentListByCategoryKeyword('NEW_GAME_TEST', 3);
+        if(!empty($newGameTest)){
+            //新游测评评分
+            foreach ($newGameTest as $key => $testApp){
+                $extend = unserialize($testApp['extend']);
+                $newGameTest[$key]['test_app_score'] = empty($extend['test_app_score']) ? 0 : $extend['test_app_score'];
+            }
+        }
         //每日一题图片
         $everyDayQuesImg = $indexService->getAdContentListByCategoryKeyword('EVERYDAT_QUESTION', 5);
         //精彩专题
         $greatTopic = $indexService->getAdContentListByCategoryKeyword('GREAT_TOPIC', 3);
+        if(!empty($greatTopic)){
+            foreach ($greatTopic as $key => $topic){
+                //精彩专题开始时间与结束时间
+                $extend = unserialize($topic['extend']);
+                $greatTopic[$key]['activity_start_time'] = date('Y.m.d', $extend['activity_start_time']);
+                $greatTopic[$key]['activity_end_time'] = date('Y.m.d', $extend['activity_end_time']);
+            }
+        }
         //热门活动
         $hotActivity = $indexService->getAdContentListByCategoryKeyword('HOT_ACTIVITY', 5);
+        if(!empty($hotActivity)){
+            foreach ($hotActivity as $key => $activity){
+                //精彩专题开始时间与结束时间
+                $extend = unserialize($activity['extend']);
+                $hotActivity[$key]['activity_start_time'] = date('m.d', $extend['activity_start_time']);
+                $hotActivity[$key]['activity_end_time'] = date('m.d', $extend['activity_end_time']);
+            }
+        }
         //新游预告
-        $newAppPreview = $indexService->getAdContentListByCategoryKeyword('NEW_APP_NOTICE', 12);
+        $newAppPreview = $indexService->getNewAppPreviewByCategoryKeyword('NEW_APP_NOTICE', 12);
         if(!empty($newAppPreview)){
             foreach ($newAppPreview as $key => $preview){
-                $extend = unserialize($preview['extend']);
-                $newAppPreview[$key]['app_name'] = $extend['app_name'];
-                $newAppPreview[$key]['app_id'] = $extend['app_id'];
-                $newAppPreview[$key]['app_publish_time'] = date('m 月 d H:i', $extend['app_publish_time']);
-                $newAppPreview[$key]['app_platform'] = $extend['app_platform'];
+                $newAppPreview[$key]['app_publish_time'] = date('m 月 d H:i', $preview['app_publish_time']);
             }
         }
         $artService = new ArticleService();
@@ -43,7 +62,12 @@ class IndexController extends HomeBaseController {
         $hotAppGuide = $indexService->getAdContentListByCategoryKeyword('HOT_GUIDE', 4);
         if(!empty($hotAppGuide)){
             foreach ($hotAppGuide as $key => $guide){
-                $hotAppGuide[$key]['article'] = $artService->getAllAppArticleByCateId($guide['art_category_id'], 5);
+                $extend = unserialize($guide['extend']);
+                $artCategoryId = $extend['art_category_id'];
+                $hotAppGuide[$key]['article'] = array();
+                if(!empty($artCategoryId)){
+                    $hotAppGuide[$key]['article'] = $artService->getAllAppArticleByCateId($artCategoryId, 5);
+                }
             }
         }
 
