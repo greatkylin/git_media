@@ -183,7 +183,7 @@ class AppTopicService extends BaseService
      * @param array $topicContent 保存到app_topic_content的数据
      * @return bool
      */
-    public function saveTopicContent(array $topicData,array $topicContent){
+    public function saveTopicContent(array $topicData, array $topicContent){
         if(empty($topicData['topic_id'])|| !is_numeric($topicData['topic_id'])){
             $this->setError('专题id参数错误');
             return false;

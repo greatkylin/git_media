@@ -4,6 +4,17 @@ ADD COLUMN `is_publish`  tinyint(1) NULL DEFAULT 1 COMMENT '媒体站游戏发�
 ADD COLUMN `publish_time`  int(11) UNSIGNED NULL DEFAULT 0 COMMENT '媒体站游戏发布时间' ;
 ALTER TABLE `zy_media_index_app_test_open`
 ADD COLUMN `is_delete`  tinyint(1) NULL DEFAULT 1 COMMENT '是否删除 1否，2是' AFTER `index_content_id`;
+/*20170904 删除新游预测类型*/
+ALTER TABLE `zy_media_index_app_test_open`
+DROP COLUMN `type`;
+ALTER TABLE `zy_media_app_topic`
+MODIFY COLUMN `is_publish`  tinyint(1) NULL DEFAULT 2 COMMENT '是否发布专题 1是，2否' ,
+MODIFY COLUMN `is_delete`  tinyint(1) NULL DEFAULT 1 COMMENT '是否删除 1正常，2删除';
+ALTER TABLE `zy_media_app_topic`
+ADD COLUMN `cover_image_path`  varchar(255) NULL COMMENT '封面图片路径';
+ALTER TABLE `zy_media_app_topic_content`
+DROP COLUMN `cover_image_path`;
+
 
 
 

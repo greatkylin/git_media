@@ -165,16 +165,20 @@ class AppTopicController extends AdminBaseController
                 $topicData['is_publish'] = 1;
             }
 
+            //当前的封面图片
+            $currentCover = !empty($topicData['cover_image_path']) ? $topicData['cover_image_path'] : '';
+            //封面图片
+            $topicData['cover_image_path'] = empty(trim(I('img_url_cover'))) ? $currentCover : trim(I('img_url_cover'));
+
             $content['topic_id'] = $topicId;
             $content['topic_type'] = $type;
 
             //获取当前的专题内容
             $currentInfo = $service->getCurrentContentByTopicIdAndType($topicId,$type);
-            //当前的封面图片
-            $currentCover = !empty($currentInfo['cover_image_path'])? $currentInfo['cover_image_path']:'';
+
             if($type == 1){
                 //专题的简介
-                $content['introduce'] = empty(trim(I('introduce')))?'':trim(I('introduce'));
+                $content['introduce'] = empty(trim(I('introduce'))) ? '' : trim(I('introduce'));
                 //添加的游戏信息,进行序列化操作
                 $appIds = I('app_id');
                 $appNames = I('app_name');
@@ -194,9 +198,8 @@ class AppTopicController extends AdminBaseController
                     }
                     $appInfoStr = serialize($appInfo);
                 }
-                $content['content'] = !empty($appInfoStr)?$appInfoStr:'';
-                //封面图片
-                $content['cover_image_path'] = empty(trim(I('img_url_cover')))?$currentCover:trim(I('img_url_cover'));
+                $content['content'] = !empty($appInfoStr) ? $appInfoStr : '';
+
                 //抬头图片
                 $picUrl = I('pic_url');
                 $delPicUrl = I('pic_url_del');
@@ -223,14 +226,13 @@ class AppTopicController extends AdminBaseController
                         }
                     }
                 }
-                $content['background_image_path'] = implode(',',$picUrl);
+                $content['background_image_path'] = implode(',', $picUrl);
             }else if($type == 2){
                 //编辑器编辑的内容
-                $content['content'] = empty(trim(I('uedit_content')))?'':trim(I('uedit_content'));
+                $content['content'] = empty(trim(I('uedit_content'))) ? '' : trim(I('uedit_content'));
             }else{
-                //h5 的连接以及封面图片
-                $content['content'] = empty(trim(I('h5_content')))?'':trim(I('h5_content'));
-                $content['cover_image_path'] = empty((I('img_url_h5')))?$currentCover:trim(I('img_url_h5'));
+                //h5 的连接
+                $content['content'] = empty(trim(I('h5_content'))) ? '' : trim(I('h5_content'));
             }
             $content['admin_id'] = $this->user_info['id'];
             //2.将表单提交的数据保存到对应的类型的数据中
@@ -238,7 +240,7 @@ class AppTopicController extends AdminBaseController
             if($result === true){
                 $this->outputJSON(false,'000000','保存成功');
             }else{
-                $this->outputJSON(true,'100001',D('AppTopic')->getError());
+                $this->outputJSON(true,'100001',$service->getFirstError());
             }
 
         }else{
@@ -268,7 +270,7 @@ class AppTopicController extends AdminBaseController
             //2.根据专题id获取专题的内容 模板，编辑器，h5
             $contentList = $service->getTopicContentByTopicId($topicId);
             if($contentList === false){
-                $this->error(M('AppTopic')->getError(),$returnUrl);
+                $this->error($service->getFirstError(),$returnUrl);
                 exit;
             }
             //3.在后台前端页面展示内容
@@ -296,10 +298,10 @@ class AppTopicController extends AdminBaseController
             $this->outputJSON(true,'100001','未找到id为'.$topicId.'的专题');
         }
 
-        if(empty($topic['is_publish'])){
-            $data['is_publish'] = 1;
+        if($topic['is_publish'] == 1){
+            $data['is_publish'] = 2;
         }else{
-            $data['is_publish'] = 0;
+            $data['is_publish'] = 1;
         }
         M()->startTrans();
         $result = M('app_topic')->where(array('topic_id'=>$topicId))->save($data);
@@ -327,10 +329,10 @@ class AppTopicController extends AdminBaseController
             $this->outputJSON(true,'100001','未找到id为'.$topicId.'的专题');
         }
 
-        if(empty($topic['is_delete'])){
-            $data['is_delete'] = 1;
+        if($topic['is_delete'] == 1){
+            $data['is_delete'] = 2;
         }else{
-            $data['is_delete'] = 0;
+            $data['is_delete'] = 1;
         }
         M()->startTrans();
         $result = M('app_topic')->where(array('topic_id'=>$topicId))->save($data);

@@ -38,11 +38,11 @@
             <div class="formControls col-xs-8 col-sm-9">
                 <div class="skin-minimal">
                     <div class="radio-box">
-                        <input type="radio" name="platform" id="radio-android" checked="checked">
+                        <input type="radio" name="platform" id="radio-android" checked="checked" value="1">
                         <label for="radio-android">Android</label>
                     </div>
                     <div class="radio-box">
-                        <input type="radio" name="platform" id="radio-ios">
+                        <input type="radio" name="platform" id="radio-ios" value="2">
                         <label for="radio-ios">IOS</label>
                     </div>
                 </div>
@@ -226,7 +226,7 @@
         var updateTime = object.val();
 
         if (updateTime != "") {
-            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss', minDate: updateTime});
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
         } else {
             WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
         }

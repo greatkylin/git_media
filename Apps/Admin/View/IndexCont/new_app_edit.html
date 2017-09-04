@@ -9,7 +9,7 @@
 <body>
 <article class="page-container">
     <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/IndexCont/content_edit')}">
-        <input type="hidden" name="id" id="id" value="{$appInfo.id}" />
+        <input type="hidden" name="id" id="id" value="{$content.id}" />
         <input type="hidden" class="input-text" value="{$content.category_id}"  id="category_id" name="category_id" style="width: 300px">
         <div class="row cl" id="app_name_box">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>游戏名称：</label>
@@ -229,7 +229,7 @@
         var updateTime = object.val();
 
         if (updateTime != "") {
-            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss', minDate: updateTime});
+            WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
         } else {
             WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'});
         }

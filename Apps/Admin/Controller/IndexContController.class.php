@@ -286,7 +286,7 @@ class IndexContController extends AdminBaseController
             }
             //判断当前图片的数量是否超过限制
             if(!$this->checkContentNumLimit($categoryId)){
-                $this->outputJSON(true,'100001','请上传的图片数量超过限制');
+                $this->outputJSON(true,'100001','上传的内容数量超过限制');
             }
             //获取当前选择分类的关键词
             $keyword = $this->getKeywordByCategoryId($categoryId);
@@ -326,7 +326,7 @@ class IndexContController extends AdminBaseController
                     $this->outputJSON(true,'100001','请填写游戏名称');
                 }
                 $appInfo = array(
-                    'app_publish_time' => strtotime(I('app_publish_time')),
+                    'open_test_time' => strtotime(I('open_test_time')),
                     'app_id' => $appId,
                     'app_name' => $appName,
                     'app_platform' => intval(I('platform')),
@@ -443,7 +443,7 @@ class IndexContController extends AdminBaseController
                     $this->outputJSON(true,'100001','请填写游戏名称');
                 }
                 $appInfo = array(
-                    'app_publish_time' => strtotime(I('app_publish_time')),
+                    'open_test_time' => strtotime(I('open_test_time')),
                     'app_id' => $appId,
                     'app_name' => $appName,
                     'app_platform' => intval(I('platform')),
@@ -507,144 +507,6 @@ class IndexContController extends AdminBaseController
             $this->assign('category',$category);
             $this->assign('currentTime',time());
             $this->display($tplName);
-        }
-    }
-
-    /**
-     * 添加新游预览
-     * @author xy
-     * @since 2017/08/31 14:58
-     */
-    public function new_app_add(){
-        if(IS_AJAX){
-            $appName = trim(I('app_name'));
-            $appId = intval(I('app_id'));
-            if(empty($appName) || empty($appId)){
-                $this->outputJSON(true,'100001','请填写游戏名称');
-            }
-            $categoryId = intval(I('category_id'));
-            if(empty($categoryId)){
-                $this->outputJSON(true,'100001','请选择分类');
-            }
-            //判断当前图片的数量是否超过限制
-            if(!$this->checkContentNumLimit($categoryId)){
-                $this->outputJSON(true,'100001','请分类下内容数量超过限制');
-            }
-            $sort = intval(I('sort'));
-            $isPublish = intval(I('is_publish'));
-
-            $data['category_id'] = $categoryId;
-            $data['title'] = $appName;
-            $data['sort'] = $sort;
-            $data['is_publish'] = $isPublish;
-            //默认未删除
-            $data['is_delete'] = 1;
-            $data['create_time'] = time();
-            $data['update_time'] = time();
-            //扩展字段的内容, 进行序列化
-            $data['extend'] = serialize(array(
-                'app_publish_time' => strtotime(I('app_publish_time')),
-                'app_id' => $appId,
-                'app_name' => $appName,
-                'app_platform' => intval(I('platform')),
-            ));
-
-            $result = M('index_column_content')->add($data);
-            if(empty($result)){
-                $this->outputJSON(true,'100001','添加失败');
-            }
-            $this->outputJSON(false,'000000','添加成功');
-        }else{
-            $categoryId = intval(I('category_id'));
-            //获取未删除的分类列表
-            $where['is_delete'] = 1;
-            $where['id'] = $categoryId;
-            $category = M('index_column_category')->where($where)->find();
-            if(empty($category)){
-                $this->error('当前分类不存在或者已删除',U('Admin/IndexCont/category_list'));
-            }
-            $this->assign('category',$category);
-            $this->display();
-        }
-    }
-
-    /**
-     * 编辑新游预告
-     * @author xy
-     * @since 2017/08、31 14:45
-     */
-    public function new_app_edit(){
-        $id = intval(I('id'));
-        if(IS_AJAX){
-            if(empty($id)){
-                $this->outputJSON(true,'100001','id不能为空');
-            }
-            $appName = trim(I('app_name'));
-            $appId = intval(I('app_id'));
-            if(empty($appName) || empty($appId)){
-                $this->outputJSON(true,'100001','请填写游戏名称');
-            }
-            //分类不允许修改
-            $categoryId = intval(I('category_id'));
-            if(empty($categoryId)){
-                $this->outputJSON(true,'100001','请选择图片分类');
-            }
-            $keyword = $this->getKeywordByCategoryId($categoryId);
-            if(!$keyword){
-                $this->outputJSON(true,'100001','获取图片分类关键字失败');
-            }
-            $sort = intval(I('sort'));
-            $isPublish = intval(I('is_publish'));
-
-            $data['title'] = $appName;
-            if(!empty($imagePath)){
-                $data['image_path'] = $imagePath;
-            }
-            if(!empty($hrefLink)){
-                $data['href_link'] = $hrefLink;
-            }
-
-            $data['is_publish'] = $isPublish;
-            $data['sort'] = $sort;
-            //默认未删除
-            $data['is_delete'] = 1;
-            $data['update_time'] = time();
-            //扩展字段的内容, 进行序列化
-            $data['extend'] = serialize(array(
-                'app_publish_time' => strtotime(I('app_publish_time')),
-                'app_id' => $appId,
-                'app_name' => $appName,
-                'app_platform' => intval(I('platform')),
-            ));
-            $result = M('index_column_content')->where(array('id'=>$id))->save($data);
-            if($result === false){
-                $this->outputJSON(true,'100001','编辑失败');
-            }
-            if($result === 0){
-                $this->outputJSON(false,'000000','无需编辑');
-            }
-            $this->outputJSON(false,'000000','编辑成功');
-        }else{
-            if(empty($id)){
-                $this->error('id不能为空',U('Admin/IndexCont/content_list'));
-            }
-            //获取内容
-            $app = M('index_column_content')->where(array('id'=>$id))->find();
-            if(empty($app)){
-                $this->error('id为'.$id.'的数据不存在',U('Admin/IndexCont/content_list'));
-            }
-            //扩展字段反序列化
-            $app['extend'] = unserialize($app['extend']);
-            $app['extend']['app_publish_time'] = date('Y-m-d H:i:s', $app['extend']['app_publish_time']);
-            //获取未删除的分类
-            $category = M('index_column_category')->where(array('id'=>$app['category_id']))->find();
-            if(empty($category)){
-                $this->error('当前分类不存在或者已删除，请先添加分类',U('Admin/IndexCont/category_list'));
-            }
-
-            $this->assign('app',$app);
-            $this->assign('category',$category);
-            $this->display();
         }
     }
 

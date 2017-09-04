@@ -269,9 +269,12 @@
             </div>
         </div>
         <div class="daily-r">
-            <div class="title">
-                <div class="kace-tag active">开测游戏</div>
-                <div class="kafu-tag">开服游戏</div>
+            <div class="gameNews-gift-title">
+                <div>
+                    <div class="left-border"></div>
+                    <div style="margin-left:15px;">新游预告</div>
+                </div>
+                <div>查看更多+</div>
             </div>
             <div class="kckf-box">
                 <div id="kace-box">
@@ -280,7 +283,7 @@
                             <a class="kc-tag <if condition = '$m eq 1' >active</if>">
                                 <div class="for-boxshadow">
                                     <div class="top">
-                                        <div>{$appPreview.app_publish_time}</div>
+                                        <div>{$appPreview.open_test_time}</div>
                                         <div class="topname">{$appPreview.app_name}</div>
                                         <div class="icons"><if condition="$appPreview[app_platform] eq 1"><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"><else /><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></if></div>
                                     </div>

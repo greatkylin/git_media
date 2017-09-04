@@ -50,10 +50,10 @@ class IndexController extends HomeBaseController {
             }
         }
         //新游预告
-        $newAppPreview = $indexService->getNewAppPreviewByCategoryKeyword('NEW_APP_NOTICE', 12);
+        $newAppPreview = $indexService->getNewAppNoticeByCategoryKeyword('NEW_APP_NOTICE', 12);
         if(!empty($newAppPreview)){
             foreach ($newAppPreview as $key => $preview){
-                $newAppPreview[$key]['app_publish_time'] = date('m 月 d H:i', $preview['app_publish_time']);
+                $newAppPreview[$key]['open_test_time'] = date('m 月 d H:i', $preview['open_test_time']);
             }
         }
         $artService = new ArticleService();
@@ -114,6 +114,62 @@ class IndexController extends HomeBaseController {
         $this->assign('newRankTotal', $newRankTotal);
         $this->assign('hotAppGuide', $hotAppGuide);
 
+        $this->display();
+    }
+
+    /**
+     * 新游预告列表
+     * @author xy
+     * @since 2017/09/04
+     */
+    public function app_notice(){
+        //获取日期时间参数
+        $currentTime = intval(I('open_time'));
+        if(empty($currentTime)){
+            $currentTime = time();
+        }
+        $currentTime = strtotime(date('Y-m-d', $currentTime));
+        $timeArr = array(
+            $currentTime - 3*86400,
+            $currentTime - 2*86400,
+            $currentTime - 1*86400,
+            $currentTime,
+            $currentTime + 1*86400,
+            $currentTime + 2*86400,
+            $currentTime + 3*86400,
+        );
+        $service = new IndexService();
+        $appList = $service->getNewAppNoticeListByDate($currentTime);
+        $this->assign('timeArr', $timeArr);
+        $this->assign('appList', $appList);
+        $this->display();
+    }
+
+    /**
+     * 活动详情页
+     * @author xy
+     * @since 2017/09/04
+     */
+    public function activity_detail(){
+        $activityId = intval(I('activity_id'));
+        $indexService = new IndexService();
+        $activityDetail = $indexService->getActivityDetailById($activityId);
+
+        $appService = new AppService();
+        //1.获取热门礼包周榜月榜
+        $giftWeekList = $appService->getHotAppGiftWeekList(10);
+        $giftMonthList = $appService->getHotAppGiftMonthList(10);
+        //2.获取本周专题
+        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        //3.获取热门游戏
+        $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
+
+        $this->assign('giftWeekList', $giftWeekList);
+        $this->assign('giftMonthList', $giftMonthList);
+        $this->assign('thisWeekTopic', $thisWeekTopic);
+        $this->assign('hotAppList', $hotAppList);
+        $this->assign('activityDetail', $activityDetail);
+        $this->assign('currentTime', time());
         $this->display();
     }
 }

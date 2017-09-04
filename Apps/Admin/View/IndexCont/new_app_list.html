@@ -59,6 +59,7 @@
             <th>ID</th>
             <th>游戏名称</th>
             <th>所属分类</th>
+            <th>排序</th>
             <th>状态</th>
             <th>是否发布</th>
             <th>操作</th>
@@ -70,6 +71,7 @@
                 <td>{$val.id}</td>
                 <td>{$val.title}</td>
                 <td>{$val.category_name}</td>
+                <td>{$val.sort}</td>
                 <td>
                     <if condition="$val['is_delete'] eq 1">正常</if>
                     <if condition="$val['is_delete'] eq 2">删除</if>

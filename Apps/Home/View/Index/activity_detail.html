@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--主体内容开始-->
+<style>
+    /*热门游戏名称*/
+    .hot-game .name-and-num div{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+<main>
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：首页>活动详情
+    </div>
+    <div class="mainl-and-mainr">
+        <div class="main-l">
+            <div class="banner-box">
+                <div class="bb-img">
+                    <img class="img" src="{$activityDetail.image_path|format_url}" alt="">
+                    <if condition="($currentTime egt $activityDetail[start_time]) AND ($currentTime elt $activityDetail[end_time])">
+                        <img class="on" src="__PUBLIC__/Home/static/img/in-ac.png" alt="">
+                        <elseif condition="$currentTime lt $activityDetail[start_time]" />
+                        <img class="off" src="__PUBLIC__/Home/static/img/end-ac.png" alt="">
+                        <elseif condition="$currentTime gt $activityDetail[end_time]" />
+                        <img class="off" src="__PUBLIC__/Home/static/img/end-ac.png" alt="">
+                    </if>
+                </div>
+                <div class="bb-desp">
+                    <div>{$activityDetail.activity_title}</div>
+                    <div class="bb-time">发布时间：<span>{$activityDetail.publish_time|date="Y年m月d日", ###}</span></div>
+                </div>
+            </div>
+            <if condition="$activityDetail[join_method] neq ''">
+                <div class="normal-name">
+                    <span></span>参与方式
+                </div>
+                <div class="title-desp">
+                    {$activityDetail.join_method}
+                </div>
+            </if>
+            <if condition="$activityDetail[activity_detail] neq ''">
+            <div class="normal-name">
+                <span></span>活动详情
+            </div>
+            <div class="title-desp">
+                {$activityDetail.activity_detail}
+            </div>
+            </if>
+            <if condition="$activityDetail[activity_note] neq ''">
+                <div class="normal-name">
+                    <span></span>注意事项
+                </div>
+                <div class="title-desp">
+                    {$activityDetail.activity_note}
+                </div>
+            </if>
+        </div>
+        <div class="main-r">
+            <if condition="(count($giftWeekList) gt 0) OR (count($giftMonthList) gt 0)">
+                <div class="normal-name gift-rank">
+                    <div class="hot-title-font"><span></span>热门礼包排行榜</div>
+                    <div class="day-and-week-rank">
+                        <div class="active" id="day-rank">日榜</div>
+                        <div id="week-rank">周榜</div>
+                    </div>
+                </div>
+                <div class="gift-box day-gift-box">
+                    <if condition="count($giftWeekList) gt 0">
+                        <volist name="giftWeekList" id="gwl" key="i">
+                            <if condition="$i elt 3">
+                                <a href="" class="gift-little-box always-big">
+                                    <div class="tag-num"></div>
+                                    <div class="tag-logo-font">
+                                        <div class="tag-logo"><img src="{$gwl.gift_icon|format_url}" alt=""></div>
+                                        <div class="tag-font">{$gwl.full_gift_name}</div>
+                                    </div>
+                                </a>
+                            </if>
+                            <if condition="$i gt 3">
+                                <a href="" class="gift-little-box always-little" data-num="0"
+                                   data-url="{$gwl.gift_icon|format_url}">
+                                    <div class="tag-num"></div>
+                                    <div class="tag-logo-font">
+                                        <!--<div class="tag-logo"><img src="../../static/img/game-gift.png" alt=""></div>-->
+                                        <div class="tag-font">{$gwl.full_gift_name}</div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                    </if>
+                </div>
+                <div class="gift-box week-gift-box" style="display: none;">
+                    <if condition="count($giftMonthList) gt 0">
+                        <volist name="giftMonthList" id="gml" key="j">
+                            <if condition="$j elt 3">
+                                <a href="" class="gift-little-box always-big">
+                                    <div class="tag-num"></div>
+                                    <div class="tag-logo-font">
+                                        <div class="tag-logo"><img src="{$gml.gift_icon|format_url}" alt=""></div>
+                                        <div class="tag-font">{$gml.full_gift_name}</div>
+                                    </div>
+                                </a>
+                            </if>
+                            <if condition="$j gt 3">
+                                <a href="" class="gift-little-box always-little" data-num="0"
+                                   data-url="{$gml.gift_icon|format_url}">
+                                    <div class="tag-num"></div>
+                                    <div class="tag-logo-font">
+                                        <!--<div class="tag-logo"><img src="../../static/img/game-gift.png" alt=""></div>-->
+                                        <div class="tag-font">{$gml.full_gift_name}</div>
+                                    </div>
+                                 </a>
+                            </if>
+                        </volist>
+                    </if>
+                </div>
+            </if>
+            <if condition="count($thisWeekTopic) gt 0">
+                <div class="topic-week">
+                    本周游戏专题
+                </div>
+                <div class="topic-week-desp">
+                    <div class="topic-img"><img src="{$thisWeekTopic.cover_image_path|format_url}" alt=""></div>
+                    <div class="topic-xushu">{$thisWeekTopic.topic_name}</div>
+                </div>
+            </if>
+            <if condition="count($hotAppList) gt 0">
+                <div class="topic-week">
+                    热门游戏
+                </div>
+                <div class="hot-game">
+                    <volist name="hotAppList" id="hotApp" key="k">
+                    <a href="#" class="hot-game-tag" data-score=0.5 id="game{$k}">
+                        <div><img src="{$hotApp.icon|format_url}" alt=""></div>
+                        <div class="name-and-num">
+                            <div>{$hotApp.app_name}</div>
+                            <div><span>{$hotApp.app_down_num}</span>人下载</div>
+                        </div>
+                        <div class="game-star">
+                            <div class="cover-bottom">
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                            </div>
+                            <div class="cover-top">
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                    </volist>
+                </div>
+            </if>
+        </div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/less.min.js"></script>
+<script>
+    //热门礼包排行榜
+    $(".gift-little-box",".day-gift-box").each(function(i,ele){
+        $(ele).find(".tag-num").text(i+1);
+    })
+    $(".gift-little-box",".week-gift-box").each(function(i,ele){
+        $(ele).find(".tag-num").text(i+1);
+    })
+    $(".always-little").hover(function () {
+        if($(this).attr("data-num")==0){
+            var imgurl=$(this).data("url");
+            var txt='<div class="tag-logo"><img src='+imgurl+' alt=""></div>';
+            $(this).find(".tag-logo-font").prepend(txt);
+            $(this).removeClass("always-little").addClass("always-big boxShadowSpecial padding").css("border","solid 1px #eee");
+            $(".tag-logo-font",this).css("border","none");
+            $(this).attr("data-num",1)
+        }else{
+            $(".tag-logo",this).remove();
+            $(this).addClass("always-little").removeClass("always-big boxShadowSpecial padding").css("border","none");
+            $(this).attr("data-num",0);
+        }
+    })
+
+
+    //游戏星星评分
+    function starScore(dom){
+        var score=$(dom).attr("data-score");
+        var n=Math.floor(score);
+        $(".icon-xingxing",dom).parent().css("width","18px");
+        var starWidth=parseInt($(".icon-xingxing").parent().css("width"));
+        var newWidth=(score-n)*starWidth+"px";
+
+        console.log(score,n,starWidth,newWidth)
+        if(n>=1){
+            $(dom).find(".cover-top span").each(function (z,ele) {
+                if(z<n){
+                    $(ele).find("i").addClass("light");
+                }else if(z==n){
+                    $(ele).find("i").addClass("light");
+                    console.log(newWidth)
+                    $(ele).css("width",newWidth);
+                }else if(z>n){
+                    $(ele).hide();
+                }
+            })
+        }else{
+//            当分数是不足1的时候
+            var newWidth0=score*starWidth+"px";
+            $(dom).find(".cover-top span").each(function(z,ele){
+                if(z==0){
+                    $(ele).find("i").addClass("light");
+                    $(ele).css("width",newWidth0);
+                }else{
+                    $(ele).hide();
+                }
+            })
+        }
+    }
+    starScore($("#game1"));
+    starScore($("#game2"));
+    starScore($("#game3"));
+    starScore($("#game4"));
+    starScore($("#game5"));
+
+    //切换日榜和周榜
+    $("#day-rank").click(function(){
+        $(this).addClass("active").siblings().removeClass("active");
+        $(".day-gift-box").show();
+        $(".week-gift-box").hide();
+    })
+    $("#week-rank").click(function(){
+        $(this).addClass("active").siblings().removeClass("active");
+        $(".day-gift-box").hide();
+        $(".week-gift-box").show();
+    })
+</script>
+</body>
+</html>

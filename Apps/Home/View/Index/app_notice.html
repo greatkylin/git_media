@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--主体内容开始-->
+<main style="background: #fff;padding:0 25px; padding-bottom:180px;">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：首页&gt;新游预告
+    </div>
+    <div class="kace-main">
+        <div class="date-circle">
+            <volist name="timeArr" id="time" key="i">
+                <a href="{:U('Home/Index/app_notice/open_time/'.$time)}"><div class="date-box <if condition='$i eq 4'>date-now</if>">{$time|date='n.j',###}</div></a>
+                <div class="date-line"></div>
+            </volist>
+        </div>
+        <div class="kace-kafu-title">
+            <!--<div class="active" id="turn-kace">开测游戏</div>-->
+            <!--<div id="turn-kafu" class="">开服游戏</div>-->
+        </div>
+        <div class="kace-kafu-allbox">
+            <div class="kace-container" style="display: flex;">
+                <volist name="appList" id="app">
+                    <div class="kk-game-tag">
+                        <div class="game-desp">
+                            <div><img src="{$app.icon|format_url}" alt="icon"></div>
+                            <div class="name-state">
+                                <div>{$app.app_name}</div>
+                                <div>
+                                    <div>游戏状态：<span>即将上架</span></div>
+                                    <div>上架时间：<span>{$app.open_test_time|date='H:i', ###}</span></div>
+                                </div>
+                            </div>
+                            <div class="down-load">
+                                <if condition = "$app[app_platform] eq 1">
+                                <a href=""><img src="__PUBLIC__/Home/static/img/anzhuo-icon.png" alt=""></a>
+                                </if>
+                                <if condition = "$app[app_platform] eq 2">
+                                <a href=""><img src="__PUBLIC__/Home/static/img/apple-icon.png" alt=""></a>
+                                </if>
+                            </div>
+                        </div>
+                    </div>
+                </volist>
+            </div>
+            <!--<div class="kafu-container" style="display: none;">-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="kk-game-tag">-->
+                    <!--<div class="game-desp">-->
+                        <!--<div><img src="../../static/img/game-gift.png" alt=""></div>-->
+                        <!--<div class="name-state">-->
+                            <!--<div>阴阳师</div>-->
+                            <!--<div>-->
+                                <!--<div>新服名称：<span>玉树飞花</span></div>-->
+                                <!--<div>开服时间：<span>11：00</span></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="down-load">-->
+                            <!--<a href=""><img src="../../static/img/anzhuo-icon.png" alt=""></a>-->
+                            <!--<a href=""><img src="../../static/img/apple-icon.png" alt=""></a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="zq-and-gift">-->
+                        <!--<a href=""><img src="../../static/img/game-zq-icon.png" alt="">游戏专区</a>-->
+                        <!--<a href=""><img src="../../static/img/game-gift-icon.png" alt="">开服礼包</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/less.min.js"></script>
+<script>
+    $(function () {
+        $("#turn-kace").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".kace-container").show().siblings().hide();
+        })
+        $("#turn-kafu").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".kafu-container").show().siblings().hide();
+        })
+
+    })
+</script>
+</body>
+</html>

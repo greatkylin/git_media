@@ -102,7 +102,7 @@
             <!--专题的类型-->
             <input  type="hidden" name="topic_id" value="{$topic.topic_id}">
             <input id="topic_type" type="hidden" name="topic_type" value="{$topic.topic_type}">
-            <div class="tabCon">
+            <div class="common-cover-box">
                 <!--封面图片-->
                 <div class="row cl">
                     <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题封面：</label>
@@ -110,8 +110,8 @@
                         <div id="uploader_cover">
                             <!--用来展示图片-->
                             <div id="coverPicture" class="uploader-list">
-                                <if condition="!empty($content_list[1]['cover_image_path'])">
-                                    <img style="width: 128px;height: 128px;" src="{$content_list[1]['cover_image_path']|format_url}" />
+                                <if condition="!empty($topic['cover_image_path'])">
+                                    <img style="width: 128px;height: 128px;" src="{$topic['cover_image_path']|format_url}" />
                                 </if>
                             </div>
                             <div class="icon-btn-wrap mt-10">
@@ -122,6 +122,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="tabCon">
                 <!--页面背景-->
                 <div class="row cl">
                     <lable class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题抬头图：</lable>
@@ -232,24 +234,24 @@
                 </div>
             </div>
             <div class="tabCon">
-                <div class="row cl">
-                    <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题名称：</label>
-                    <div class="formControls col-md-6 col-xs-6 col-sm-6">
-                        <div id="uploader_h5">
-                            <!--用来展示图片-->
-                            <div id="h5Picture" class="uploader-list">
-                                <if condition="!empty($content_list[3]['cover_image_path'])">
-                                    <img style="width: 128px;height: 128px;" src="{$content_list[3]['cover_image_path']|format_url}" />
-                                </if>
-                            </div>
-                            <div class="icon-btn-wrap mt-10">
-                                <div id="h5Picker">选择图片</div>
-                                <a id="h5PickerUploadBtn" class="btn btn-default">开始上传</a>
-                                <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!--<div class="row cl">-->
+                    <!--<label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">H5专题封面：</label>-->
+                    <!--<div class="formControls col-md-6 col-xs-6 col-sm-6">-->
+                        <!--<div id="uploader_h5">-->
+                            <!--&lt;!&ndash;用来展示图片&ndash;&gt;-->
+                            <!--<div id="h5Picture" class="uploader-list">-->
+                                <!--<if condition="!empty($content_list[3]['cover_image_path'])">-->
+                                    <!--<img style="width: 128px;height: 128px;" src="{$content_list[3]['cover_image_path']|format_url}" />-->
+                                <!--</if>-->
+                            <!--</div>-->
+                            <!--<div class="icon-btn-wrap mt-10">-->
+                                <!--<div id="h5Picker">选择图片</div>-->
+                                <!--<a id="h5PickerUploadBtn" class="btn btn-default">开始上传</a>-->
+                                <!--<span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="row cl">
                     <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">H5链接:</label>
                     <div class="formControls col-md-6 col-xs-10 col-sm-10">
@@ -1017,13 +1019,6 @@
             } else {
                 no_upload_cover = false;
             }
-            if($("#h5Picture").html() == '')
-            {
-                is_h5_success = false;
-                no_upload_h5 = true;
-            } else {
-                no_upload_h5 = false;
-            }
             if($("#bgPicList").html() == '')
             {
                 is_pic_success = false;
@@ -1037,23 +1032,19 @@
             if(!is_update_cover) {
                 is_cover_success = true;
             }
-            if(!is_update_h5) {
-                is_h5_success = true;
-            }
             if(!is_update_pic) {
                 is_pic_success = true;
             }
-
+            if(!is_cover_success && !no_upload_cover && is_update_cover) {
+                layer.alert('请先上传模板封面', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                return false;
+            }
             if(currentType == 1){
-                if(!is_cover_success && !no_upload_cover && is_update_cover) {
-                    layer.alert('请先上传模板封面', {
-                        skin: 'layui-layer-lan',
-                        closeBtn: 0,
-                        anim: 4 //动画类型
-                    });
-                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
-                    return false;
-                }
                 if(!is_pic_success && !no_upload_pic && is_update_pic) {
                     layer.alert('请先上传抬头图', {
                         skin: 'layui-layer-lan',
@@ -1063,18 +1054,7 @@
                     $(form).find(":submit").attr("disabled", false).attr("value", "提交");
                     return false;
                 }
-            } else if(currentType == 3){
-                if(!is_h5_success && !no_upload_h5 && is_update_h5) {
-                    layer.alert('请先上传H5封面图', {
-                        skin: 'layui-layer-lan',
-                        closeBtn: 0,
-                        anim: 4 //动画类型
-                    });
-                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
-                    return false;
-                }
             }
-
 
             window.layer.alert('请选择更新或发布', {
                 skin: 'layui-layer-lan',

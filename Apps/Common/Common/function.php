@@ -1188,3 +1188,21 @@ function get_app_type_tree_recursive(array $data, $parentId = 0, $currentLevel, 
     }
     return $tree;
 }
+/**
+ * 取得给定日期所在周的开始日期和结束日期
+ * @param int $currentTimeStamp 日期时间戳，默认为当天
+ * @param int $weekStart 一周以星期一还是星期天开始，0为星期天，1为星期一
+ * @return array 数组array( "开始日期 ",  "结束日期");
+ */
+function get_a_week_time_start_and_end($currentTimeStamp, $weekStart = 0) {
+    if (! $currentTimeStamp){
+        $currentDate = date ( "Y-m-d" );
+    }else{
+        $currentDate = date ( "Y-m-d", $currentTimeStamp );
+    }
+    $w = date ( "w", strtotime ( $currentDate ) ); //取得一周的第几天,星期天开始0-6
+    $dn = $w ? $w - $weekStart : 6; //要减去的天数
+    $sTimeStamp = strtotime ( "$currentDate  - " . $dn . "  days " );
+    $eTimeStamp = strtotime ( "$currentDate  +6  days " ) + (86400 - 1);
+    return array ($sTimeStamp, $eTimeStamp ); //返回开始和结束日期
+}

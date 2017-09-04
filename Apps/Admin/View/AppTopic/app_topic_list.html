@@ -38,10 +38,9 @@
                     <td>{$i}</td>
                     <td>{$val.topic_name}</td>
                     <td>{$val.time_range_start|date='Y-m-d',###}~{$val.time_range_end|date='Y-m-d',###}</td>
-                    <td><if condition="!empty($val['publish_time'])">{$val.publish_time|date='Y-m-d H:i:s',###}</if></td>
+                    <td><if condition="!empty($val['publish_time'])">{$val.publish_time|date='Y-m-d H:i:s',###}<else />--</if></td>
                     <td>
-                        <if condition="$val['is_publish'] eq 0">未发布</if>
-                        <if condition="$val['is_publish'] eq 1">发布</if>
+                        <if condition="$val['is_publish'] eq 1">发布<else />下架</if>
                     </td>
                     <!--<td>{$val.nickname}</td>-->
                     <td>
@@ -54,7 +53,7 @@
                            class="btn btn-success radius" style="text-decoration:none">
                             <i class="Hui-iconfont Hui-iconfont-edit"></i>修改
                         </a>
-                        <if condition="empty($val[is_publish])">
+                        <if condition="$val[is_publish] eq 2">
                             <a title="发布"
                                href="javascript:;"
                                onclick="topicPublishChange('{$val.topic_id}', '确定要发布这篇专题吗')"
@@ -69,7 +68,7 @@
                                 <i class="Hui-iconfont Hui-iconfont-xiajia"></i>下架
                             </a>
                         </if>
-                        <if condition="empty($val[is_delete])">
+                        <if condition="$val[is_delete] eq 2">
                             <a title="删除"
                                href="javascript:;"
                                onclick="topicDeleteChange('{$val.topic_id}', '确定要删除这边文章吗')"
