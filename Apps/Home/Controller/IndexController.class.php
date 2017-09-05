@@ -153,7 +153,7 @@ class IndexController extends HomeBaseController {
     public function activity_detail(){
         $activityId = intval(I('activity_id'));
         $indexService = new IndexService();
-        $activityDetail = $indexService->getActivityDetailById($activityId);
+        $activityDetail = $indexService->getValidActivityDetailById($activityId);
 
         $appService = new AppService();
         //1.获取热门礼包周榜月榜
@@ -171,5 +171,33 @@ class IndexController extends HomeBaseController {
         $this->assign('activityDetail', $activityDetail);
         $this->assign('currentTime', time());
         $this->display();
+    }
+
+    /**
+     * 活动详情预览页
+     * @author xy
+     * @since 2017/09/04
+     */
+    public function activity_preview(){
+        $activityId = intval(I('activity_id'));
+        $indexService = new IndexService();
+        $activityDetail = $indexService->getActivityDetailById($activityId);
+
+        $appService = new AppService();
+        //1.获取热门礼包周榜月榜
+        $giftWeekList = $appService->getHotAppGiftWeekList(10);
+        $giftMonthList = $appService->getHotAppGiftMonthList(10);
+        //2.获取本周专题
+        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        //3.获取热门游戏
+        $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
+
+        $this->assign('giftWeekList', $giftWeekList);
+        $this->assign('giftMonthList', $giftMonthList);
+        $this->assign('thisWeekTopic', $thisWeekTopic);
+        $this->assign('hotAppList', $hotAppList);
+        $this->assign('activityDetail', $activityDetail);
+        $this->assign('currentTime', time());
+        $this->display('activity_detail');
     }
 }

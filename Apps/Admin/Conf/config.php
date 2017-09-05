@@ -114,6 +114,14 @@ return array(
             'max_size'   => 2 * 1024 * 1024,
             'exts'       => array('jpg', 'png', 'jpeg'),
         ),
+        'ACTIVITY_DETAIL_IMAGE_CONF' => array(
+            'file_path'  => 'Uploads',
+            'save_path'  => 'Images/activity/',            // 礼包详情页BANNER上传地址配置
+            'max_width'  => 1200,
+            'max_height' => 1000,
+            'max_size'   => 2 * 1024 * 1024,
+            'exts'       => array('jpg', 'png', 'jpeg'),
+        ),
     ),
 
     'SUPER_ADMIN' => array(1, 14, 25, 42, 45),  // 超级管理员权限（跳过权限验证的管理员ID）

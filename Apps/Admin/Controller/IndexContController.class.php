@@ -520,16 +520,17 @@ class IndexContController extends AdminBaseController
         if(empty($id)){
             $this->outputJSON(true,'100001','id不能为空');
         }
-        $image = M('index_column_content')->where(array('id'=>$id))->find();
+        $content = M('index_column_content')->where(array('id'=>$id))->find();
         if(empty($image)){
             $this->outputJSON(true,'100001','未找到id为'.$id.'的图片');
         }
-        $currentStatus = $image['is_publish'];
+        $currentStatus = $content['is_publish'];
         if($currentStatus == 1){
             $data['is_publish'] = 2;
         }else{
             $data['is_publish'] = 1;
         }
+
         M()->startTrans();
         $result = M('index_column_content')->where(array('id'=>$id))->save($data);
         if(empty($result)){
@@ -559,8 +560,10 @@ class IndexContController extends AdminBaseController
         $currentStatus = $content['is_delete'];
         if($currentStatus == 1){
             $data['is_delete'] = 2;
+            $appData['is_delete'] = 2;
         }else{
             $data['is_delete'] = 1;
+            $appData['is_delete'] = 1;
         }
         M()->startTrans();
         $result = M('index_column_content')->where(array('id'=>$id))->save($data);
@@ -569,14 +572,14 @@ class IndexContController extends AdminBaseController
             $this->outputJSON(true,'100001','删除失败');
         }else{
             if($keyword == self::$category_keyword['NEW_APP_NOTICE']){
-                $result = M('index_app_test_open')->where('index_content_id = '.$content['id'])->save(array('is_delete' => 2));
+                $result = M('index_app_test_open')->where('index_content_id = '.$content['id'])->save($appData);
                 if($result === false){
                     M()->rollback();
-                    $this->outputJSON(true,'100001','删除新游预告内容失败');
+                    $this->outputJSON(true,'100001','新游预告内容编辑失败');
                 }
             }
             M()->commit();
-            $this->outputJSON(false,'000000','删除成功');
+            $this->outputJSON(false,'000000','操作成功');
         }
     }
 
@@ -681,6 +684,23 @@ class IndexContController extends AdminBaseController
     }
 
     /**
+     * ajax验证是否已经添加过该游戏id的新游预告
+     * @author xy
+     * @since 2017/09/05 17:38
+     */
+    public function ajax_check_app_notice_exist(){
+        $appId = intval(I('app_id'));
+        if(empty($appId)){
+            $this->outputJSON(true, '100001', '游戏id不能为空');
+        }
+        $result = $this->checkIsExistAppNoticeByAppId($appId);
+        if(!$result){
+            $this->outputJSON(true, '100001', '已经添加过此游戏, 请不要重复添加');
+        }
+        $this->outputJSON(false, '100001', '验证通过');
+    }
+
+    /**
      * 判断关键字是否是英文字符、下划线、字母组成，以及是否已存在
      * @author xy
      * @since 2017/07/24 15:52
@@ -758,6 +778,32 @@ class IndexContController extends AdminBaseController
             return $category['keyword'] ;
         }
         return false;
+    }
+
+    /**
+     * 判读是否已经添加对应app_id的新游预告
+     * @author xy
+     * @since 2017/09/05 17:09
+     * @param $appId
+     * @return bool
+     */
+    private function checkIsExistAppNoticeByAppId($appId){
+        if(empty($appId)){
+            return false;
+        }
+        $where = array(
+            'app.app_id' => $appId
+        );
+        $appInfo = M('index_column_content')->alias('icc')
+            ->field('icc.id')
+            ->join('INNER JOIN '.C('DE_NAME').'.'.C('DB_PREFIX').'index_app_test_open as app')
+            ->where($where)
+            ->find();
+        if(!empty($appInfo)){
+            return false;
+        }
+        return true;
+
     }
 
 }

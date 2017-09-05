@@ -1,0 +1,270 @@
+<include file='Common:meta'/>
+<title>热门活动管理</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    热门活动管理>活动列表
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="text-c">
+            <form action="{:U('Admin/Activity/activity_list')}">
+                <input type="text" name="activity_title" id="activity" placeholder=" 请输入活动标题进行搜索" style="width:250px" class="input-text" value="{$activityTitle}">
+                <span class="select-box inline">
+                    <select name="is_publish" class="select">
+                        <option value="0">上架状态</option>
+                        <option value="1" <if condition="$isPublish eq 1">selected="selected"</if>>已发布</option>
+                        <option value="2" <if condition="$isPublish eq 2">selected="selected"</if>>下架</option>
+                    </select>
+                </span>
+                <span class="select-box inline">
+                    <select name="is_delete" class="select">
+                        <option value="0">删除状态</option>
+                        <option value="1" <if condition="$isDelete eq 1">selected="selected"</if>>正常</option>
+                        <option value="2" <if condition="$isDelete eq 2">selected="selected"</if>>删除</option>
+                    </select>
+                </span>
+                <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
+                <button name="reset" id="reset" class="btn btn-success"><i class="Hui-iconfont"></i> 重置</button>
+            </form>
+        </span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l c-warning pt-5">
+        </span>
+        <span class="r">
+            <a href="javascript:;" onclick="layer_show('新增活动','{:U(\'Admin/Activity/activity_add/\')}', 600, 550)" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-add3"></i>新增活动</a>
+        </span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr class="text-c">
+            <th>ID</th>
+            <th>活动标题</th>
+            <th>图片</th>
+            <th>活动时间</th>
+            <th>创建时间</th>
+            <th>发布状态</th>
+            <th>删除状态</th>
+            <th>链接</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_data">
+        <volist name="activityList" key="i" id="val">
+            <tr class="text-c">
+                <td>{$val.activity_id}</td>
+                <td>{$val.activity_title}</td>
+                <td><img src="{$val.image_path|format_url}" alt="" width="200px" height="100px"></td>
+                <td>{$val.start_time|date="Y/m/d H:i:s", ###}~{$val.end_time|date="Y/m/d H:i:s", ###}</td>
+                <td>{$val.create_time|date="Y/m/d H:i:s", ###}</td>
+                <td>
+                    <if condition="$val['is_publish'] eq 0">
+                        未知
+                        <elseif condition="$val['is_publish'] eq 1"/>
+                        已发布
+                        <elseif condition="$val['is_publish'] eq 2"/>
+                        下架
+                    </if>
+                </td>
+                <td>
+                    <if condition="$val['is_delete'] eq 0">
+                        未知
+                        <elseif condition="$val['is_delete'] eq 1"/>
+                        正常
+                        <elseif condition="$val['is_delete'] eq 2"/>
+                        已删除
+                    </if>
+                </td>
+                <td>
+                    <if condition="$val[is_publish] eq 1">
+                        {:C('BASE_URL')}{:U('Home/Index/activity_detail/activity_id/'.$val[activity_id])}
+                        <else />
+                        暂无
+                    </if>
+                </td>
+                <td>
+                    <a title="编辑"
+                       href="javascript:;"
+                       onclick="layer_show('排序编辑','{:U(\'Admin/Activity/activity_edit/activity_id/\'.$val[activity_id])}', 300, 300)"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑
+                    </a>
+                    <if condition="$val[is_publish] eq 1">
+                        <a title="下架"
+                           href="javascript:;"
+                           onclick="publish_status_change('确定要下架吗？', '{$val[activity_id]}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont Hui-iconfont-xiajia"></i>下架
+                        </a>
+                        <else />
+                        <a title="发布"
+                           href="javascript:;"
+                           onclick="publish_status_change('确定要发布吗？', '{$val[activity_id]}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont Hui-iconfont-shangjia"></i>发布
+                        </a>
+                    </if>
+                    <if condition="$val[is_delete] eq 1">
+                        <a title="删除"
+                           href="javascript:;"
+                           onclick="delete_status_change('确定要删除此活动吗？', '{$val[activity_id]}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont Hui-iconfont-del2"></i>删除
+                        </a>
+                        <else />
+                        <a title="恢复"
+                           href="javascript:;"
+                           onclick="delete_status_change('确定要恢复此记录吗？', '{$val[activity_id]}')"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont Hui-iconfont-chexiao"></i>恢复
+                        </a>
+                    </if>
+                    <a href="{:U('Home/Index/activity_preview/activity_id/'.$val[activity_id])}" target="_blank" class="btn btn-success radius" style="text-decoration:none"><i class="Hui-iconfont Hui-iconfont-yanjing"></i>预览</a>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+
+    <div id="page" class="r"></div>
+    <div id="div_pagesize" class="r">
+        <span>每页显示：<input type="text" class="radius" size="1" value="{$pagesize}" id="pagesize"/>&nbsp;条<a href="javascript:void(0);" style="border: 1px solid #ddd;padding:1px 4px 4px 4px;margin: 0 3px 6px;" id="page_go">Go</a></span>
+    </div>
+</div>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var pages = "{$pages}";
+    var activityTitle = '{$activityTitle}';
+    var isPublish = '{$isPublish}';
+    var isDelete = '{$isDelete}';
+    if(parseInt(pages) > 1)
+    {
+        $("#div_pagesize").show();
+        laypage({
+            cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+            pages: {$pages}, //通过后台拿到的总页数
+            curr: {$page}, //初始化当前页
+
+            jump: function(e, first){ //触发分页后的回调
+                if(!first) { //一定要加此判断，否则初始时会无限刷新
+                    var pagesize = $("#pagesize").val();
+                    var url = "{:U('Admin/Activity/activity_list/activity_title/"+activityTitle+"/is_delete/"+isDelete+"/is_publish/"+isPublish+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
+                    var param = '{$param}';
+                    var new_url = url.replace('/_param_', param);
+                    window.location.href = new_url;
+                }
+            }
+        });
+    }
+    $('#page_go').click(function () {
+        var page_size = $('#pagesize').val();
+        var url = "{:U('Admin/Activity/activity_list/activity_title/"+activityTitle+"/is_delete/"+isDelete+"/is_publish/"+isPublish+"/p/1/pagesize/"+page_size+"/_param_')}";
+        var param = '{$param}';
+        var new_url = url.replace('/_param_', param);
+        window.location.href = new_url;
+    });
+
+
+    //生成列表操作
+    function delete_status_change(message, activity_id) {
+        layer.confirm(message, function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/Activity/delete_status_change')}", {activity_id: activity_id}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                } else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //活动上下操作
+    function publish_status_change(message, activity_id) {
+        layer.confirm(message, function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.get("{:U('Admin/Activity/public_status_change')}", {activity_id: activity_id}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                } else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //恢复列表的默认排序
+    function recover_default_sort(listId){
+        layer.confirm('确定要恢复默认排序吗？', function (index) {
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.post("{:U('Admin/AppLib/ajax_recover_sort')}", {list_type:listType,list_id:listId}, function (result) {
+                if (!result.error) {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+                else {
+                    layer.alert(result.detail, {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4, //动画类型
+                        title: '提示',
+                    }, function (index, layero) {
+                        //按钮【按钮一】的回调
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+    }
+
+    //搜索表单重置按钮
+    $("#reset").click(function(){
+        $("input[name=activity_title]").val('');
+        $("select[name=is_publish]").val(0);
+        $("select[name=is_delete]").val(0);
+    });
+</script>
+</body>
+</html>

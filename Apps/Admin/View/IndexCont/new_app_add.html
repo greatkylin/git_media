@@ -15,7 +15,7 @@
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="hidden" class="input-text" value="" placeholder="" id="title" name="title" style="width: 300px" v-model="app_name">
                 <input type="hidden" class="input-text" value="" placeholder="" id="app_name" name="app_name" style="width: 300px" v-model="app_name">
-                <input type="hidden" class="input-text" value="" placeholder="" id="app_id" name="app_id" style="width: 300px" v-model="app_id">
+                <input type="hidden" class="input-text"  value="" placeholder="" id="app_id" name="app_id" style="width: 300px" v-model="app_id">
                 <el-autocomplete
                         class="inline-input"
                         v-model="app_name"
@@ -97,9 +97,38 @@
         },
         methods : {
             handleSelect:function(item) {
-                //设置表单的值
-                this.app_id = item.app_id;
-                this.app_name = item.app_name;
+                //判读是否有添加过改游戏到新游预告表
+                var app_id = '';
+                var app_name = '';
+                $.ajax({
+                    type: 'POST',
+                    url: "{:U('Admin/IndexCont/ajax_check_app_notice_exist')}" ,
+                    data: {app_id : item.app_id} ,
+                    dataType:'json',
+                    async : false, //默认为true 异步
+                    success:function(res) {
+                        if(res.error){
+                            layer.alert(res.detail, {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                        }else{
+                            //设置表单的值
+                            app_id = item.app_id;
+                            app_name = item.app_name;
+                        }
+                    },
+                    error : function() {
+                        layer.alert('异常', {
+                            skin: 'layui-layer-lan',
+                            closeBtn: 0,
+                            anim: 4 //动画类型
+                        });
+                    }
+                });
+                this.app_id = app_id;
+                this.app_name = app_name;
             },
             querySearch:function(queryString, cb) {
                 var options = this.options;

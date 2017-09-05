@@ -300,6 +300,8 @@ class AdminBaseController extends Controller {
             case 'upload_gift_banner':
                 $config = C('FILE_CONFIG.GIFT_DETAIL_BANNER_CONF'); //礼包详情页BANNER图片配置
                 break;
+            case 'upload_activity_image':
+                $config = C('FILE_CONFIG.ACTIVITY_DETAIL_IMAGE_CONF');//活动详情页图片
             default:
                 break;
         }

@@ -46,7 +46,7 @@
                     <span></span>参与方式
                 </div>
                 <div class="title-desp">
-                    {$activityDetail.join_method}
+                    {$activityDetail.join_method|htmlspecialchars_decode}
                 </div>
             </if>
             <if condition="$activityDetail[activity_detail] neq ''">
@@ -54,7 +54,7 @@
                 <span></span>活动详情
             </div>
             <div class="title-desp">
-                {$activityDetail.activity_detail}
+                {$activityDetail.activity_detail|htmlspecialchars_decode}
             </div>
             </if>
             <if condition="$activityDetail[activity_note] neq ''">
@@ -62,7 +62,7 @@
                     <span></span>注意事项
                 </div>
                 <div class="title-desp">
-                    {$activityDetail.activity_note}
+                    {$activityDetail.activity_note|htmlspecialchars_decode}
                 </div>
             </if>
         </div>

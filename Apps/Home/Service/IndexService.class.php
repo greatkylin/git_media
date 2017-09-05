@@ -164,13 +164,41 @@ class IndexService extends BaseService
      * @param int $activityId 活动id
      * @return bool
      */
-    public function getActivityDetailById($activityId){
+    public function getValidActivityDetailById($activityId){
         if(empty($activityId)){
             return $this->setError('请填写活动id');
         }
         $where = array(
             'pa.is_publish' => 1, //已上架
             'pa.is_delete' => 1,  //未删除
+            'pa.activity_id' => $activityId, //指定的id
+        );
+        $activity = M('popular_activity')->alias('pa')
+            ->field('pa.*')
+            ->where($where)
+            ->find();
+        if($activity === false){
+            return $this->setError('查询失败');
+        }
+        if(empty($activity)){
+            return $this->setError('未找到对应的活动数据');
+        }
+        return $activity;
+
+    }
+
+    /**
+     * 通过id获取活动
+     * @author xy
+     * @since  2017/09/04 17:41
+     * @param int $activityId 活动id
+     * @return bool
+     */
+    public function getActivityDetailById($activityId){
+        if(empty($activityId)){
+            return $this->setError('请填写活动id');
+        }
+        $where = array(
             'pa.activity_id' => $activityId, //指定的id
         );
         $activity = M('popular_activity')->alias('pa')
