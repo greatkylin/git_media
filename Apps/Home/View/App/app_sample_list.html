@@ -2,10 +2,10 @@
     <div class="people-simple" style="display: block;">
         <div class="for-flexbox">
             <volist name="appList" id="app">
-                <a href="" target="_blank" class="rank-icon-tag" data-role="js" style="display: flex;">
+                <a href="{:U('Home/App/app_detail',array('app_id'=>$app['app_id']))}" target="_blank" class="rank-icon-tag" data-role="js" style="display: flex;">
                     <div><img src="{$app.icon|format_url}" alt=""></div>
                     <div class="rit-name">{$app.app_name}</div>
-                    <div class="enter-zq">进入专区</div>
+                    <div class="enter-zq" >进入专区</div>
                     <div class="down-link" data-href="{:U('Home/App/down',array('app_id'=>$app['app_id']))}">
                         <if condition="$app['platform'] eq 1">
                             <img src="__PUBLIC__/Home/static/img/anzhuo-icon.png" alt="">

@@ -1,7 +1,7 @@
 <div class="gsrc-people">
     <div class="people-list" style="display: block;">
         <volist name="appList" id="app">
-            <a href="gameDesp.html" target="_blank" class="rank-list-tag" data-role="js" style="display: flex;">
+            <a href="{:U('Home/App/app_detail',array('app_id'=>$app['app_id']))}" target="_blank" class="rank-list-tag" data-role="js" style="display: flex;">
                 <div class="icon"><img src="{$app.icon|format_url}" alt=""></div>
                 <div class="desp">
                     <div class="name-time">
@@ -14,7 +14,7 @@
                                 condition="$app['platform'] eq 1">Android</if><if
                                 condition="$app['platform'] eq 2">IOS</if></span>
                         </div>
-                        <div>类型：<span>角色 3D</span></div>
+                        <div>类型：<span>{$app.app_type_str}</span></div>
                         <!--<div>状态：<span>公测</span></div>-->
                     </div>
                     <div class="jianjie">简介：

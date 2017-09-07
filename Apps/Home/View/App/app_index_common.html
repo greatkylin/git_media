@@ -15,7 +15,7 @@
     <div class="grc-link">
         <div class="link1 page-jump  <if condition='$listType eq 1'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>1, 'css_type'=>$cssType, 'p'=>$currentPage))}">人气最高</div>
         <div class="link2 page-jump  <if condition='$listType eq 2'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>2, 'css_type'=>$cssType, 'p'=>$currentPage))}">近期更新</div>
-        <!--<div class="link3" data-num="0">新建专区</div>-->
+        <div class="link3 page-jump  <if condition='$listType eq 3'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>3, 'css_type'=>$cssType, 'p'=>$currentPage))}">新建专区</div>
     </div>
     <div class="grc-icon">
         <div class="page-jump <if condition='$cssType eq 0'>active</if>" id="list" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>$listType, 'css_type'=>0, 'p'=>$currentPage))}"><img src="__PUBLIC__/Home/static/img/list-er.png" alt=""></div>

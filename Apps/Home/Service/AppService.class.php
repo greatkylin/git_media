@@ -797,8 +797,8 @@ class AppService extends BaseService
     public function getPublishAppByPage(array $where = array(), $currentPage, $pageSize, $orderBy = NULL){
         $where['alist.is_publish'] = array('IN', array(1));
 
-        $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, (list.app_down_num + list.cardinal) as app_down_num')
+        $appList = M('app_list')->alias('alist')
+            ->field('alist.`app_id`, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, (list.app_down_num + list.cardinal) as app_down_num, list.create_time')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
@@ -808,10 +808,27 @@ class AppService extends BaseService
             ->order($orderBy)
             ->limit($currentPage.','.$pageSize)
             ->select();
-        if($result === false){
+        if($appList === false){
             return $this->setError('计算游戏数量失败');
         }
-        return $result;
+        $appList = self::getAppTypeInfoArrFromCache();
+        if($appList){
+            foreach ($appList as $key=> $app){
+                if(!empty($app['app_type'])){
+                    $app['app_type'] = explode(',', $app['app_type']);
+                    $appTypeStrArr = array();
+                    foreach ($app['app_type'] as $k=>$v){
+                        $appTypeStrArr = isset($appTypeArr[$v])? $appTypeArr[$v]['type_name'] : '未知';
+                    }
+                    $appTypeStr = implode(',', array_unique($appTypeStrArr));
+                }else{
+                    $appTypeStr = '未知';
+                }
+                $app['app_type_str'] = $appTypeStr;
+                $appList[$key] = $app;
+            }
+        }
+        return $appList;
     }
 
     /**
@@ -1019,5 +1036,40 @@ class AppService extends BaseService
         return $parentList;
     }
 
+    /**
+     * 从缓存中获取游戏类型信息
+     * @author xy
+     * @since 2017/09/07 23:38
+     * @return bool|mixed
+     */
+    public static function getAppTypeInfoArrFromCache(){
+        $appTypeInfo = S('zy_app_type_info');
+        if(empty($appTypeInfo)){
+            return $appTypeInfo = self::updateAppTypeInfoInCache();
+        }else{
+            return $appTypeInfo;
+        }
+    }
+
+    /**
+     * 更新缓存中游戏类型信息
+     * @author xy
+     * @since 2017/09/07 23:38
+     * @param int $expire 默认有效期 1天
+     * @return bool|mixed
+     */
+    public static function updateAppTypeInfoInCache($expire = 86400){
+        $appTypeInfo = M(C('DB_ZHIYU.DB_NAME').'.'.'app_type', C('DB_ZHIYU.DB_PREFIX'))
+            ->select();
+        if(!empty($appTypeInfo)){
+            $tempArr = array();
+            foreach($appTypeInfo as $key=>$type){
+                $tempArr[$type['id']] = $type;
+            }
+            S('zy_app_type_info', $tempArr, array('expire'=>$expire));
+            return $tempArr;
+        }
+        return false;
+    }
 
 }

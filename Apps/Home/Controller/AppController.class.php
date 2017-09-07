@@ -133,7 +133,7 @@ class AppController extends HomeBaseController {
      * @since 2017/09/06 18:55
      */
     public function ajaxGetAppList(){
-        //游戏列表类型，1人气最高，2最近更新
+        //游戏列表类型，1人气最高，2最近更新，3新建专区
         $listType = intval(I('list_type'));
         //游戏二级分类
         $appSecondType = intval(I('app_type'));
@@ -151,8 +151,10 @@ class AppController extends HomeBaseController {
         }
         if($listType == 1){
             $orderBy = 'final_hot_sort ASC, app_down_num DESC';
-        }else {
+        }else if($listType == 2){
             $orderBy = 'final_new_sort ASC, alist.publish_time DESC';
+        }else{
+            $orderBy = 'list.create DESC';
         }
         $pageParams['list_type'] = $listType;
         if(!empty($appSecondType)){
@@ -170,6 +172,7 @@ class AppController extends HomeBaseController {
         $show = $page->show();
         // 进行分页游戏数据查询 注意limit方法的参数要使用Page类的属性
         $appList = $appService->getPublishAppByPage($where, $page->firstRow, $page->listRows, $orderBy);
+
         //媒体站本周上架的游戏数量
         $appWeekSjNum = $appService->countCurrentWeekSjAppNum($where);
 
