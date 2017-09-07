@@ -23,7 +23,7 @@
         flex-flow: row wrap;
         padding: 10px 0;
     }
-    .sub-load-box {
+    .sub-load-box, .sub-load-beauty-box {
         border: solid 8px #ccc;
         position: relative;
         padding: 10px;
@@ -33,7 +33,7 @@
     .on {
         border-color: #3bb4f2;
     }
-    .sub-load-box>div:first-child {
+    .sub-load-box>div:first-child, .sub-load-beauty-box>div:first-child{
         width: 100%;
         height: 100%;
     }
@@ -282,12 +282,12 @@
             <label class="form-label col-xs-4 col-sm-2">游戏截图类型：</label>
             <div class="mt-20 skin-minimal">
                 <div class="radio-box">
-                    <input type="radio" id="is-landscape-2" value="0" name="is_landscape" <if condition="$app_info['is_landscape'] eq 0">checked</if>>
-                    <label for="is-landscape-2">竖版</label>
+                    <input type="radio" id="is-landscape-0" value="0" name="is_landscape" <if condition="$app_info['is_landscape'] eq 0">checked</if>>
+                    <label for="is-landscape-0">横版</label>
                 </div>
                 <div class="radio-box">
                     <input type="radio" id="is-landscape-1" value="1" name="is_landscape" <if condition="$app_info['is_landscape'] eq 1">checked</if>>
-                    <label for="is-landscape-1">横版</label>
+                    <label for="is-landscape-1">竖版</label>
                 </div>
             </div>
         </div>
@@ -334,7 +334,7 @@
         <h3>图文攻略</h3>
         <!--图文攻略上传-->
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2">图文攻略：</label>
+            <label class="form-label col-xs-4 col-sm-2">图文攻略图片：</label>
             <div class="formControls col-xs-8 col-sm-3">
 
                 <!--攻略图片上传1-->
@@ -442,48 +442,107 @@
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span>视频或文章链接：</label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">1</span>
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span>图文攻略标题链接：</label>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接1</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[1]['guide_link']}" placeholder=""  name="guide_link[0]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题1</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[1]['guide_title']}" placeholder=""  name="guide_title[0]">
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">2</span>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接2</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[2]['guide_link']}" placeholder=""  name="guide_link[1]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题2</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[2]['guide_title']}" placeholder=""  name="guide_title[1]">
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">3</span>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接3</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[3]['guide_link']}" placeholder=""  name="guide_link[2]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题3</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[3]['guide_title']}" placeholder=""  name="guide_title[2]">
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">4</span>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接4</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[4]['guide_link']}" placeholder=""  name="guide_link[3]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题4</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[4]['guide_title']}" placeholder=""  name="guide_title[3]">
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">5</span>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接5</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[5]['guide_link']}" placeholder=""  name="guide_link[4]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题5</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[5]['guide_title']}" placeholder=""  name="guide_title[4]">
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-8 col-sm-5">
-                <span class="c-green">6</span>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接6</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[6]['guide_link']}" placeholder=""  name="guide_link[5]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">标题6</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[6]['guide_title']}" placeholder=""  name="guide_title[5]">
+            </div>
         </div>
-
+        <h3>精美图片</h3>
+        <!--游戏截图上传-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">精美图片：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <div id="uploader_beauty">
+                    <!--用来存放item-->
+                    <div class="game-beauty">
+                        <div>
+                            <div class="loadpic-box" id="beautyImageList">
+                                <volist name="beauty_image_url" key="beauty_i" id="beauty_val">
+                                    <if condition="!empty($beauty_val)">
+                                        <div class="sub-load-beauty-box">
+                                            <div class="upload-state-done">
+                                                <img alt="" style="width: 65px;height: 115px;" src="{$beauty_val|format_url}">
+                                            </div>
+                                            <div class="load-mask">{$beauty_val|format_url|substr=###,-17}</div>
+                                            <img alt="" data-url="{$beauty_val}" src="__PUBLIC__/imgclose.png" class="close-img">
+                                            </div>
+                                        </if>
+                                    </if>
+                                </volist>
+                            </div>
+                            <div class="loadpic-btn">
+                                <div id="beautyImagePicker">选择图片</div>
+                                <div class="upload-btn-div">
+                                    <a id="beautyImagePickerUploadBtn" class="begin-upload-btn" href="javascript:void(0);">开始上传</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <span style="color: #17983b;margin-top: 5px;" class="r">(最多可上传10张图，横版最佳显示效果350*262，竖版最佳显示效果130*230，同比例亦可，单张图片大小<500KB)</span>
+                </div>
+            </div>
+        </div>
         <h3>游戏礼包</h3>
         <div id="gift_box">
             <if condition="!empty($gift_list)">
@@ -864,8 +923,14 @@
     var pic_url = [];             // 截图图片数组
     var is_pic_success  = true;   // 截图上传是否成功
     var pic_url_del = [];         // 替换删除的图片
-    var is_update_pic  = false;    // 是否有更新上传截图文件
+    var is_update_pic  = false;   // 是否有更新上传截图文件
     var no_upload_pic  = true;    // 是否有上传截图文件
+
+    var beauty_img_url = [];             // 精美图片数组
+    var is_beauty_img_success  = true;   // 精美图片上传是否成功
+    var beauty_img_del = [];             // 替换删除的精美图片
+    var is_update_beauty_img  = false;      // 是否有更新上传精美图片
+    var no_upload_beauty_img  = true;       // 是否有上传精美图片
 
     /************游戏icon图片上传****************/
     var thumbnailWidth = 100;       //缩略图宽度
@@ -1128,6 +1193,7 @@
     });
 
     /**************************游戏截图上传****************************/
+    var img_num = {$pic_num}; //记录当前有几张截图
     $('.sub-load-box').click(function () {
         if($(this).hasClass('on')) {
             $(this).removeClass('on').siblings().removeClass('on');
@@ -1139,8 +1205,9 @@
     $('.sub-load-box').find('.close-img').click(function (e) {
         pic_url_del.push($(this).data('url'));
         $(this).parent().remove();
+        img_num = img_num - 1;
     });
-    var img_num = {$pic_num}; //记录当前有几张截图
+
     //缩略图默认宽高
     var pic_thumbnailWidth = 100;
     var pic_thumbnailHeight = 100;
@@ -1250,6 +1317,7 @@
                     $(this).before($li);
                     $fileList_pic = $('#screenshotList').eq($(this).index()+1);
                     $(this).remove();
+                    img_num = img_num - 1;
                 }
             });
         }
@@ -2122,6 +2190,223 @@
 
 </script>
 <script>
+    /**************************精美图片上传****************************/
+    var beauty_img_num = {$beauty_image_num}; //记录当前有几张截图
+    $('.sub-load-beauty-box').click(function () {
+        if($(this).hasClass('on')) {
+            $(this).removeClass('on').siblings().removeClass('on');
+        }
+        else {
+            $(this).addClass('on').siblings().removeClass('on');
+        }
+    });
+    $('.sub-load-beauty-box').find('.close-img').click(function (e) {
+        beauty_img_del.push($(this).data('url'));
+        $(this).parent().remove();
+        beauty_img_num = beauty_img_num -1;
+    });
+    //缩略图默认宽高
+    var beauty_thumbnailWidth = 100;
+    var beauty_thumbnailHeight = 100;
+
+// 初始化Web Uploader
+var uploaderBeauty = WebUploader.create({
+
+    // 选完文件后，是否自动上传。
+    auto: false,
+
+    // swf文件路径
+    swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',
+
+    // 文件接收服务端。
+    server: "{:U('Admin/AppLib/ajax_upload_image')}",
+    formData: {fun : 'upload_beauty_image'},
+
+    // 选择文件的按钮。可选。
+    // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+    pick: '#beautyImagePicker',
+
+    // 只允许选择图片文件。
+    accept: {
+        title: 'Images',
+        extensions: 'gif,jpg,jpeg,bmp,png',
+        mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+    },
+    fileSizeLimit: 2 * 1024 * 1024
+});
+    uploaderBeauty.on('error', function (error) {
+    if(error == 'Q_EXCEED_SIZE_LIMIT') {
+        layer.alert('文件大小超过500k，不允许上传', {
+            skin: 'layui-layer-lan',
+            closeBtn: 0,
+            anim: 4 //动画类型
+        });
+    }
+    if(error == 'Q_TYPE_DENIED') {
+        layer.alert('文件类型错误', {
+            skin: 'layui-layer-lan',
+            closeBtn: 0,
+            anim: 4 //动画类型
+        });
+    }
+});
+// 当有文件添加进来的时候
+    uploaderBeauty.on( 'fileQueued', function( file ) {
+        var $li = $(
+                '<div class="sub-load-beauty-box">' +
+                '<div id="' + file.id + '"><img alt="" src="__PUBLIC__/imgbcg.png"></div>' +
+                '<div class="load-mask">' + file.name + '</div>' +
+                '<img alt="" src="__PUBLIC__/imgclose.png" class="close-img">' +
+                '</div>'
+            ),
+            $img = $li.find('div:first-child img');
+        $li.click(function () {
+            if($(this).hasClass('on')) {
+                $(this).removeClass('on').siblings().removeClass('on');
+            }
+            else {
+                $(this).addClass('on').siblings().removeClass('on');
+            }
+        });
+        //点击关闭图标删除图片时 记录的截图数量-1
+        $li.find('.close-img').click(function (e) {
+            uploaderBeauty.removeFile(file, true);
+            $li.remove();
+            beauty_img_num = beauty_img_num - 1;
+        });
+
+        var $fileList_beauty;
+        $fileList_beauty = $("#beautyImageList");
+        // 替换
+        if($('#beautyImageList .sub-load-beauty-box').length > 0) {
+            $('#beautyImageList .sub-load-beauty-box').each(function(z,that){
+                if($(this).hasClass('on')) {
+                    // 判断是否已上传成功
+                    //console.log(pic_url);
+                    if($(this).find('div:first').hasClass('upload-state-done')) {
+                        if($(this).find('div:first').attr('id')) {
+                            // 替换删除文件如果是添加则去除数组对应的值
+                            beauty_img_del.push(beauty_img_url[$(this).find('div:first').attr('id')]);
+                            // 调用删除图片
+                            delete  beauty_img_url[$(this).find('div:first').attr('id')];
+                        }
+                        if($(this).find('.close-img').data('url')) {
+                            beauty_img_del.push($(this).find('.close-img').data('url'));
+                        }
+                    }
+
+                    if($(this).find('div:first').attr('id')) {
+                        uploaderBeauty.removeFile($(this).find('div:first').attr('id'), true);
+                    }
+                    $(this).before($li);
+                    $fileList_beauty = $('#beautyImageList').eq($(this).index()+1);
+                    $(this).remove();
+                    beauty_img_num = beauty_img_num - 1;
+                }
+            });
+        }
+
+        $fileList_beauty.append( $li );
+        beauty_img_num = beauty_img_num + 1;
+
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploaderBeauty.makeThumb( file, function( error, src ) {
+            if ( error ) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr( 'src', src );
+        }, beauty_thumbnailWidth, beauty_thumbnailHeight );
+    });
+    // 点击上传
+    $('#beautyImagePickerUploadBtn').click(function () {
+        uploaderBeauty.upload();
+    });
+    uploaderBeauty.on('error', function (error) {
+        if(error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if(error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+// 当文件被加入队列之前触发
+    uploaderBeauty.on( 'beforeFileQueued', function( file ) {
+        if(beauty_img_num > 9){
+            layer.alert('最多只能添加10张', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        no_upload_beauty_img = true;
+    });
+
+// 文件上传过程中创建进度条实时显示。
+    uploaderBeauty.on( 'uploadProgress', function( file, percentage ) {
+        var $li = $( '#'+file.id ),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if ( !$percent.length ) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo( $li )
+                .find('span');
+        }
+
+        $percent.css( 'width', percentage * 100 + '%' );
+    });
+
+
+    uploaderBeauty.on("uploadAccept", function( file, data){
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        } else{
+            beauty_img_url[file.file.id] = data.url;
+            is_beauty_img_success = true;
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploaderBeauty.on( 'uploadSuccess', function( file ) {
+        $( '#'+file.id ).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploaderBeauty.on( 'uploadError', function( file ) {
+        is_pic_success = false;
+        var $li = $( '#'+file.id ),
+            $error = $li.find('div.error');
+
+        // 避免重复创建
+        if ( !$error.length ) {
+            $error = $('<div class="error"></div>').appendTo( $li );
+        }
+        $error.text('上传失败');
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploaderBeauty.on( 'uploadComplete', function( file ) {
+        $( '#'+file.id ).find('.progress').remove();
+    });
+</script>
+<script>
     // 表单提交
     function form_submit(form, type) {
         //type来判断是否上架 1是，0否
@@ -2129,10 +2414,14 @@
         for(var key in pic_url) {
             pic_url_post.push(pic_url[key]);
         }
+        var beauty_image_post = [];//精美图片的图片路径
+        for(var bkey in beauty_img_url) {
+            beauty_image_post.push(beauty_img_url[bkey]);
+        }
         $(form).ajaxSubmit({
             type:"post",  //提交方式
             dataType:"json", //数据类型
-            data:{appid:'{$app_info.app_id}',img_url_icon : img_url_icon[0], img_url_video : img_url_video[0], pic_url : pic_url_post, pic_url_del : pic_url_del,img_url_guide:img_url_guide, app_list_status : type},
+            data:{appid:'{$app_info.app_id}',img_url_icon : img_url_icon[0], img_url_video : img_url_video[0], pic_url : pic_url_post, pic_url_del : pic_url_del, beauty_image : beauty_image_post, beauty_image_del:beauty_img_del, img_url_guide:img_url_guide, app_list_status : type},
             url:"{:U('Admin/AppLib/applib_edit')}", //请求url
             success:function(data){ //提交成功的回调函数
                 if(!data.error) {
@@ -2229,6 +2518,13 @@
             } else {
                 no_upload_pic = false;
             }
+            if($("#beautyImageList").html() == '')
+            {
+                is_beauty_img_success = false;
+                no_upload_beauty_img = true;
+            } else {
+                no_upload_beauty_img= false;
+            }
             if($("#guidePicture1").html() == '') {
                 is_guide_success = false;
                 no_upload_guide = true;
@@ -2272,6 +2568,16 @@
             //如果有上传图片但上传失败，或者有更新图片但上传失败则提示要上传图片
             if((!is_pic_success && !no_upload_pic) || (!is_pic_success  && is_update_pic)) {
                 layer.alert('请先上传截图', {
+                    skin: 'layui-layer-lan',
+                    closeBtn: 0,
+                    anim: 4 //动画类型
+                });
+                $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                return false;
+            }
+            //如果有上传精美图片图片但上传失败，或者有更新精美图片但上传失败则提示要上传图片
+            if((!is_beauty_img_success && !no_upload_beauty_img) || (!is_beauty_img_success  && is_update_beauty_img)) {
+                layer.alert('请先上传精美图片', {
                     skin: 'layui-layer-lan',
                     closeBtn: 0,
                     anim: 4 //动画类型

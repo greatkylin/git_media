@@ -116,7 +116,15 @@ return array(
         ),
         'ACTIVITY_DETAIL_IMAGE_CONF' => array(
             'file_path'  => 'Uploads',
-            'save_path'  => 'Images/activity/',            // 礼包详情页BANNER上传地址配置
+            'save_path'  => 'Images/activity/',            // 活动详情页页图片
+            'max_width'  => 1200,
+            'max_height' => 1000,
+            'max_size'   => 2 * 1024 * 1024,
+            'exts'       => array('jpg', 'png', 'jpeg'),
+        ),
+        'APP_BEAUTY_IMAGE_CONF' => array(
+            'file_path'  => 'Uploads',
+            'save_path'  => 'Images/applib/beauty/',            // 游戏详情页精美图片
             'max_width'  => 1200,
             'max_height' => 1000,
             'max_size'   => 2 * 1024 * 1024,

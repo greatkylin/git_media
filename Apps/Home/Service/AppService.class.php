@@ -415,13 +415,13 @@ class AppService extends BaseService
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort')
+            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, sum(money) AS `total_money` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'sdk_order WHERE YEARWEEK(date_format(FROM_UNIXTIME(create_time), \'%Y-%m-%d\')) = YEARWEEK(now())-1  AND (`status` = 0 OR `status` = 4) GROUP BY `app_id` ) as pay on pay.app_id = alist.app_id')//关联查询上一个礼拜app充值(已完成和支付成功的)的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('pre_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order('final_sort ASC, total_money DESC')
             ->where($where)
             ->limit($limit)
             ->select();
@@ -444,13 +444,13 @@ class AppService extends BaseService
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF( arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
+            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, sum(money) AS `total_money` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'sdk_order WHERE date_format(FROM_UNIXTIME(create_time), \'%Y-%m\') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),\'%Y-%m\') AND (`status` = 0 OR `status` = 4) GROUP BY `app_id` ) as pay on pay.app_id = alist.app_id')//关联查询上一个月app充值(已完成和支付成功的)的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('pre_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order('final_sort ASC, total_money DESC')
             ->where($where)
             ->limit($limit)
             ->select();
@@ -473,12 +473,12 @@ class AppService extends BaseService
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
+            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('pre_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order('final_sort ASC, total_money DESC')
             ->where($where)
             ->limit($limit)
             ->select();
@@ -518,12 +518,12 @@ class AppService extends BaseService
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, arank.`rank_id`, IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 ) ) as pre_sort')
+            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, arank.`rank_id`, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 2 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('pre_sort ASC, sj_time DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 2 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order('final_sort ASC, sj_time DESC')
             ->where($where)
             ->limit($limit)
             ->select();
@@ -668,4 +668,356 @@ class AppService extends BaseService
         }
         return $giftList;
     }
+
+    /**
+     * 获取游戏的顶级分类ID字符串
+     * @author xy
+     * @since 2017/09/06 09:57
+     * @return bool
+     */
+    public function getTopLevelAppTypeIdStr(){
+        $appTypeId = M(C('DB_ZHIYU.DB_NAME') . '.' . 'app_type', C('DB_ZHIYU.DB_PREFIX'))->alias('at')
+            ->field('GROUP_CONCAT(id) as type_ids')
+            ->where(array('parent_id' => 0))
+            ->find();
+        if($appTypeId === false){
+            return $this->setError('查询游戏分类失败');
+        }
+        if(empty($appTypeId)){
+            return $this->setError('没有游戏分类数据');
+        }
+
+        return $appTypeId['type_ids'];
+    }
+
+    /**
+     * 通过游戏的顶级分类获取游戏的二级分类
+     * @author xy
+     * @since 2017/09/06 09:57
+     * @return bool
+     */
+    public function getSecondLevelAppType(){
+        $topAppTypeIdStr = $this->getTopLevelAppTypeIdStr();
+
+        if(empty($topAppTypeIdStr)){
+            return false;
+        }
+        $appTypeList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'app_type', C('DB_ZHIYU.DB_PREFIX'))->alias('at')
+            ->field('at.id, at.type_name, at.parent_id')
+            ->where(array('parent_id IN ('.$topAppTypeIdStr.')'))
+            ->select();
+        if($appTypeList === false){
+            return $this->setError('查询游戏分类失败');
+        }
+        if(empty($appTypeList)){
+            return $this->setError('没有游戏分类数据');
+        }
+
+        return $appTypeList;
+    }
+
+    /**
+     * 获取媒体站已上架游戏数量
+     * @author xy
+     * @since 2017/09/06 14:16
+     * @param array $where 查询条件
+     * @return mixed
+     */
+    public function countPublishAppTotalNum(array $where = array()){
+        $where['alist.is_publish'] = array('IN', array(1));
+        $result = M('app_list')->alias('alist')
+            ->field('alist.`app_id`, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->where($where)
+            ->count();
+        return $result;
+    }
+
+    /**
+     * 获取本周上架的游戏的数量
+     * @author xy
+     * @since 2017/09/06 14:21
+     * @return mixed
+     */
+    public function countCurrentWeekSjAppNum($where){
+        $where['alist.is_publish'] = array('IN', array(1));
+        $where['_string'] = 'YEARWEEK(date_format(FROM_UNIXTIME(alist.publish_time), \'%Y-%m-%d\')) = YEARWEEK(now())';
+        $result = M('app_list')->alias('alist')
+            ->field('alist.`app_id`, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_type `at` on (FIND_IN_SET(`at`.id, IFNULL(alib.app_type, lib.app_type)))')
+            ->where($where)
+            ->group('alist.app_id')
+            ->select();
+        if($result === false){
+            return $this->setError('计算游戏数量失败');
+        }
+        return count($result);
+    }
+
+    /**
+     * 根据条件获取媒体站上架的游戏的数量
+     * @author xy
+     * @since 2017/09/06 15:06
+     * @param array $where
+     * @return mixed
+     */
+    public function countPublishAppNumByCondition(array $where = array()){
+        $where['alist.is_publish'] = array('IN', array(1));
+
+        $result = M('app_list')->alias('alist')
+            ->field('alist.`app_id`, alist.publish_time, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type,  IFNULL(alib.platform, lib.platform) as platform, IFNULL(alib.introduct, lib.introduct) as introduct, lib.app_file_url, list.`status`, list.`sj_time`')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_type `at` on (FIND_IN_SET(`at`.id, IFNULL(alib.app_type, lib.app_type)))')
+            ->where($where)
+            ->group('alist.app_id')
+            ->select();
+        if($result === false){
+            return $this->setError('计算游戏数量失败');
+        }
+        return count($result);
+    }
+
+    /**
+     * 根据条件获取媒体站上架的游戏列表
+     * @author xy
+     * @since 2017/09/06 15:06
+     * @param array $where
+     * @param int $currentPage 当前页
+     * @param int $pageSize 页大小
+     * @param string $orderBy 排序规则
+     * @return mixed
+     */
+    public function getPublishAppByPage(array $where = array(), $currentPage, $pageSize, $orderBy = NULL){
+        $where['alist.is_publish'] = array('IN', array(1));
+
+        $result = M('app_list')->alias('alist')
+            ->field('alist.`app_id`, IF(alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, (list.app_down_num + list.cardinal) as app_down_num')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_type `at` on (FIND_IN_SET(`at`.id, IFNULL(alib.app_type, lib.app_type)))')
+            ->where($where)
+            ->group('alist.app_id')
+            ->order($orderBy)
+            ->limit($currentPage.','.$pageSize)
+            ->select();
+        if($result === false){
+            return $this->setError('计算游戏数量失败');
+        }
+        return $result;
+    }
+
+    /**
+     * 判断媒体站是否存在指定app_id的游戏，存在则判断该游戏是否在媒体站发布
+     * @author xy
+     * @since 2017/09/07 10:51
+     * @param int $appId 游戏id
+     * @return bool
+     */
+    public function isMediaExistApp($appId){
+        if(empty($appId)){
+            return $this->setError('请求的参数缺失');
+        }
+        $app = M('app_list')->where(array('app_id'=>$appId))->find();
+        if(empty($app)){
+            return $this->setError('媒体站不存在此游戏');
+        }
+        if($app['is_publish'] != 1){
+            return $this->setError('此游戏未在媒体站发布');
+        }
+        return true;
+
+    }
+
+    /**
+     * 通过app_id获取游戏的详情信息
+     * @author xy
+     * @since 2017/09/07 11:22
+     * @param int $appId 游戏id
+     * @return bool
+     */
+    public function getAppDetailInfoByAppId($appId){
+        if(empty($appId)){
+            return $this->setError('请求的参数缺失');
+        }
+        $isExist = $this->isMediaExistApp($appId);
+        if(!$isExist){
+            return false;
+        }
+        $where['alist.app_id'] = $appId;
+        $appInfo = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, 
+                IF( alist.final_hot_sort=0, 9999999, IFNULL( alist.final_hot_sort, 9999999 ) ) as final_hot_sort, 
+                IF( alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, 
+                IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, 
+                IFNULL(alib.app_type, lib.app_type) as app_type, 
+                IFNULL(alib.start_score, lib.start_score) as start_score, 
+                IFNULL(alib.supplier_id, lib.supplier_id) as supplier_id, 
+                IFNULL(alib.platform, lib.platform) as platform, 
+                IFNULL(alib.version_code,lib.version_code) as version_code, 
+                IFNULL(alib.version_name, lib.version_name) as version_name, 
+                IFNULL(alib.about, lib.about) as about, IFNULL(alib.introduct, lib.introduct) as introduct, 
+                IFNULL(alib.pic_url, lib.pic_url) as pic_url, IFNULL(alib.app_size, lib.app_size) as app_size, 
+                IFNULL(alib.is_landscape, lib.is_landscape) as is_landscape,
+                IFNULL(alib.update_time, lib.update_time) as update_time, 
+                IFNULL(alib.game_quality, lib.game_quality) as game_quality, 
+                IFNULL(alib.game_picture, lib.game_picture) as game_picture, 
+                IFNULL(alib.game_gandu, lib.game_gandu) as game_gandu, 
+                IFNULL(alib.game_diff, lib.game_diff) as game_diff, 
+                IFNULL(alib.game_quality_value, lib.game_quality_value) as game_quality_value, 
+                IFNULL(alib.game_picture_value, lib.game_picture_value) as game_picture_value,
+                IFNULL(alib.game_gandu_value, lib.game_gandu_value) as game_gandu_value,
+                IFNULL(alib.game_diff_value, lib.game_diff_value) as game_diff_value, alib.cover_img, lib.app_file_url, 
+                lib.cover_img as zy_cover_img, alib.video_link, lib.video_id, list.`status`, list.`sj_time`, lib.is_my_sdk,
+                (list.app_down_num + list.cardinal) as app_down_num, s.supplier_name, s.supplier_icon, s.supplier_info,
+                alib.beauty_image'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'supplier s on IFNULL(alib.supplier_id, lib.supplier_id) = s.supplier_id')//关联指娱应用厂商表
+            ->where($where)
+            ->find();
+        if($appInfo === false){
+            return $this->setError('查询失败');
+        }
+        if(empty($appInfo)){
+            return $this->setError('未查询到对应的游戏信息');
+        }
+        //判断游戏总库是否有设置游戏视频，有的话获取视频链接
+        if(empty($appInfo['video_id'])){
+            $videoInfo = $this->getAppVideoUrlByVideoId($appInfo['video_id']);
+            if($videoInfo){
+                $appInfo['video_url'] = $videoInfo['video_url'];
+                if(empty($appInfo['zy_cover_img'])){
+                    $appInfo['zy_cover_img'] = $videoInfo['video_img'];
+                }
+            }
+        }
+        //游戏截图
+        if(!empty($appInfo['pic_url'])){
+            $appInfo['pic_url'] = explode(',', $appInfo['pic_url']);
+        }
+        //精美图片
+        if(!empty($appInfo['beauty_image'])){
+
+            $appInfo['beauty_image'] = explode(',', $appInfo['beauty_image']);
+        }
+        //游戏大小转换成兆（M）
+        if(!empty($appInfo['app_size'])){
+            $appInfo['app_size'] = $appInfo['app_size'] / (1024 * 1024);
+        }else{
+            $appInfo['app_size'] = 0;
+        }
+        return $appInfo;
+    }
+
+    /**
+     * 通过视频id从视频库或爱奇艺获取托管的视频信息
+     * @author xy
+     * @since 2017/09/07 11:53
+     * @param $videoId
+     * @return array|bool
+     */
+    public function getAppVideoUrlByVideoId($videoId){
+        if(empty($videoId)){
+            return $this->setError('请求的参数缺失');
+        }
+        $where['vlib.video_id'] = $videoId;
+        $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'video_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('vlib')
+            ->field('vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id')
+            ->where($where)
+            ->find();
+
+        if(!$result){
+            return $this->setError('未找到对应视频数据');
+        }
+        //通过视频的file_id从爱奇艺获取托管视频url以及视频相关信息
+        if (!empty($result['file_id'])) {
+            $result['video_url'] = $this->getIqiyiVideoUrl($result['file_id'], 2);
+
+            if ($result['video_url']) {
+                $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id']);
+                $result = [
+                    'video_name' => $result['video_name'],
+                    'video_url' => $result['video_url'],
+                    'video_img' => format_url($result['video_img']),
+                    'video_size' => $iqiyiVideoInfo['fileSize'],
+                    'video_duration' => $iqiyiVideoInfo['duration'],
+                    'file_id' => $result['file_id'],
+                ];
+                return $result;
+            }else{
+                return $this->setError('未找到对应视频数据');
+            }
+        }else{
+            if(!empty($result['video_url'] )){
+                return $result;
+            }
+            return $this->setError('未找到对应视频数据');
+        }
+
+    }
+
+    /**
+     * 通过游戏id获取游戏详情页的图文攻略
+     * @author xy
+     * @since 2017/09/07 17;46
+     * @param int $appId 游戏app_id
+     * @return bool
+     */
+    public function getAppDetailGuideByAppId($appId){
+        if(empty($appId)){
+            return $this->setError('请求的参数缺失');
+        }
+        $where['app_id'] = $appId;
+        $guideList = M('app_guide')->where($where)->order('sort ASC')->limit(6)->select();
+        if($guideList === false){
+            $this->setError('查询精品攻略失败');
+        }
+        return $guideList;
+    }
+
+    /**
+     * 通过游戏类型id查询对应的父级id与名称
+     * @author xy
+     * @since 2017/09/07 19:30
+     * @param $appTypeId
+     * @return bool|mixed]
+     */
+    public function getAppTypeIdParentIdAndName($appTypeId){
+        if(empty($appTypeId)){
+            return $this->setError('请求的参数缺失');
+        }
+        if(is_numeric($appTypeId)){
+            $appTypeId = intval($appTypeId);
+        }
+        if(is_array($appTypeId)){
+            $appTypeId = implode(',', $appTypeId);
+        }
+
+        $parentList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'app_type', C('DB_ZHIYU.DB_PREFIX'))->alias('at')
+            ->field('at.id, at.type_name, at.parent_id')
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_type tat on tat.parent_id = at.id')
+            ->where(array('tat.id'=>array('IN', array($appTypeId))))
+            ->group('at.id')
+            ->select();
+        if($parentList === false){
+            $this->setError('查询游戏分类失败');
+        }
+        if(empty($parentList)){
+            $this->setError('查询游戏分类失败');
+        }
+        return $parentList;
+    }
+
+
 }

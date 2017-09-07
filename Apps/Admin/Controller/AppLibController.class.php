@@ -278,14 +278,14 @@ class AppLibController extends AdminBaseController
             $data['create_time'] = !empty(trim(I('create_time'))) ? trim(I('create_time')) : time();
 
             //游戏评论
-            $data['game_quality'] = !empty(trim(I('game_quality')))?trim(I('game_quality')):'游戏品质';
-            $data['game_picture'] = !empty(trim(I('game_picture')))?trim(I('game_picture')):'游戏画质';
-            $data['game_gandu'] = !empty(trim(I('game_gandu')))?trim(I('game_gandu')):'游戏肝度';
-            $data['game_diff'] = !empty(trim(I('game_diff')))?trim(I('game_diff')):'游戏难度';
-            $data['game_quality_value'] = !empty(trim(I('game_quality_value')))?trim(I('game_quality_value')):0;
-            $data['game_picture_value'] = !empty(trim(I('game_picture_value')))?trim(I('game_picture_value')):0;
-            $data['game_gandu_value'] = !empty(trim(I('game_gandu_value')))?trim(I('game_gandu_value')):0;
-            $data['game_diff_value'] = !empty(trim(I('game_diff_value')))?trim(I('game_diff_value')):0;
+            $data['game_quality'] = !empty(trim(I('game_quality'))) ? trim(I('game_quality')) : '游戏品质';
+            $data['game_picture'] = !empty(trim(I('game_picture'))) ? trim(I('game_picture')) : '游戏画质';
+            $data['game_gandu'] = !empty(trim(I('game_gandu'))) ? trim(I('game_gandu')) : '游戏肝度';
+            $data['game_diff'] = !empty(trim(I('game_diff'))) ? trim(I('game_diff')) : '游戏难度';
+            $data['game_quality_value'] = !empty(trim(I('game_quality_value'))) ? trim(I('game_quality_value')) : 0;
+            $data['game_picture_value'] = !empty(trim(I('game_picture_value'))) ? trim(I('game_picture_value')) : 0;
+            $data['game_gandu_value'] = !empty(trim(I('game_gandu_value'))) ? trim(I('game_gandu_value')) : 0;
+            $data['game_diff_value'] = !empty(trim(I('game_diff_value'))) ? trim(I('game_diff_value')) : 0;
             //游戏icon
             $icon =  trim(I('img_url_icon'));
             if(!empty($icon)){
@@ -324,10 +324,37 @@ class AppLibController extends AdminBaseController
                 }
             }
             $data['pic_url'] = implode(',',$picUrl);
-            //图文攻略图片以及链接
+            //精美图片
+            $beautyImage = I('beauty_image');
+            $beautyImageDel = I('beauty_image_del');
+            if(!empty($appInfo['beauty_image'])){
+                $libBeautyImageArr = explode(',', $appInfo['beauty_image']);
+                $beautyImageDelArr = array();
+                if(!empty($beautyImageDel)) {
+                    // 删除已经添加到数据库的图片（上传成功后替换的不给删除）
+                    if(!empty($libBeautyImageArr)) {
+                        foreach($beautyImageDel as $dbVal) {
+                            if(in_array($dbVal, $libBeautyImageArr)) {
+                                $beautyImageDelArr[] = $dbVal;
+                            }
+                        }
+                    }
+                }
+                // 将原有的图片添加进去
+                if(!empty($libBeautyImageArr)) {
+                    foreach ($libBeautyImageArr as $bVal) {
+                        if(!in_array($bVal, $beautyImageDelArr)) {
+                            $beautyImage[] = $bVal;
+                        }
+                    }
+                }
+            }
+            $data['beauty_image'] = implode(',', $beautyImage);
+            //图文攻略图片以及链接标题
             $guideData = array();
             $guideLinkArr = I('guide_link');
             $guideImageArr = I('img_url_guide');
+            $guideTitleArr = I('guide_title');
 
             foreach ($guideLinkArr as $key=>$link){
                 $guideData[$key]['app_id'] = $appId;
@@ -357,11 +384,20 @@ class AppLibController extends AdminBaseController
                         $guideData[$key]['guide_image'] = '';
                     }
                 }
+                if(!empty($guideTitleArr[$key])){
+                    $guideData[$key]['guide_title'] = $guideTitleArr[$key];
+                }else{
+                    if($appGuideList!==NULL){
+                        $guideData[$key]['guide_title'] = $appGuideList[$key+1]['guide_title'];
+                    }else{
+                        $guideData[$key]['guide_title'] = '';
+                    }
+                }
                 $guideData[$key]['sort'] = $key+1;
                 $guideData[$key]['create_time'] = time();
             }
             //是否更新游戏发布状态
-            $publish = empty(trim(I('app_list_status')))?'0':trim(I('app_list_status'));
+            $publish = empty(trim(I('app_list_status'))) ? '0' : trim(I('app_list_status'));
             $result = $service->saveAppLibDetainInfo($appId, $data, $guideData, $publish);
             if($result === false){
                 //echo $service->getFirstError();
@@ -442,8 +478,14 @@ class AppLibController extends AdminBaseController
                 $picNum = count($picUrl);
                 $this->assign('pic_url', $picUrl);
             }
+            //精美图片数量 默认0，
+            $beautyImageNum = 0;
+            if(isset($appInfo['beauty_image'])){
+                $beautyImageUrl = explode(',', $appInfo['beauty_image']);
+                $beautyImageNum = count($beautyImageUrl);
+                $this->assign('beauty_image_url', $beautyImageUrl);
+            }
             if($appGuideList === false){
-                $this->outputJSON(true,'100001','获取游戏图文攻略失败');
                 $this->error('获取游戏图文攻略失败');
                 exit;
             }
@@ -452,22 +494,22 @@ class AppLibController extends AdminBaseController
             }
             //游戏类型
             if(!empty($appInfo['app_type'])){
-                $this->assign('appTypeIdArray',$appInfo['app_type']);
-
+                $this->assign('appTypeIdArray', $appInfo['app_type']);
             }
 
             $giftService = new GiftService();
             $giftList = $giftService->getAppGiftByAppId($appId);
             //$giftList = $giftService->getSetUponNumGiftListByAppId($appId);
-            $this->assign('gift_list',$giftList);
+            $this->assign('gift_list', $giftList);
 
-            $this->assign('app_id',$appId);
-            $this->assign('app_type_list',$appTypeList);
+            $this->assign('app_id', $appId);
+            $this->assign('app_type_list', $appTypeList);
             //$this->assign('star_rank',$starRank);
-            $this->assign('pic_num',$picNum);
-            $this->assign('app_guide_list',$appGuideList);
-            $this->assign('app_info',$appInfo);
-            $this->assign('reload_url', U('Admin/AppLib/applib_edit',array('app_id'=>$appId)));
+            $this->assign('pic_num', $picNum);
+            $this->assign('beauty_image_num', $beautyImageNum);
+            $this->assign('app_guide_list', $appGuideList);
+            $this->assign('app_info', $appInfo);
+            $this->assign('reload_url', U('Admin/AppLib/applib_edit', array('app_id'=>$appId)));
             $this->display();
         }
 

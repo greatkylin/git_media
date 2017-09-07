@@ -1,0 +1,54 @@
+<div class="gs-class">
+    <div>分类筛选</div>
+    <div>共计<span><if condition="empty($appTotalNum)">0<else />{$appTotalNum}</if></span>款游戏，本周更新<span><if condition="empty($appWeekSjNum)">0<else />{$appWeekSjNum}</if></span>款</div>
+</div>
+<div class="gs-class-desp">
+    <div>游戏类型</div>
+    <div class="gcd-tag">
+        <div class="page-jump all-checked <if condition='$appSecondType eq 0'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>0, 'list_type'=>$listType, 'css_type'=>$cssType, 'p'=>$currentPage))}">全部</div>
+        <volist name="appTypeList" id="type" key="i">
+            <div id="{$type.id}" class="page-jump <if condition='$appSecondType eq $type[id]'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$type['id'], 'list_type'=>$listType, 'css_type'=>$cssType, 'p'=>$currentPage))}">{$type.type_name}</div>
+        </volist>
+    </div>
+</div>
+<div class="gs-rank-class">
+    <div class="grc-link">
+        <div class="link1 page-jump  <if condition='$listType eq 1'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>1, 'css_type'=>$cssType, 'p'=>$currentPage))}">人气最高</div>
+        <div class="link2 page-jump  <if condition='$listType eq 2'>active</if>" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>2, 'css_type'=>$cssType, 'p'=>$currentPage))}">近期更新</div>
+        <!--<div class="link3" data-num="0">新建专区</div>-->
+    </div>
+    <div class="grc-icon">
+        <div class="page-jump <if condition='$cssType eq 0'>active</if>" id="list" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>$listType, 'css_type'=>0, 'p'=>$currentPage))}"><img src="__PUBLIC__/Home/static/img/list-er.png" alt=""></div>
+        <div class="page-jump <if condition='$cssType eq 1'>active</if>" id="simple" data-href="{:U('Home/App/index', array('app_type'=>$appSecondType, 'list_type'=>$listType, 'css_type'=>1, 'p'=>$currentPage))}"><img src="__PUBLIC__/Home/static/img/pu.png" alt=""></div>
+    </div>
+</div>
+<div class="gs-rank-container">
+    <if condition="$cssType eq 0">
+        <include file='app_info_list'/>
+    </if>
+    <if condition="$cssType eq 1">
+        <include file='app_sample_list'/>
+    </if>
+</div>
+<div class="page-box">
+    {$show}
+</div>
+<script>
+    $(function () {
+        $(".page-box div, .page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            $.ajax({
+                type:'GET',
+                url:url,
+                success:function(res){
+                    $('#app-list').empty().html(res);
+                },
+                error : function() {
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

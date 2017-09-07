@@ -1,0 +1,35 @@
+<div class="gsrc-people">
+    <div class="people-list" style="display: block;">
+        <volist name="appList" id="app">
+            <a href="gameDesp.html" target="_blank" class="rank-list-tag" data-role="js" style="display: flex;">
+                <div class="icon"><img src="{$app.icon|format_url}" alt=""></div>
+                <div class="desp">
+                    <div class="name-time">
+                        <div class="name">{$app.app_name}</div>
+                        <div class="time">更新时间：<span><if condition="empty($app['publish_time'])">未知<else/>{$app.publish_time|date='Y-m-d H:i:s', ###}</if></span>
+                        </div>
+                    </div>
+                    <div class="platform">
+                        <div>平台：<span><if condition="empty($app['platform'])">未知</if><if
+                                condition="$app['platform'] eq 1">Android</if><if
+                                condition="$app['platform'] eq 2">IOS</if></span>
+                        </div>
+                        <div>类型：<span>角色 3D</span></div>
+                        <!--<div>状态：<span>公测</span></div>-->
+                    </div>
+                    <div class="jianjie">简介：
+                        <span><if condition="empty($app['introduct'])">暂无简介<else/>{$app.introduct}</if></span>
+                    </div>
+                    <div class="icon-link">
+                        <!--写点击的时候注意return false，限制默认跳转-->
+                        <div><img src="__PUBLIC__/Home/static/img/game-zq-icon.png" alt="">游戏专区</div>
+                        <div><img src="__PUBLIC__/Home/static/img/gift-icon-little.png" alt="">领取礼包</div>
+                        <div data-href="{:U('Home/App/down',array('app_id'=>$app['app_id']))}"><img src="__PUBLIC__/Home/static/img/download-icon-little.png" alt="">点击下载</div>
+                    </div>
+                </div>
+            </a>
+        </volist>
+    </div>
+</div>
+
+

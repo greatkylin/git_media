@@ -151,7 +151,7 @@ class AppService extends BaseService
         }else {
             //获取近期更新的app,并且先按自定义顺序正序排序，再按更新时间倒序排序
             $field = 'alist.id, alist.app_id, alist.is_publish, IF(alist.pre_hot_sort=0, 9999999, alist.pre_hot_sort) as pre_hot_sort, IF(alist.pre_new_sort=0, 9999999, alist.pre_new_sort) as pre_new_sort, IFNULL(alib.app_name, lib.app_name) as app_name, list.status, list.sj_time';
-            $orderBy = 'pre_new_sort asc, alib.update_time desc';
+            $orderBy = 'pre_new_sort asc, alist.publish_time desc';
         }
 
         $appList = M('app_list')->alias('alist')
@@ -451,6 +451,7 @@ class AppService extends BaseService
             //执行发布操作，如果是未发布状态，执行发布操作，否则返回已发布提示
             if($appData['is_publish'] != 1){
                 $appData['is_publish'] = 1;
+                $appData['publish_time'] = time();
                 $result = M('app_list')->save($appData);
                 if($result === false){
                     $this->setError('游戏发布失败');

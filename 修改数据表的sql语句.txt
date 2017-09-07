@@ -14,7 +14,11 @@ ALTER TABLE `zy_media_app_topic`
 ADD COLUMN `cover_image_path`  varchar(255) NULL COMMENT '封面图片路径';
 ALTER TABLE `zy_media_app_topic_content`
 DROP COLUMN `cover_image_path`;
-
+/*20170907添加精品攻略标题*/
+ALTER TABLE `zy_media_app_guide`
+ADD COLUMN `guide_title`  varchar(120) NULL COMMENT '精选攻略标题' AFTER `sort`;
+ALTER TABLE `zy_media_app_lib`
+ADD COLUMN `beauty_image`  text NULL COMMENT '精美图片url，以（,）分割' AFTER `cover_img`;
 
 
 

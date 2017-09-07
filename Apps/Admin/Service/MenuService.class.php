@@ -436,6 +436,29 @@ class MenuService extends BaseService
                     )
                 ),
             ),
+            array(
+                'name' => 'Admin/Activity/activity_list/',
+                'title' => '热门活动',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 1,
+                "menu_child" => array(
+                    array(
+                        'name' => 'Admin/Activity/activity_list/',
+                        'title' => '活动列表',
+                        'menu_type' => 4,
+                        'css' => 'Hui-iconfont-home',
+                        'sort' => 1,
+                        "isshow" => 1,
+                        "level" => 2,
+                        "has_child" => 0,
+                        "menu_child" => array(),
+                    )
+                ),
+            )
         );
     }
 

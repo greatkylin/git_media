@@ -302,6 +302,10 @@ class AdminBaseController extends Controller {
                 break;
             case 'upload_activity_image':
                 $config = C('FILE_CONFIG.ACTIVITY_DETAIL_IMAGE_CONF');//活动详情页图片
+                break;
+            case 'upload_beauty_image':
+                $config = C('FILE_CONFIG.APP_BEAUTY_IMAGE_CONF');//详情页精美图片
+                break;
             default:
                 break;
         }

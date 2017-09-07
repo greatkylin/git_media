@@ -23,6 +23,10 @@ class ArticleService extends BaseService
     const ARTICLE_TYPE_APP = 0;         //文章分类类型 0 游戏专题
     const ARTICLE_TYPE_NEWS = 1;        //文章分类类型 1 新闻中心
 
+    const ARTICLE_LEVEL_LOWER = 1;     //文章 初阶
+    const ARTICLE_LEVEL_MIDDLE = 2;    //文章 进级
+    const ARTICLE_LEVEL_HIGH = 3;      //文章 高阶
+
     /**
      * 获取指定条数的最新的发布在媒体站每日一题的文章 按时间倒序排序
      * @author xy
@@ -53,6 +57,9 @@ class ArticleService extends BaseService
      * @return bool
      */
     public function getAllAppArticleByCateId($cateId, $limit = 5){
+        if(empty($cateId)){
+            return $this->setError('必填参数缺失');
+        }
         $cateList = self::getAllColumnInfoFromRedis();
         if(empty($cateList)){
             $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
@@ -73,5 +80,90 @@ class ArticleService extends BaseService
             return $this->setError('查询失败');
         }
         return $articleList;
+    }
+
+    /**
+     * 获取指定分类以及该分类子类下的指定游戏所有展示在媒体站的文章
+     * @author xy
+     * @since 2017/08/31 16:35
+     * @param int $cateId 文章栏目分类id
+     * @param int $appId 游戏id
+     * @param int $limit 获取的条数
+     * @return bool
+     */
+    public function getAppArticleByCateIdAndAppId($cateId, $appId, $limit = 5){
+        if(empty($cateId) || empty($appId)){
+            return $this->setError('必填参数缺失');
+        }
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        //递归获取指定分类以及该分类子类id
+        $catIdArr = get_id_array_recursive($cateList,$cateId,$newArray,'parent_id','catid');
+        $cateIdStr = implode(',', $catIdArr);
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', show_position) AND status = '.self::ART_STATUS_PUBLISH.' AND is_delete = '.self::ART_DELETE_NO.' AND catid IN ('.$cateIdStr.') AND app_id = '.$appId;
+        $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))
+            ->where($where)
+            ->limit($limit)
+            ->order('create_time DESC')
+            ->select();
+        if($articleList === false){
+            return $this->setError('查询失败');
+        }
+        return $articleList;
+    }
+
+    /**
+     * 获取指定栏目以及该栏目的子栏目下指定游戏的所有阶级文章
+     * @author xy
+     * @since 2017/09/07 18:22
+     * @param int $cateId 栏目id
+     * @param int $appId 游戏id
+     * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
+     * @param int $limit
+     * @return bool
+     */
+    public function getAppArticleGuideByCateIdAndAppId($cateId, $appId, $typeId, $limit = 5){
+        if(empty($cateId) || empty($appId)){
+            return $this->setError('必填参数缺失');
+        }
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        //递归获取指定分类以及该分类子类id
+        $catIdArr = get_id_array_recursive($cateList,$cateId,$newArray,'parent_id','catid');
+        $cateIdStr = implode(',', $catIdArr);
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', show_position) AND status = '.self::ART_STATUS_PUBLISH.' AND is_delete = '.self::ART_DELETE_NO.' AND catid IN ('.$cateIdStr.') AND app_id = '.$appId.' AND FIND_IN_SET(\''.$typeId.'\', typeids)' ;
+        $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))
+            ->where($where)
+            ->limit($limit)
+            ->order('create_time DESC')
+            ->select();
+        if($articleList === false){
+            return $this->setError('查询失败');
+        }
+        return $articleList;
+    }
+
+    /**
+     * 获取文章等级数组
+     * @author xy
+     * @since 2017/09/07 18:37
+     * @return array
+     */
+    public static function getArticleLeverArr(){
+        return array(
+            self::ARTICLE_LEVEL_LOWER => '初阶',
+            self::ARTICLE_LEVEL_MIDDLE => '进阶',
+            self::ARTICLE_LEVEL_HIGH => '高阶',
+        );
     }
 }

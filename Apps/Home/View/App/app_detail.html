@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--这个是和以前落地页一个，不要随意更改start-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+<!--end-->
+<!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+<!--end-->
+<style>
+    .game-store-desp .gsd-forflex .container-r .wonderful-strategy{
+        height: auto;
+    }
+</style>
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a class="active" href="index.html">游戏库</a>
+        <a href="hotgameRank.html">热游排行榜</a>
+        <a href="giftCenter.html">礼包中心</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<a class="game-store-desp-subtitle" href="index.html" target="_blank">
+    <div id="js">角色扮演</div>
+    <div id="dz">动作冒险</div>
+    <div id="cl">策略战棋</div>
+    <div id="yz">益智休闲</div>
+    <div id="fx">飞行射击</div>
+    <div id="ty">体育竞速</div>
+    <div id="ml">模拟经营</div>
+    <div id="gd">格斗竞技</div>
+    <div id="hh">回合卡牌</div>
+</a>
+<!--主体内容更开始-->
+<main class="game-store-box game-store-desp">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">游戏库</a>>阴阳师
+    </div>
+    <div class="gsd-forflex">
+        <!--左大块-->
+        <div class="container-l">
+            <div class="video-container">
+                <ul class="change-to-page">
+                </ul>
+                <!--下面有两个样式，做判断，如果上传的图是竖屏，就只显示竖屏，另一个display:none-->
+                <if condition="!empty($appInfo['pic_url'])">
+                    <div class="right-tag-container <if condition='$appInfo[is_landscape] eq 0'>hengping<else />shuping</if>">
+                        <volist name="appInfo.pic_url" id="pic_val" key="i">
+                        <div class="img-tag <if condition='$appInfo[is_landscape] neq 0'>img-tag-shuping</if> whiteBorder" data-num="{$i-1}"><img data-src="{$pic_val|format_url}" src="{$pic_val|format_url}" alt=""></div>
+                        </volist>
+                    </div>
+                </if>
+                <div class="left-sub-container">
+                    <div class="v-title">
+                        <div class="vt-title">{$appInfo.app_name}</div>
+                        <div class="star-and-score">
+                            <div class="star-container">
+                                <div class="down">
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                </div>
+                                <div class="cover">
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                    <span><i class="iconfont icon-xingxing"></i></span>
+                                </div>
+                            </div>
+                            <div class="star-score" data-score="{$appInfo.start_score}"></div>
+                        </div>
+                    </div>
+                    <div class="v-desp">
+                        开发：{$appInfo.supplier_name}{$appInfo.introduct}
+                    </div>
+                    <if condition = "!empty($appInfo['cover_img']) AND !empty($appInfo['video_link'])">
+                        <div class="v-turnon-video"><img alt="" src="{$appInfo.cover_img|format_url}"></div>
+                        <elseif condition="!empty($appInfo['zy_cover_img']) AND !empty($appInfo['video_url'])" />
+                        <div class="v-turnon-video"><img alt="" src="{$appInfo.zy_cover_img|format_url}"></div>
+                    </if>
+                    <div class="v-type" style="margin-bottom: 5px;">
+                        <div>类型：角色扮演</div>
+                        <div>大小：{$appInfo.app_size}M</div>
+                    </div>
+                    <div class="v-type">
+                        <div>版本：{$appInfo.version_code}</div>
+                        <div>更新：{$appInfo.update_time|date='Y-m-d H:i:s', ###}</div>
+                    </div>
+                    <div class="v-game-character">
+                        <div>{$appInfo.game_quality}</div>
+                        <div class="zsx-quality-container">
+                            <div class="down">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div class="cover">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="quality-score" data-score="{$appInfo.game_quality_value}"></div>
+                    </div>
+                    <div class="v-game-character">
+                        <div>{$appInfo.game_picture}</div>
+                        <div class="zsx-quality-container zsx-huamian-container">
+                            <div class="down">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div class="cover">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="huamian-score" data-score="{$appInfo.game_picture_value}"></div>
+                    </div>
+                    <div class="v-game-character">
+                        <div>{$appInfo.game_diff}</div>
+                        <div class="zsx-quality-container zsx-nandu-container">
+                            <div class="down">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div class="cover">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="nandu-score" data-score="{$appInfo.game_diff_value}"></div>
+                    </div>
+                    <div class="v-game-character">
+                        <div>{$appInfo.game_gandu}</div>
+                        <div class="zsx-quality-container zsx-shangshou-container">
+                            <div class="down">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                            <div class="cover">
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                                <span><i class="iconfont icon-zhengfangxing"></i></span>
+                            </div>
+                        </div>
+                        <div class="shangshou-score" data-score="{$appInfo.game_gandu_value}"></div>
+                    </div>
+                    <a class="get-gift-bag" href="" style="margin-top: 10px;">领取礼包</a>
+                    <if condition="!empty($appInfo['app_file_url'])">
+                        <a class="get-gift-bag download" href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}">下载</a>
+                        <div class="dload-hover-container">
+                            <div class="for-border">
+                                <div class="erm"><img src="__PUBLIC__/Home/static/img/zwt-ewm.png" alt=""></div>
+                                <div class="alert">扫一扫，下载到手机<br><span>点击图标下载到电脑</span></div>
+                                <div class="click-dload">
+                                    <if condition="$appInfo['is_my_sdk'] eq 1">
+                                        <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" class="active" data-url="__PUBLIC__/Home/static/img/zwt-ewm.png"><img src="__PUBLIC__/Home/static/img/zy.png" alt=""></a>
+                                    </if>
+                                    <if condition="$appInfo['platform'] eq 1">
+                                    <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url="http://ossweb-img.qq.com/images/lol/web201310/skin/big266001.jpg"><img src="__PUBLIC__/Home/static/img/az.png" alt=""></a>
+                                    </if>
+                                    <if condition="$appInfo['platform'] eq 2">
+                                        <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url=""><img src="__PUBLIC__/Home/static/img/pg.png" alt=""></a>
+                                    </if>
+                                    <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url=""><img src="__PUBLIC__/Home/static/img/yx.png" alt=""></a>
+                                </div>
+                            </div>
+                        </div>
+                    </if>
+                </div>
+                <div class="video-play-mask" style="display: none;">
+                    <div class="video-self-box">
+                        <if condition = "!empty($appInfo['cover_img']) AND !empty($appInfo['video_link'])">
+                            <video autoplay controls src="{$appInfo.video_link}">您的浏览器版本太低，暂不支持视频播放！</video>
+                            <elseif condition="!empty($appInfo['zy_cover_img']) AND !empty($appInfo['video_url'])" />
+                            <video autoplay controls src="{$appInfo.video_url}">您的浏览器版本太低，暂不支持视频播放！</video>
+                        </if>
+
+                        <div class="close-video"><img src="__PUBLIC__/Home/static/img/close.png" alt=""></div>
+                    </div>
+                </div>
+            </div>
+            <div class="game-titles">
+                <span></span>游戏简介
+            </div>
+            <div class="game-desp">
+                <div class="font-desp"><if condition="empty($appInfo['about'])">暂无简介<else />{$appInfo.about|htmlspecialchars_decode}</if></div>
+                <div class="more" data-num="0">展开简介<img src="__PUBLIC__/Home/static/img/sanjiao.png" alt=""></div>
+            </div>
+            <div class="game-news">
+                <div class="active" id="news">游戏新闻</div>
+                <div id="check">游戏测评</div>
+                <div id="beauty">精美图片</div>
+            </div>
+            <div class="game-news-container">
+                <div class="game-news">
+                    <if condition="count($newsList) gt 0">
+                        <volist name="newsList" id="new">
+                            <a href="">{$new.title}</a>
+                        </volist>
+                        <else />
+                        <a href="javascript:;">暂无内容</a>
+                    </if>
+                </div>
+                <div class="game-check" style="display: none;">
+                    <if condition="count($testList) gt 0">
+                        <volist name="testList" id="test">
+                            <a href="">{$test.title}</a>
+                        </volist>
+                        <else />
+                        <a href="javascript:;">暂无内容</a>
+                    </if>
+                </div>
+                <div class="game-beauty">
+                    <if condition="!empty($appInfo['beauty_image'])">
+                        <volist name="appInfo.beauty_image" id="beauty" key="j">
+                            <a target="_blank" href="{$beauty|format_url}" data-num="{$j}"><img src="{$beauty|format_url}" alt=""></a>
+                        </volist>
+                    <div class="page"><span class="page-now">1</span>/<span class="page-all"></span></div>
+                    </if>
+                </div>
+            </div>
+            <if condition="count($recommendApp) gt 0" >
+            <div class="game-titles">
+                <span></span>游戏推荐
+            </div>
+            <div class="game-sugust">
+                <volist name="recommendApp" id="rapp">
+                    <div class="gs-tag">
+                        <div class="img-box"><img src="{$rapp.icon|format_url}" alt=""></div>
+                        <div>{$rapp.app_name}</div>
+                    </div>
+                </volist>
+            </div>
+            </if>
+        </div>
+        <!--右大块-->
+        <div class="container-r">
+            <if condition="count($guideList) gt 0">
+                <div class="wonderful-strategy">
+                    <div class="title">精选攻略</div>
+                    <div class="strategy-container">
+                        <volist name="guideList" id="guide" key="g">
+                            <a class="strategy-tag" href="{$guide.guide_link}">
+                                <div class="imgbox"><img alt="" src="{$guide.guide_image|format_url}" style="width: 110px;height: 67px;"></div>
+                                <div class="desp">{$guide.guide_title}</div>
+                            </a>
+                        </volist>
+                    </div>
+                </div>
+            </if>
+            <div class="game-titles">
+                <span></span>游戏攻略
+                <a href="strategyCollection.html" target="_blank" class="check-more">查看更多+</a>
+            </div>
+            <div class="news-container">
+                <div class="key-words">
+                    <volist name="artLevelArr" id="level" key="l">
+                        <php>
+                            if($key == 1){
+                                $type = 'xs';
+                            }else if($key == 2){
+                                $type = 'jj';
+                            }else if($key == 3){
+                                $type = 'gj';
+                            }
+                        </php>
+                        <a data-type="{$type}" class="<if condition='$l eq 1'>active</if>">{$level}</a>
+                    </volist>
+                </div>
+                <div class="key-news">
+                    <if condition="count($appGuideLowerList) gt 0">
+                        <volist name="appGuideLowerList" id="lower">
+                            <a class="news-tag" data-time="{$lower.create_time|date='Y-m-d', ###}" data-type="xs">
+                                <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
+                                <div class="desp">{$lower.title}</div>
+                            </a>
+                        </volist>
+                    </if>
+                    <if condition="count($appGuideMiddleList) gt 0">
+                        <volist name="appGuideMiddleList" id="middle">
+                            <a class="news-tag" data-time="{$middle.create_time|date='Y-m-d', ###}" data-type="jj">
+                                <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
+                                <div class="desp">{$middle.title}</div>
+                            </a>
+                        </volist>
+                    </if>
+                    <if condition="count($appGuideHighList) gt 0">
+                        <volist name="appGuideHighList" id="high">
+                            <a class="news-tag" data-time="{$high.create_time|date='Y-m-d', ###}" data-type="gj">
+                                <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
+                                <div class="desp">{$high.title}</div>
+                            </a>
+                        </volist>
+                    </if>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/page.js"></script>
+<script>
+    $(function () {
+        //如果是横屏的话
+        if ($(".hengping").length !== 0) {
+            //根据右下角有几个缩略图写UL标签的长度
+            var imgNum = $(".right-tag-container").children().length;
+
+            $(".img-tag").each(function (i, self) {
+                var tagImg = $(self).html();
+                var liHtml = '<li>' + tagImg + '</li>';
+                $(".change-to-page").append(liHtml);
+            });
+            $(".change-to-page").css("width", (810 * imgNum) + "px").find("li").css("width", "810px");
+            //点击滑动背景图，并且自身加白色边框
+            $(".img-tag").click(function () {
+                var num = $(this).attr("data-num");
+                var moveLeft = num * (-810);
+                $(".change-to-page").css("left", moveLeft + "px");
+                $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
+            })
+        }
+        //如果是竖屏的话
+        if ($(".shuping").length !== 0) {
+            var leftBackImg = $(this).find('.img-tag:first-child img').data('src');
+            $(".left-sub-container").css("background", "url("+leftBackImg+")");
+            $("ul.change-to-page").css("margin-left", "270px");
+
+            //根据缩略图确定几个可滑动的背景Li标签
+            $(".img-tag-shuping").each(function (i, self) {
+                var tagImg = $(self).html();
+                var liHtml = '<li>' + tagImg + '</li>';
+                $(".change-to-page").append(liHtml);
+            });
+            $("ul.change-to-page>li").css("border-right", "solid 10px #fff").css("width", "270px");
+            //点击滑动背景图，并且自身加白色边框
+            $(".img-tag-shuping").click(function () {
+                var num = $(this).attr("data-num");
+                var moveLeft = num * (-270);
+                $(".change-to-page").css("left", moveLeft + "px");
+                $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
+            })
+        }
+        // 游戏详情的游戏总评分，保留一位小数
+        var newtext = parseFloat($(".star-score").attr("data-score")).toFixed(1);
+        $(".star-score").text(newtext);
+        function starScore(dom, father, colorer) {
+            var num = $(dom).attr("data-score");
+            var n = Math.floor(num);
+//            var wid=$(father).find(".cover").find("span").width();
+//            console.log(wid)
+            var newWid = 12 * (num - n);
+            var $cover = $(father).find(".cover");
+            if (n == 0) {
+                $cover.find("span:first-child").css({"width": newWid + "px", "opacity": 1});
+                $cover.find("i").css("color", colorer)
+            } else {
+                $cover.find("i").css("color", colorer);
+                $cover.find("span").each(function (i, self) {
+                    if (i < n) {
+                        $(self).css("opacity", 1);
+                    } else if (i == n) {
+                        $(self).css({"width": newWid + "px", "opacity": 1});
+                    } else if (i > n) {
+                        $(self).css("opacity", 0);
+                    }
+                })
+            }
+        }
+
+        starScore(".star-score", ".star-container", "yellow");//取数、cover图的span的父亲、颜色
+        //保留一位小数
+        function tofixed(dom) {
+            var old = parseFloat($(dom).attr("data-score"));
+            var newer = old.toFixed(1);
+            $(dom).text(newer);
+        }
+
+        tofixed($(".quality-score"));
+        starScore(".quality-score", ".zsx-quality-container", "#f4dd1f");
+        tofixed($(".huamian-score"));
+        starScore(".huamian-score", ".zsx-huamian-container", "#ff553b");
+        tofixed($(".nandu-score"));
+        starScore(".nandu-score", ".zsx-nandu-container", "#5add0a");
+        tofixed($(".shangshou-score"));
+        starScore(".shangshou-score", ".zsx-shangshou-container", "#2ea4ff");
+        $(".click-dload>a").mouseenter(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            var newurl = $(this).attr("data-url");
+            $(".for-border").find(".erm").find("img").attr("src", newurl);
+        })
+        $(".get-gift-bag.download").mouseenter(function () {
+            $(".dload-hover-container").show();
+        })
+        $(".dload-hover-container").mouseover(function () {
+            $(this).show()
+        }).mouseout(function () {
+            $(this).hide();
+        });
+        //        点击播放视频
+        $(".v-turnon-video").click(function () {
+            $(".video-play-mask").fadeIn();
+            $(".close-video").click(function () {
+                $(".video-play-mask").fadeOut();
+            });
+        })
+        //        是否展开简介
+        var len = $(".font-desp").height();
+        console.log(len);
+        if (len > $(".game-desp").height()) {
+            $(".font-desp").height(87).css("overflow", "hidden");
+            //下面为什么不能写成$(".game-desp .more").show();
+            $(".game-desp .more").css("display", "block");
+            $(".game-desp").css("height", "112px");
+            $(".more").click(function () {
+                if ($(this).attr("data-num") == 0) {
+                    $(this).html("收起简介<img class='active' src='__PUBLIC__/Home/static/img/sanjiao.png' alt=''>");
+                    $(this).attr("data-num", 1);
+                    $(".game-desp").css("height", "auto").css("max-height", "2000px");
+                    $(".font-desp").css("height", "auto");
+                } else {
+                    $(this).html("展开简介<img src='__PUBLIC__/Home/static/img/sanjiao.png' alt=''>");
+                    $(this).attr("data-num", 0);
+                    $(".game-desp").css("height", "112px");
+                    $(".font-desp").css("height", "87px");
+                }
+            })
+        }
+
+        $(".news-tag").mouseenter(function () {
+            var time = $(this).attr("data-time");
+            var timeHtml = '<div class="news-time">' + time + '</div>';
+            $(this).append(timeHtml);
+        }).mouseleave(function () {
+            $(this).find(".news-time").remove();
+        })
+        //初始化新手对就的攻略进入页面就要展示
+        $(".key-news").find("a").each(function (i, self) {
+            if ($(self).attr("data-type") == "xs") {
+                $(self).show();
+            } else {
+                $(self).hide();
+            }
+        });
+        //点击新手、高阶等标签，下面对应的攻略展示，非对应隐藏
+        $(".key-words>a").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            var dataType = $(this).attr("data-type");
+            $(".key-news").find("a").each(function (i, self) {
+                if ($(self).attr("data-type") == dataType) {
+                    $(self).show();
+                } else {
+                    $(self).hide();
+                }
+            });
+        });
+
+
+        //轮播图目前最多有五张,排版样式
+        //动态添加总页数
+        var imgNum = $(".game-beauty").children("a").length;
+        $(".page-all").text(imgNum)
+        if (imgNum == 2) {
+            $(".game-beauty").find("a:eq(1)").css("right", 0);
+        } else if (imgNum == 3) {
+            $(".game-beauty").find("a:eq(2)").css("right", 0);
+            $(".game-beauty").find("a:eq(1)").css("left", "13%");
+        } else if (imgNum == 4) {
+            $(".game-beauty").find("a:eq(3)").css("right", 0);
+            $(".game-beauty").find("a:eq(2)").css("right", "9%");
+            $(".game-beauty").find("a:eq(1)").css("left", "8%");
+        } else if (imgNum == 5) {
+            $(".game-beauty").find("a:eq(4)").css({"right": 0, "top": 0});
+            $(".game-beauty").find("a:eq(3)").css({"right": "7%", "top": 0});
+            $(".game-beauty").find("a:eq(2)").css({"right": "13%", "top": 0});
+            $(".game-beauty").find("a:eq(1)").css({"left": "6%", "top": 0});
+        }
+        // 轮播图自动播放
+        var beautyPlay = {
+            currentNum: 1,
+            $target: '',
+            length: '',
+            timer: null,
+            init: function () {
+                var that = this;//不管this、that反正都指总对象
+                that.length = that.$target.length;
+                that.$target.on('mouseenter', function () {
+                    clearTimeout(that.timer);
+                    var $this = $(this);//$this指被mouseenter的那个a元素
+                    that.currentNum = $this.data('num');
+                    $this.addClass('active').siblings('a').removeClass('active');
+                    that.handle(that.currentNum);
+                });
+                that.$target.on('mouseleave', function () {
+                    that.autoPlay();
+                });
+                that.autoPlay();
+            },
+            handle: function (num) {
+                if (num === 4) {
+                    $('[data-num=4]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 5);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                } else if (num === 1) {
+                    $('[data-num=1]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 1);
+                    $('[data-num=4]').css('z-index', 2);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 4);
+                } else if (num === 2) {
+                    $('[data-num=2]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 1);
+                    $('[data-num=4]').css('z-index', 2);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=1]').css('z-index', 4);
+                } else if (num === 3) {
+                    $('[data-num=3]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 4);
+                    $('[data-num=4]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                } else if (num == 5) {
+                    $('[data-num=5]').css('z-index', 100);
+                    $('[data-num=4]').css('z-index', 4);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                }
+            },
+            autoPlay: function () {
+                var that = this;
+                this.currentNum++;
+                if (this.currentNum > this.length) {
+                    this.currentNum = 1;
+                }
+                this.$target.removeClass('active');
+                $('[data-num=' + this.currentNum + ']').addClass('active');
+                this.handle(this.currentNum);
+                this.timer = setTimeout(function () {
+                    that.autoPlay();
+                }, 2000);
+                $(".page-now").text(this.currentNum);
+            },
+            go: function ($target) {
+                console.log(this);
+                this.$target = $target;//这个this是调用go函数的那个对象，这里指beautyPlay对象
+                this.init();
+            }
+        };
+        beautyPlay.go($('.game-beauty a'));
+
+        //点击切换新闻、测评、精美图片
+        function turnLink(dom, target) {
+            $(dom).addClass("active").siblings().removeClass("active");
+            $(".game-news-container>" + target).show().siblings().hide();
+        }
+
+        $("#news").click(function () {
+            turnLink(this, ".game-news");
+        });
+        $("#check").click(function () {
+            turnLink(this, ".game-check");
+        });
+        $("#beauty").click(function () {
+            turnLink(this, ".game-beauty");
+        })
+    })
+</script>
+</body>
+</html>
