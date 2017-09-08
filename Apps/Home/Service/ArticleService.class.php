@@ -124,10 +124,11 @@ class ArticleService extends BaseService
      * @param int $cateId 栏目id
      * @param int $appId 游戏id
      * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
-     * @param int $limit
+     * @param int $currentPage 当前页
+     * @param int $pageSize 页大小
      * @return bool
      */
-    public function getAppArticleGuideByCateIdAndAppId($cateId, $appId, $typeId, $limit = 5){
+    public function getAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId, $currentPage, $pageSize = 5){
         if(empty($cateId) || empty($appId)){
             return $this->setError('必填参数缺失');
         }
@@ -142,15 +143,50 @@ class ArticleService extends BaseService
         $cateIdStr = implode(',', $catIdArr);
         //展示在媒体站未删除已发布的文章 按创建时间倒序排序
         $where = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', show_position) AND status = '.self::ART_STATUS_PUBLISH.' AND is_delete = '.self::ART_DELETE_NO.' AND catid IN ('.$cateIdStr.') AND app_id = '.$appId.' AND FIND_IN_SET(\''.$typeId.'\', typeids)' ;
-        $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))
+        $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
+            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
             ->where($where)
-            ->limit($limit)
-            ->order('create_time DESC')
+            ->limit($currentPage, $pageSize)
+            ->order('new_attr ASC, a.create_time DESC')
             ->select();
         if($articleList === false){
             return $this->setError('查询失败');
         }
         return $articleList;
+    }
+
+    /**
+     * 计算指定栏目以及该栏目的子栏目下指定游戏的所有阶级文章的数量
+     * @author xy
+     * @since 2017/09/08 14:49
+     * @param int $cateId 栏目id
+     * @param int $appId 游戏id
+     * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
+     * @return bool
+     */
+    public function countAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId){
+        if(empty($cateId) || empty($appId)){
+            return $this->setError('必填参数缺失');
+        }
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        //递归获取指定分类以及该分类子类id
+        $catIdArr = get_id_array_recursive($cateList,$cateId,$newArray,'parent_id','catid');
+        $cateIdStr = implode(',', $catIdArr);
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', show_position) AND status = '.self::ART_STATUS_PUBLISH.' AND is_delete = '.self::ART_DELETE_NO.' AND catid IN ('.$cateIdStr.') AND app_id = '.$appId.' AND FIND_IN_SET(\''.$typeId.'\', typeids)' ;
+        $totalNum = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
+            ->where($where)
+            ->order('a.attr ASC, a.create_time DESC')
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询失败');
+        }
+        return $totalNum;
     }
 
     /**

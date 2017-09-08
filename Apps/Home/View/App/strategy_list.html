@@ -1,0 +1,73 @@
+<div class="key-words">
+    <volist name="levelTypeArr" id="level" key="l">
+        <php>
+            if($key == 1){
+            $type = 'xs';
+            }else if($key == 2){
+            $type = 'jj';
+            }else if($key == 3){
+            $type = 'gj';
+            }
+        </php>
+        <a href="javascript:;" data-href="{:U('Home/App/strategy', array('app_id' => $appId, 'level_type' => $key, 'p' => $currentPage))}" data-type="{$type}" class="page-jump <if condition='$key eq $levelType'>active</if>">{$level}</a>
+    </volist>
+</div>
+<php>
+    if($levelType == 1){
+    $currentType = 'xs';
+    }else if($levelType == 2){
+    $currentType = 'jj';
+    }else if($levelType == 3){
+    $currentType = 'gj';
+    }
+</php>
+<div class="form-title">
+    <div>{$levelTypeArr[$levelType]}</div>
+    <div>发布时间</div>
+</div>
+<div class="key-strategy" style="height: 985px">
+    <if condition = "count($strategyList) gt 0">
+        <volist name="strategyList" id="strategy">
+            <a href="#" class="strategy-tag" data-type="{$currentType}">
+                <div class="img-and-font">
+                    <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                    <if condition="$strategy['attr'] gt 0">
+                        <if condition="$strategy['attr'] eq 1">
+                            <div class="zhiding">置顶</div>
+                            <elseif condition="$strategy['attr'] eq 2" />
+                            <div class="remen">热门</div>
+                            <else />
+                            <div class="jingping">精品</div>
+                        </if>
+                    </if>
+                    <span>{$strategy.title}</span>
+                </div>
+                <div class="time">{$strategy.create_time|date="Y-m-d", ###}</div>
+            </a>
+        </volist>
+    </if>
+</div>
+<div class="page-helper-box">
+    <div class="page-box" style="width:805px;">
+        {$show}
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".page-box div, .page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            $.ajax({
+                type:'GET',
+                url:url,
+                success:function(res){
+                    $('#strategy-list').empty().html(res);
+                },
+                error : function() {
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

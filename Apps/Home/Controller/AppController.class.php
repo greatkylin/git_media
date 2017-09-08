@@ -15,6 +15,8 @@ class AppController extends HomeBaseController {
      * @since 2017/09/06 14:45
      */
     public function index(){
+        //游戏二级分类
+        $appSecondType = intval(I('app_type'));
         //1.获取游戏的游戏顶级分类
         $appService = new AppService();
         $appTypeList = $appService->getSecondLevelAppType();
@@ -23,6 +25,7 @@ class AppController extends HomeBaseController {
             //ajax分页
             $this->ajaxGetAppList();
         }
+        $this->assign('appSecondType', $appSecondType);
         $this->display();
     }
 
@@ -73,7 +76,7 @@ class AppController extends HomeBaseController {
             $this->error($appService->getFirstError());
         }
         //2.根据游戏id获取游戏信息
-        $isExist = $appService->isMediaExistApp($appId);
+        $isExist = $appService->isMediaExistAndPublishApp($appId);
         if(!$isExist){
             $this->error($appService->getFirstError());
         }
@@ -92,30 +95,18 @@ class AppController extends HomeBaseController {
         //5.获取游戏测评
         $testList = $artService->getAppArticleByCateIdAndAppId(3, $appId, 10);
         //6.获取游戏攻略
-        $appGuideLowerList = $artService->getAppArticleGuideByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_LOWER, 10);
-        $appGuideMiddleList = $artService->getAppArticleGuideByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_MIDDLE, 10);
-        $appGuideHighList = $artService->getAppArticleGuideByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_HIGH, 10);
+        $appGuideLowerList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_LOWER, 0, 10);
+        $appGuideMiddleList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_MIDDLE, 0, 10);
+        $appGuideHighList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_HIGH, 0,10);
         $artLevelArr = $artService::getArticleLeverArr();
         //获取相同类型下最热的5款游戏
-        if(!empty($appInfo['app_type'])){
-            $appInfo['app_type'] = explode(',', $appInfo['app_type'] );
-            $parentTypeArr = $appService->getAppTypeIdParentIdAndName($appInfo['app_type']);
-            if($parentTypeArr){
-                $parentIdArr = array();
-                foreach ($parentTypeArr as $key=>$type){
-                    $parentIdArr[] = $type['id'];
-                }
-                if(!empty($parentIdArr)){
-                    $where['at.parent_id'] = array('IN', $parentIdArr);
-                    $orderBy = 'final_hot_sort ASC, app_down_num DESC';
-                    $recommendApp = $appService->getPublishAppByPage($where, 0, 5, $orderBy);
-                    $this->assign('recommendApp', $recommendApp);
-                }
-            }
+        $recommendApp = $appService->getAppsInSameAppTypeByAppId($appInfo['app_id'], 5);
+        if($recommendApp === false){
+            $this->error($appService->getFirstError());
         }
+        $this->assign('recommendApp', $recommendApp);
 
-
-
+        $this->assign('appTypeList', $appTypeList);
         $this->assign('newsList', $newsList);
         $this->assign('testList', $testList);
         $this->assign('appGuideLowerList', $appGuideLowerList);
@@ -125,6 +116,99 @@ class AppController extends HomeBaseController {
         $this->assign('guideList', $guideList);
         $this->assign('appInfo', $appInfo);
         $this->display();
+    }
+
+    /**
+     * 游戏攻略合集页
+     * @author xy
+     * @since 2017/09/08
+     */
+    public function strategy(){
+        $appId = intval(I('app_id'));
+        if(empty($appId)){
+            $this->error('缺少请求参数');
+        }
+        $appService = new AppService();
+        //验证游戏是否已存在于媒体站且发布了
+        $isExistAndPublish = $appService->isMediaExistAndPublishApp($appId);
+        if(!$isExistAndPublish){
+            $this->error($appService->getFirstError());
+        }
+        $appName = $appService->getAppNameByAppId($appId);
+        $appTypeList = $appService->getSecondLevelAppType();
+
+        //1.获取游戏详情页的设置的精品攻略
+        $guideList = $appService->getAppDetailGuideByAppId($appId);
+        if($guideList === false){
+            $this->error($appService->getFirstError());
+        }
+        //2.获取时间段是本周的游戏专题
+        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        if($thisWeekTopic === false){
+            $this->error($appService->getFirstError());
+        }
+        //3.获取同类型的最热的5款游戏
+        $recommendApp = $appService->getAppsInSameAppTypeByAppId($appId, 5);
+        if($recommendApp === false){
+            $this->error($appService->getFirstError());
+        }
+        //4.获取指定游戏攻略的列表
+        if(IS_AJAX){
+            $this->ajaxGetStrategyList();
+        }
+        $this->assign('appId', $appId);
+        $this->assign('appName', $appName);
+        $this->assign('appTypeList', $appTypeList);
+        $this->assign('guideList', $guideList);
+        $this->assign('thisWeekTopic', $thisWeekTopic);
+        $this->assign('recommendApp', $recommendApp);
+
+        $this->display();
+    }
+
+    /**
+     * ajax方式获取指定游戏的游戏攻略列表
+     * @author xy
+     * @since 2017/09/08 14:30
+     */
+    public function ajaxGetStrategyList(){
+        $appId = intval(I('app_id'));
+        if(empty($appId)){
+            $this->ajaxReturn('必填参数缺失');
+        }
+        //当前页
+        $currentPage = intval(I('p'));
+        if(empty($currentPage)){
+            $currentPage = 1;
+        }
+        //文章类型 1初阶，2进阶，3高阶
+        $service = new ArticleService();
+        $levelType = intval(I('level_type'));
+        if(empty($levelType)){
+            $levelType = $service::ARTICLE_LEVEL_LOWER;
+        }
+        $pageParams = array(
+            'app_id' => $appId,
+            'level_type' => $levelType,
+        );
+        $strategyTotalNum = $service->countAppArticleStrategyByCateIdAndAppId(1, $appId, $levelType);
+        // 实例化分页类 传入总记录数和每页显示的记录数
+        $page = new NewPage($strategyTotalNum,19, $pageParams);
+        // 分页显示输出
+        $show = $page->show();
+        $strategyList = $service->getAppArticleStrategyByCateIdAndAppId(1, $appId, $levelType, $page->firstRow, $page->listRows);
+        //获取游戏攻略阶级的类型
+        $levelTypeArr = $service::getArticleLeverArr();
+
+        $this->assign('appId', $appId);
+        $this->assign('currentPage', $currentPage);
+        $this->assign('levelType', $levelType);
+        $this->assign('levelTypeArr', $levelTypeArr);
+        $this->assign('strategyList', $strategyList);
+        $this->assign('show', $show);
+
+        $html = $this->fetch('strategy_list');
+        $this->ajaxReturn($html);
     }
 
     /**
@@ -154,7 +238,7 @@ class AppController extends HomeBaseController {
         }else if($listType == 2){
             $orderBy = 'final_new_sort ASC, alist.publish_time DESC';
         }else{
-            $orderBy = 'list.create DESC';
+            $orderBy = 'list.create_time DESC';
         }
         $pageParams['list_type'] = $listType;
         if(!empty($appSecondType)){
@@ -172,7 +256,6 @@ class AppController extends HomeBaseController {
         $show = $page->show();
         // 进行分页游戏数据查询 注意limit方法的参数要使用Page类的属性
         $appList = $appService->getPublishAppByPage($where, $page->firstRow, $page->listRows, $orderBy);
-
         //媒体站本周上架的游戏数量
         $appWeekSjNum = $appService->countCurrentWeekSjAppNum($where);
 

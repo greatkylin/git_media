@@ -44,9 +44,10 @@
 <script>
     $(function () {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "{:U('Home/App/index')}" ,
             dataType:'json',
+            data:{app_type: '{$appSecondType}'},
             async : false, //默认为true 异步
             success:function(res) {
                 $('#app-list').empty().html(res);

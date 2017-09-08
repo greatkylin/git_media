@@ -20,6 +20,9 @@
     .game-store-desp .gsd-forflex .container-r .wonderful-strategy{
         height: auto;
     }
+    .v-turnon-video >img{
+        height:117px;
+    }
 </style>
 <!--子导航栏开始-->
 <div class="game-store-subnav">
@@ -30,21 +33,17 @@
     </div>
 </div>
 <!--子导航栏结束-->
-<a class="game-store-desp-subtitle" href="index.html" target="_blank">
-    <div id="js">角色扮演</div>
-    <div id="dz">动作冒险</div>
-    <div id="cl">策略战棋</div>
-    <div id="yz">益智休闲</div>
-    <div id="fx">飞行射击</div>
-    <div id="ty">体育竞速</div>
-    <div id="ml">模拟经营</div>
-    <div id="gd">格斗竞技</div>
-    <div id="hh">回合卡牌</div>
-</a>
+<if condition="count($appTypeList) gt 0">
+    <div class="game-store-desp-subtitle">
+        <volist name="appTypeList" id="type" key="i">
+            <div id="{$type.id}" data-href="{:U('Home/App/index', array('app_type'=>$type['id']))}">{$type.type_name}</div>
+        </volist>
+    </div>
+</if>
 <!--主体内容更开始-->
 <main class="game-store-box game-store-desp">
     <div class="bread-tag">
-        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">游戏库</a>>阴阳师
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a>>{$appInfo.app_name}
     </div>
     <div class="gsd-forflex">
         <!--左大块-->
@@ -92,12 +91,12 @@
                         <div class="v-turnon-video"><img alt="" src="{$appInfo.zy_cover_img|format_url}"></div>
                     </if>
                     <div class="v-type" style="margin-bottom: 5px;">
-                        <div>类型：角色扮演</div>
+                        <div>类型：{$appInfo.second_app_type_name_str}</div>
                         <div>大小：{$appInfo.app_size}M</div>
                     </div>
                     <div class="v-type">
-                        <div>版本：{$appInfo.version_code}</div>
-                        <div>更新：{$appInfo.update_time|date='Y-m-d H:i:s', ###}</div>
+                        <div>版本：V{$appInfo.version_name}</div>
+                        <div>更新：{$appInfo.update_time|date='Y-m-d', ###}</div>
                     </div>
                     <div class="v-game-character">
                         <div>{$appInfo.game_quality}</div>

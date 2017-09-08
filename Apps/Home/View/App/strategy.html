@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--这个是和以前落地页一个，不要随意更改start-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+<!--end-->
+<!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+<!--end-->
+<style>
+    #strategy-collection .gsd-forflex .container-r .wonderful-strategy{
+        height: auto;
+    }
+    .game-store-desp .gsd-forflex .container-r .wonderful-strategy .strategy-container .strategy-tag .imgbox img{
+        height: 70px;
+    }
+</style>
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a herf="{:U('Home/App/index')}" class="active">游戏库</a>
+        <a>热游排行榜</a>
+        <a>礼包中心</a>
+    </div>
+</div>
+<if condition="count($appTypeList) gt 0">
+    <div class="game-store-desp-subtitle" target="_blank">
+        <volist name="appTypeList" id="type" key="i">
+            <div id="{$type.id}"  data-href="{:U('Home/App/index', array('app_type'=>$type['id']))}">{$type.type_name}</div>
+        </volist>
+    </div>
+</if>
+<!--主体内容开始-->
+<main class="game-store-box game-store-desp" id="strategy-collection">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a>>{$appName}
+    </div>
+    <div class="gsd-forflex">
+        <!--左大块-->
+        <div class="container-l">
+            <div class="title-all">{$appName}攻略合集</div>
+            <div id="strategy-list">
+
+            </div>
+        </div>
+        <!--右大块-->
+        <div class="container-r">
+            <if condition = "count($guideList) gt 0">
+                <div class="wonderful-strategy">
+                <div class="title">精选攻略</div>
+                <div class="strategy-container">
+                    <volist name="guideList" id="guide">
+                        <a class="strategy-tag" href="{$guide.guide_link}">
+                            <div class="imgbox"><img alt="" src="{$guide.guide_image|format_url}"></div>
+                            <div class="desp">{$guide.guide_title}</div>
+                        </a>
+                    </volist>
+                </div>
+            </div>
+            </if>
+            <if condition ="!empty($thisWeekTopic)">
+                <a href="#" class="week-topic">
+                    <div class="title">本周游戏专题</div>
+                    <div class="img-and-desp">
+                        <div class="img-box"><img alt="" src="{$thisWeekTopic.cover_image_path|format_url}"></div>
+                        <div class="desp">{$thisWeekTopic.topic_name}</div>
+                    </div>
+                </a>
+            </if>
+            <if condition="count($recommendApp) gt 0">
+            <div class="hotgame-title">
+                热门游戏
+            </div>
+            <div class="hot-game">
+                <volist name="recommendApp" id="app" key="i">
+                <a href="{:U('Home/App/app_detail', array('app_id' => $app['app_id']))}" class="hot-game-tag" data-score="{$app.start_score}" id="game{$i}">
+                    <div><img src="{$app.icon|format_url}" alt=""></div>
+                    <div class="name-and-num">
+                        <div>{$app.app_name}</div>
+                        <div><span>{$app.app_down_num}</span>人下载</div>
+                    </div>
+                    <div class="game-star">
+                        <div class="cover-bottom">
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                        </div>
+                        <div class="cover-top">
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                            <span><i class="iconfont icon-xingxing"></i></span>
+                        </div>
+                    </div>
+                </a>
+                </volist>
+            </div>
+            </if>
+        </div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/page.js"></script>
+<script>
+    $(function () {
+        $.ajax({
+            type: 'POST',
+            url: "{:U('Home/App/strategy')}" ,
+            dataType:'json',
+            data: {app_id: '{$appId}'},
+            async : false, //默认为true 异步
+            success:function(res) {
+                $('#strategy-list').empty().html(res);
+            },
+            error : function() {
+            }
+        });
+
+        //初始化新手对就的攻略进入页面就要展示
+//        $(".key-strategy").find("a").each(function (i,self) {
+//            if($(self).attr("data-type")=="xs"){
+//                $(self).show();
+//            }else{
+//                $(self).hide();
+//            }
+//        });
+        //初始化前三条攻略要显示小提示，置顶、热门、精品
+//        function threeTags(dataType) {
+//            var zhiding='<div class="zhiding">置顶</div>';
+//            var remen='<div class="remen">热门</div>';
+//            var jingping='<div class="jingping">精品</div>';
+//            $(zhiding).insertBefore($(".key-strategy").find("a[data-type="+dataType+"]:eq(0) .img-and-font span"));
+//            $(remen).insertBefore($(".key-strategy").find("a[data-type="+dataType+"]:eq(1) .img-and-font span"));
+//            $(jingping).insertBefore($(".key-strategy").find("a[data-type="+dataType+"]:eq(2) .img-and-font span"));
+//        }
+//        threeTags("xs");
+//        threeTags("jj");
+//        threeTags("gj");
+        //点击新手、高阶等标签，下面对应的攻略展示，非对应隐藏
+//        $(".key-words>a").click(function () {
+//            $(this).addClass("active").siblings().removeClass("active");
+//            var dataType=$(this).attr("data-type");
+//            var name=$(this).text();
+//            $(".form-title>div:first-child").text(name);
+//            $(".key-strategy").find("a").each(function (i,self) {
+//                if($(self).attr("data-type")==dataType){
+//                    $(self).show();
+//                }else{
+//                    $(self).hide();
+//                }
+//            });
+//        })
+        //游戏星星评分
+        function starScore(dom){
+            var score=$(dom).attr("data-score");
+            var n=Math.floor(score);
+            $(".icon-xingxing",dom).parent().css("width","18px");
+            var starWidth=parseInt($(".icon-xingxing").parent().css("width"));
+            var newWidth=(score-n)*starWidth+"px";
+
+            if(n>=1){
+                $(dom).find(".cover-top span").each(function (z,ele) {
+                    console.log(111)
+                    if(z<n){
+                        console.log(z)
+                        console.log(n)
+                        $(ele).find("i").addClass("light");
+                    }else if(z==n){
+                        $(ele).find("i").addClass("light");
+//                        console.log(newWidth)
+                        $(ele).css("width",newWidth);
+                    }else if(z>n){
+                        $(ele).hide();
+                    }
+                })
+            }else{
+//            当分数是不足1的时候
+                var newWidth0=score*starWidth+"px";
+                $(dom).find(".cover-top span").each(function(z,ele){
+                    if(z==0){
+                        $(ele).find("i").addClass("light");
+                        $(ele).css("width",newWidth0);
+                    }else{
+                        $(ele).hide();
+                    }
+                })
+            }
+        }
+        starScore($("#game1"));
+        starScore($("#game2"));
+        starScore($("#game3"));
+        starScore($("#game4"));
+        starScore($("#game5"));
+    });
+</script>
+</body>
+</html>

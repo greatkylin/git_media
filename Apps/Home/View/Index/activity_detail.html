@@ -141,7 +141,7 @@
                 </div>
                 <div class="hot-game">
                     <volist name="hotAppList" id="hotApp" key="k">
-                    <a href="#" class="hot-game-tag" data-score=0.5 id="game{$k}">
+                    <a href="{:U('Home/App/app_detail',array('app_id' =>$hotApp['app_id'] ))}" class="hot-game-tag" data-score=0.5 id="game{$k}">
                         <div><img src="{$hotApp.icon|format_url}" alt=""></div>
                         <div class="name-and-num">
                             <div>{$hotApp.app_name}</div>
