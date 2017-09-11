@@ -91,7 +91,7 @@
                         <div class="v-turnon-video"><img alt="" src="{$appInfo.zy_cover_img|format_url}"></div>
                     </if>
                     <div class="v-type" style="margin-bottom: 5px;">
-                        <div>类型：{$appInfo.second_app_type_name_str}</div>
+                        <div>类型：{$appInfo.app_type_name_str}</div>
                         <div>大小：{$appInfo.app_size}M</div>
                     </div>
                     <div class="v-type">
@@ -324,7 +324,7 @@
             </if>
             <div class="game-titles">
                 <span></span>游戏攻略
-                <a href="strategyCollection.html" target="_blank" class="check-more">查看更多+</a>
+                <a href="{:U('Home/App/strategy', array('app_id' => $appInfo['app_id']))}" target="_blank" class="check-more">查看更多+</a>
             </div>
             <div class="news-container">
                 <div class="key-words">

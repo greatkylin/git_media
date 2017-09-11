@@ -1,0 +1,308 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <include file='Common:meta' />
+    <link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet">
+    <title>游戏专题聚合页图片</title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/AppTopic/list_image_edit')}">
+        <input type="hidden" name="slide_id" value="{$slideInfo.slide_id}">
+        <input type="hidden" id="slide_cid" name="slide_cid" value="{$slideCateId}">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>图片名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$slideInfo.slide_name}" placeholder="请输入标题名称" id="slide_name" name="slide_name" style="width: 300px">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>图片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <!--图片上传-->
+                <div id="uploader-banner">
+                    <!--用来展示图片-->
+                    <div id="imagePicture" class="uploader-list">
+                        <if condition="!empty($slideInfo['slide_pic'])">
+                            <img style="width: 128px;height: 128px;" src="{$slideInfo['slide_pic']|format_url}" />
+                        </if>
+                    </div>
+                    <div class="icon-btn-wrap mt-10">
+                        <div id="imagePicker">选择图片</div>
+                        <a id="imagePickerUploadBtn" class="btn btn-default">开始上传</a>
+                        <span id="pic_info" style="color: #17983b;margin-top: 5px; " class="r">图片大小<2M</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">跳转链接：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$slideInfo.slide_url}" placeholder="请输入跳转链接" id="slide_url" name="slide_url" style="width: 300px">
+                <span style="color: #17983b;margin-top: 5px; display: block">格式：http://www.baidu.com</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">描述信息：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <textarea id="slide_des" name="slide_des" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*0-150">{$slideInfo.slide_des}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否发布：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box" style="width: 300px">
+                    <select id="is_publish" name="is_publish" class="select valid" aria-required="true" aria-invalid="false">
+                        <option value="1" <if condition="$slideInfo[is_publish] eq 1">selected</if>>正常</option>
+                        <option value="2" <if condition="$slideInfo[is_publish] eq 2">selected</if>>删除</option>
+                    </select>
+                    <label id="is_publish-error" class="error valid" style="display: block;"></label>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{$slideInfo.sort}" placeholder="请输入整数" id="sort" name="sort" style="width: 300px">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button  class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</article>
+<include file='Common:footer' />
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__PUBLIC__/H-ui/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script>
+
+    $(function() {
+        //表单验证
+        $("#form-add").validate({
+            rules: {
+                slide_name: {
+                    required: true
+                },
+                slide_cid:{
+                    required: true,
+                },
+                slide_url:{
+                    remote:{
+                        url: "{:U('Admin/AppTopic/ajax_check_url')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            url: function () {
+                                return $("#slide_url").val();　　　　//这个是取要验证的密码
+                            }
+                        },
+                        dataFilter: function (data) {　　　　//判断控制器返回的内容
+                            data = $.parseJSON(data);
+                            if (data.error) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }
+                },
+                sort: {
+                    number: true
+                },
+                slide_des: {
+                    minlength: 0,
+                    maxlength : 150
+                }
+            },
+            messages: {
+                slide_name: {
+                    required: "请填写标题名称！"
+                },
+                slide_cid: {
+                    required: "分类id不能为空"
+                },
+                slide_url: {
+                    remote: "跳转链接格式不正确"
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: "post",  //提交方式
+                    dataType: "json", //数据类型
+                    data: {image_path:img_url_image[0]},
+                    url: "{:U('Admin/AppTopic/list_image_edit')}", //请求url
+                    success: function (data) { //提交成功的回调函数
+                        if (data.error) {
+                            $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                            layer.alert(data.detail, {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                        } else {
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }
+                    }
+                });
+
+            }
+        });
+
+    });
+
+    //关闭窗口
+    function removeIframe(){
+        var index = parent.layer.getFrameIndex(window.name);
+        // parent.$('.btn-refresh').click();
+        parent.layer.close(index);
+    }
+</script>
+<script>
+    /*上传背景图片*/
+    var img_url_image = [];        // banner图片地址
+    var is_image_success = false;  // banner图片上传是否成功
+    var no_upload_image = true;    // 是否有上传banner图片文件
+    var is_update_image = false;   // 是否有更新上传banner图片文件
+
+    var imageThumbnailWidth = 300;       //缩略图宽度
+    var imageThumbnailHeight = 150;      //缩略图高度
+    // 初始化Web Uploader
+    uploader_1 = WebUploader.create({
+        auto: false,    //选完文件后，是否自动上传。false否
+
+        swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
+
+        server: "{:U('Admin/IndexCont/ajax_upload_image')}", // 文件接收服务端。
+        formData: {fun: 'upload_slide_image'},
+
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: {
+            multiple: false,
+            id: '#imagePicker'
+        },
+
+        // 只允许选择图片文件。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
+        },
+        fileSizeLimit: 2 * 1024 * 1024,
+    });
+    // 点击上传
+    $('#imagePickerUploadBtn').click(function () {
+        uploader_1.upload();
+    });
+    uploader_1.on('error', function (error) {
+        if (error == 'Q_EXCEED_SIZE_LIMIT') {
+            layer.alert('文件大小超过500k，不允许上传', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+        if (error == 'Q_TYPE_DENIED') {
+            layer.alert('文件类型错误', {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+        }
+    });
+    // 当文件被加入队列之前触发
+    uploader_1.on('beforeFileQueued', function (file) {
+        uploader_1.reset();
+        no_upload_image = false;
+        is_update_image = true;
+    });
+    // 当有文件添加进来的时候
+    uploader_1.on('fileQueued', function (file) {
+        file_id = file.id;
+        var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+            ),
+            $img = $li.find('img');
+        // $list为容器jQuery实例
+        $imageList = $("#imagePicture");
+        $imageList.html($li);
+        // 创建缩略图
+        // 如果为非图片文件，可以不用调用此方法。
+        // thumbnailWidth x thumbnailHeight 为 100 x 100
+        uploader_1.makeThumb(file, function (error, src) {
+            if (error) {
+                $img.replaceWith('<span>不能预览</span>');
+                return;
+            }
+            $img.attr('src', src);
+        }, imageThumbnailWidth, imageThumbnailHeight);
+    });
+    // 文件上传过程中创建进度条实时显示。
+    uploader_1.on('uploadProgress', function (file, percentage) {
+        var $li = $('#' + file.id),
+            $percent = $li.find('.progress span');
+
+        // 避免重复创建
+        if (!$percent.length) {
+            $percent = $('<p class="progress"><span></span></p>')
+                .appendTo($li)
+                .find('span');
+        }
+        $percent.css('width', percentage * 100 + '%');
+    });
+
+    uploader_1.on("uploadAccept", function (file, data) {
+        if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
+            layer.alert(data.info, {
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4 //动画类型
+            });
+            return false;
+        }
+        else {
+            is_image_success = true;
+            img_url_image[0] = data.url;
+        }
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader_1.on('uploadSuccess', function (file) {
+        is_image_success = true;
+        $('#' + file.id).addClass('upload-state-done');
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader_1.on('uploadError', function (file) {
+        is_image_success = false;
+        var $li = $('#' + file.id),
+            $error = $li.find('div.error');
+        // 避免重复创建
+        if (!$error.length) {
+            $error = $('<div class="error"></div>').appendTo($li);
+        }
+
+        $error.text('上传失败');
+    });
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader_1.on('uploadComplete', function (file) {
+        $('#' + file.id).find('.progress').remove();
+    });
+</script>
+</body>
+</html>

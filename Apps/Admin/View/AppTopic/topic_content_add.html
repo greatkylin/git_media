@@ -117,7 +117,7 @@
                             <div class="icon-btn-wrap mt-10">
                                 <div id="coverPicker">选择图片</div>
                                 <a id="coverPickerUploadBtn" class="btn btn-default">开始上传</a>
-                                <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果256*256,比例1:1亦可，图片大小<500KB)</span>
+                                <span style="color: #17983b;margin-top: 5px;" class="r">(最佳显示效果350*215,图片大小<500KB)</span>
                             </div>
                         </div>
                     </div>
@@ -129,42 +129,17 @@
                     <lable class="form-label col-md-2 col-xs-2 col-sm-2 text-r">专题抬头图：</lable>
                     <div class="formControls col-md-6 col-xs-10 col-sm-10">
                         <div id="uploader_bg_pic">
-                            <!--用来存放item-->
-                            <div class="game-jt">
-                                <div>
-                                    <div class="loadpic-box" id="bgPicList">
-                                        <!--记录当前有几张图片-->
-                                        <php>
-                                            if(empty($content_list[1]['background_image_path'])){
-                                                $pic_num = 0;
-                                            }else{
-                                                var_dump();
-                                                $pic_num = count($content_list[1]['background_image_path']);
-                                            }
-                                        </php>
-                                        <volist name="content_list[1]['background_image_path']" key="pic_i" id="pic_val">
-                                            <if condition="!empty($pic_val)">
-                                                <div class="sub-load-box">
-                                                    <div class="upload-state-done"><img alt="" style="width: 115px;height: 65px;" src="{$pic_val|format_url}">
-                                                    </div>
-                                                    <div class="load-mask">
-                                                        {$pic_val|format_url|substr=###,-17}
-                                                    </div>
-                                                    <img alt="" data-url="{$pic_val}" src="__PUBLIC__/imgclose.png" class="close-img">
-                                                </div>
-                                            </if>
-                                        </volist>
-                                    </div>
-                                    <div class="loadpic-btn">
-                                        <div id="bgPicPicker">选择图片</div>
-                                        <div class="upload-btn-div">
-                                            <a id="bgPicPickerUploadBtn" class="begin-upload-btn" href="javascript:void(0);">开始上传</a>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!--用来展示图片-->
+                            <div id="bgPicture" class="uploader-list">
+                                <if condition="!empty($content_list[1]['background_image_path'])">
+                                    <img style="width: 128px;height: 128px;" src="{$content_list[1]['background_image_path']|format_url}" />
+                                </if>
                             </div>
-                            <br/>
-                            <span style="color: #17983b;margin-top: 5px;" class="r">(最多可上传10张图，横版最佳显示效果350*262，竖版最佳显示效果130*230，同比例亦可，单张图片大小<500KB)</span>
+                            <div class="icon-btn-wrap mt-10">
+                                <div id="bgPicPicker">选择图片</div>
+                                <a id="bgPickerUploadBtn" class="btn btn-default">开始上传</a>
+                                <span style="color: #17983b;margin-top: 5px;" class="r">(图片大小<2M)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -189,7 +164,7 @@
                         <foreach name="content_list[1]['content']" item="appVal">
                             <div class="row cl app-box" id="game_id_{$i}">
                                 <div class="col-md-11 col-xs-11 col-sm-11 r">
-                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">游戏ID:</label>
+                                    <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">游戏名称:</label>
                                     <div class="formControls col-md-2 col-xs-2 col-sm-2">
                                         <el-autocomplete class="inline-input" placeholder="请输入游戏名称" v-model="app_name" :fetch-suggestions="querySearch" :trigger-on-focus="false" @select="handleSelect">
                                         </el-autocomplete>
@@ -202,7 +177,7 @@
                                     </div>
                                     <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">详情链接:</label>
                                     <div class="formControls col-md-2 col-xs-2 col-sm-2">
-                                        <input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="app_id">
+                                        <input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="detail_url" readonly="readonly">
                                     </div>
                                     <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">下载包体:</label>
                                     <div class="formControls col-md-2 col-xs-2 col-sm-2">
@@ -255,7 +230,8 @@
                 <div class="row cl">
                     <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">H5链接:</label>
                     <div class="formControls col-md-6 col-xs-10 col-sm-10">
-                        <input class="input-text" type="text" name="h5_content" value="{$content_list[3]['content']}">
+                        <input id="h5_content" class="input-text" type="text" name="h5_content" value="{$content_list[3]['content']}">
+                        <span style="color: #17983b;margin-top: 5px; display: block">格式：http://www.baidu.com</span>
                     </div>
                 </div>
             </div>
@@ -293,7 +269,7 @@
 <script>
     var currentAppNum = '{$currentAppNum}';//当前已添加的游戏数量
     //查询游戏
-    function appIdSelect(elemMainId,defAppId,defAppName,defAppIntro,defVedioUrl,defAppFile){
+    function appIdSelect(elemMainId,defAppId,defAppName,defAppIntro,defVedioUrl,defAppFile,defDetailUrl){
         new Vue({
             el: elemMainId,
             data: function() {
@@ -303,7 +279,8 @@
                     app_name:'',
                     introduce:'',
                     video_url:'',
-                    app_file_url:''
+                    app_file_url:'',
+                    detail_url: ''
                 };
             },
             mounted: function () {
@@ -327,13 +304,30 @@
                     }
                 },
                 handleSelect:function(app) {
-                    console.log(app);
-                    //设置表单的值
-                    this.app_id = app.app_id;
-                    this.app_name = app.value;
-                    this.introduce = app.introduct ;
-                    this.video_url = app.video_id;
-                    this.app_file_url = app.app_file_url;
+                    //console.log(app);
+                    var isRepeat = false;
+                    $('.app_id').each(function (index,elem) {
+                        if($(elem).val() === app.app_id){
+                            layer.alert('请不要添加重复的游戏', {
+                                skin: 'layui-layer-lan',
+                                closeBtn: 0,
+                                anim: 4 //动画类型
+                            });
+                            isRepeat = true;
+                            return false;
+                        }
+                    });
+                    if(isRepeat === false){
+                        //设置表单的值
+                        this.app_id = app.app_id;
+                        this.app_name = app.value;
+                        this.introduce = app.introduct ;
+                        this.video_url = app.video_url;
+                        this.app_file_url = app.app_file_url;
+                        this.detail_url = app.detail_url;
+                    }else{
+                        this.app_name = '';
+                    }
                 },
                 getList:function(){
                     var obj = this;
@@ -357,12 +351,17 @@
                     if (defAppFile !== null || defAppFile !== undefined || defAppFile !== '') {
                         app_file_url = defAppFile;
                     }
+                    var detail_url = '';
+                    if (defDetailUrl !== null || defDetailUrl !== undefined || defDetailUrl !== '') {
+                        detail_url = defDetailUrl;
+                    }
                     $.post("{:U('Admin/AppLib/ajax_get_app')}",{app_id : ''},function(res){
                         obj.app_id = app_id;
                         obj.app_name = app_name;
                         obj.introduce = introduce;
                         obj.video_url = video_url;
                         obj.app_file_url = app_file_url;
+                        obj.detail_url = detail_url;
                         if(res.error){
                             layer.alert(res.detail, {
                                 skin: 'layui-layer-lan',
@@ -407,7 +406,7 @@
                 '</div>'+
                 '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">详情链接:</label>'+
                 '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
-                    '<input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="app_id">'+
+                    '<input style="width: 150px;" class="input-text" type="text" name="detail_url[]" value="" v-model="detail_url" readonly="readonly">'+
                 '</div>'+
                 '<label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">下载包体:</label>'+
                 '<div class="formControls col-md-2 col-xs-2 col-sm-2">'+
@@ -438,7 +437,7 @@
     <if condition="$currentAppNum gt 0">
         <php>$j = 0;</php>
         <foreach name="content_list[1]['content']" item="appVal">
-            appIdSelect("#game_id_{$j}","{$appVal[app_id]}","{$appVal[app_name]}","{$appVal[app_introduce]}","{$appVal[video_url]}","{$appVal[download_url]}");
+            appIdSelect("#game_id_{$j}","{$appVal[app_id]}","{$appVal[app_name]}","{$appVal[app_introduce]}","{$appVal[video_url]}","{$appVal[download_url]}","{$appVal[detail_url]}");
             <php>$j++;</php>
         </foreach>
         removeApp();
@@ -620,28 +619,14 @@
     });
 
     /****************背景图片******************/
-    var pic_url = [];             // 聚合图片数组
-    var is_pic_success  = true;   // 聚合图片上传是否成功
-    var pic_url_del = [];         // 替换删除的图片
-    var is_update_pic  = false;    // 是否有更新上传聚合图片
-    var no_upload_pic  = true;    // 是否有上传聚合图片
+    var img_url_bg = [];             // 聚合图片数组
+    var is_bg_success  = true;   // 聚合图片上传是否成功
+    var is_update_bg  = false;    // 是否有更新上传聚合图片
+    var no_upload_bg  = true;    // 是否有上传聚合图片
 
-    $('.sub-load-box').click(function () {
-        if($(this).hasClass('on')) {
-            $(this).removeClass('on').siblings().removeClass('on');
-        }
-        else {
-            $(this).addClass('on').siblings().removeClass('on');
-        }
-    });
-    $('.sub-load-box').find('.close-img').click(function (e) {
-        pic_url_del.push($(this).data('url'));
-        $(this).parent().remove();
-    });
-    var img_num = "{$pic_num}"; //记录当前有几张截图
     //缩略图默认宽高
-    var pic_thumbnailWidth = 100;
-    var pic_thumbnailHeight = 100;
+    var bg_thumbnailWidth = 200;
+    var bg_thumbnailHeight = 100;
 
     // 初始化Web Uploader
     var uploaderBgPic = WebUploader.create({
@@ -663,6 +648,10 @@
         },
         fileSizeLimit: 2 * 1024 * 1024,
     });
+    // 点击上传
+    $('#bgPickerUploadBtn').click(function () {
+        uploaderBgPic.upload();
+    });
     uploaderBgPic.on('error', function (error) {
         if(error == 'Q_EXCEED_SIZE_LIMIT') {
             layer.alert('文件大小超过2M，不允许上传', {
@@ -679,64 +668,25 @@
             });
         }
     });
+    // 当文件被加入队列之前触发
+    uploaderBgPic.on( 'beforeFileQueued', function( file ) {
+        uploaderBgPic.reset();
+        no_upload_bg = false;
+        is_update_bg = true;
+    });
     // 当有文件添加进来的时候
     uploaderBgPic.on( 'fileQueued', function( file ) {
+        file_id = file.id;
         var $li = $(
-                '<div class="sub-load-box">' +
-                '<div id="' + file.id + '"><img alt="" src="__PUBLIC__/imgbcg.png"></div>' +
-                '<div class="load-mask">' + file.name + '</div>' +
-                '<img alt="" src="__PUBLIC__/imgclose.png" class="close-img">' +
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
                 '</div>'
             ),
-            $img = $li.find('div:first-child img');
-        $li.click(function () {
-            if($(this).hasClass('on')) {
-                $(this).removeClass('on').siblings().removeClass('on');
-            }
-            else {
-                $(this).addClass('on').siblings().removeClass('on');
-            }
-        });
-        //点击关闭图标删除图片时 记录的截图数量-1
-        $li.find('.close-img').click(function (e) {
-            uploaderBgPic.removeFile(file, true);
-            $li.remove();
-            img_num = parseInt(img_num)  - 1;
-        });
-
-        var $fileList_pic;
-        $fileList_pic = $("#bgPicList");
-        // 替换
-        if($('#bgPicList .sub-load-box').length > 0) {
-            $('#bgPicList .sub-load-box').each(function(z,that){
-                if($(this).hasClass('on')) {
-                    // 判断是否已上传成功
-                    //console.log(pic_url);
-                    if($(this).find('div:first').hasClass('upload-state-done')) {
-                        if($(this).find('div:first').attr('id')) {
-                            // 替换删除文件如果是添加则去除数组对应的值
-                            pic_url_del.push(pic_url[$(this).find('div:first').attr('id')]);
-                            // 调用删除图片
-                            delete  pic_url[$(this).find('div:first').attr('id')];
-                        }
-                        if($(this).find('.close-img').data('url')) {
-                            pic_url_del.push($(this).find('.close-img').data('url'));
-                        }
-                    }
-                    //console.log(pic_url_del);
-                    if($(this).find('div:first').attr('id')) {
-                        uploaderBgPic.removeFile($(this).find('div:first').attr('id'), true);
-                    }
-                    $(this).before($li);
-                    $fileList_pic = $('#bgPicList').eq($(this).index()+1);
-                    $(this).remove();
-                }
-            });
-        }
-
-        $fileList_pic.append( $li );
-        img_num = parseInt(img_num) + 1;
-
+            $img = $li.find('img');
+        // $list为容器jQuery实例
+        $fileList = $("#bgPicture");
+        $fileList.html( $li );
         // 创建缩略图
         // 如果为非图片文件，可以不用调用此方法。
         // thumbnailWidth x thumbnailHeight 为 100 x 100
@@ -746,41 +696,8 @@
                 return;
             }
             $img.attr( 'src', src );
-        }, pic_thumbnailWidth, pic_thumbnailHeight );
+        }, bg_thumbnailWidth, bg_thumbnailHeight );
     });
-    // 点击上传
-    $('#bgPicPickerUploadBtn').click(function () {
-        uploaderBgPic.upload();
-    });
-    uploaderBgPic.on('error', function (error) {
-        if(error == 'Q_EXCEED_SIZE_LIMIT') {
-            layer.alert('文件大小超过500k，不允许上传', {
-                skin: 'layui-layer-lan',
-                closeBtn: 0,
-                anim: 4 //动画类型
-            });
-        }
-        if(error == 'Q_TYPE_DENIED') {
-            layer.alert('文件类型错误', {
-                skin: 'layui-layer-lan',
-                closeBtn: 0,
-                anim: 4 //动画类型
-            });
-        }
-    });
-    // 当文件被加入队列之前触发
-    uploaderBgPic.on( 'beforeFileQueued', function( file ) {
-        if(img_num > 9){
-            layer.alert('最多只能添加10张', {
-                skin: 'layui-layer-lan',
-                closeBtn: 0,
-                anim: 4 //动画类型
-            });
-            return false;
-        }
-        no_upload_pic = true;
-    });
-
     // 文件上传过程中创建进度条实时显示。
     uploaderBgPic.on( 'uploadProgress', function( file, percentage ) {
         var $li = $( '#'+file.id ),
@@ -794,7 +711,6 @@
         $percent.css( 'width', percentage * 100 + '%' );
     });
 
-
     uploaderBgPic.on("uploadAccept", function( file, data){
         if (data.error) { // 通过return false来告诉组件，此文件上传有错。 return false;
             layer.alert(data.info, {
@@ -805,20 +721,20 @@
             return false;
         }
         else{
-            pic_url[file.file.id] = data.url;
-            //console.log(pic_url);
-            is_pic_success = true;
+            is_bg_success = true;
+            img_url_bg.push(data.url);
         }
     });
 
     // 文件上传成功，给item添加成功class, 用样式标记上传成功。
     uploaderBgPic.on( 'uploadSuccess', function( file ) {
+        is_bg_success = true;
         $( '#'+file.id ).addClass('upload-state-done');
     });
 
     // 文件上传失败，显示上传出错。
     uploaderBgPic.on( 'uploadError', function( file ) {
-        is_pic_success = false;
+        is_bg_success = false;
         var $li = $( '#'+file.id ),
             $error = $li.find('div.error');
         // 避免重复创建
@@ -827,7 +743,6 @@
         }
         $error.text('上传失败');
     });
-
     // 完成上传完了，成功或者失败，先删除进度条。
     uploaderBgPic.on( 'uploadComplete', function( file ) {
         $( '#'+file.id ).find('.progress').remove();
@@ -965,14 +880,10 @@
 <script>
     // 表单提交
     function form_submit(form,type) {
-        var pic_url_post = [];//抬头的图片路径
-        for(var key in pic_url) {
-            pic_url_post.push(pic_url[key]);
-        }
         $(form).ajaxSubmit({
             type:"post",  //提交方式
             dataType:"json", //数据类型
-            data:{img_url_cover : img_url_cover[0], pic_url : pic_url_post, pic_url_del : pic_url_del,img_url_h5:img_url_h5[0],topic_status : type},
+            data:{img_url_cover : img_url_cover[0], img_url_bg : img_url_bg[0], img_url_h5:img_url_h5[0],topic_status : type},
             url:"{:U('Admin/AppTopic/topic_content_add')}", //请求url
             success:function(data){ //提交成功的回调函数
                 if(!data.error) {
@@ -1005,6 +916,31 @@
             topic_type:{
                 required:true,
                 number:true
+            },
+            h5_content:{
+                remote:{
+                    url: "{:U('Admin/AppTopic/ajax_check_url')}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        url: function () {
+                            return $("#h5_content").val();　　　　//这个是取要验证的密码
+                        }
+                    },
+                    dataFilter: function (data) {　　　　//判断控制器返回的内容
+                        data = $.parseJSON(data);
+                        if (data.error) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            }
+        },
+        messages: {
+            h5_content: {
+                remote: "H5链接格式不正确"
             }
         },
         onkeyup:false,
@@ -1021,10 +957,10 @@
             }
             if($("#bgPicList").html() == '')
             {
-                is_pic_success = false;
-                no_upload_pic = true;
+                is_bg_success = false;
+                no_upload_bg = true;
             } else {
-                no_upload_pic = false;
+                no_upload_bg = false;
             }
 
 
@@ -1032,8 +968,8 @@
             if(!is_update_cover) {
                 is_cover_success = true;
             }
-            if(!is_update_pic) {
-                is_pic_success = true;
+            if(!is_update_bg) {
+                is_bg_success = true;
             }
             if(!is_cover_success && !no_upload_cover && is_update_cover) {
                 layer.alert('请先上传模板封面', {
@@ -1045,7 +981,7 @@
                 return false;
             }
             if(currentType == 1){
-                if(!is_pic_success && !no_upload_pic && is_update_pic) {
+                if(!is_bg_success && !no_upload_bg && is_update_bg) {
                     layer.alert('请先上传抬头图', {
                         skin: 'layui-layer-lan',
                         closeBtn: 0,

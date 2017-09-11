@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body id="game-video-page">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--这个是和以前落地页一个，不要随意更改start-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+<!--end-->
+<!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+<!--end-->
+<!--专题抬头图片开始-->
+<main class="gameVideoPage">
+    <if condition="!empty($topicContent)">
+        {$topicContent.content|htmlspecialchars_decode}
+    </if>
+    <a class="old-video" href="{:U('Home/App/app_topic_list')}" target="_blank">
+        <img src="__PUBLIC__/Home/static/img/old-vedio-page.png" alt="">
+    </a>
+    <div class="to-top">
+        <div><img src="__PUBLIC__/Home/static/img/totop.png" alt=""></div>
+        <div>回到顶部</div>
+    </div>
+</main>
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script>
+    $(function () {
+        $(".to-top").click(function () {
+            $("body").animate({scrollTop:0},300);
+        })
+
+        //星星评分函数
+        function starScore(dom,father,colorer){
+            var num=$(dom).attr("data-score");
+            var n=Math.floor(num);
+            var wid=$(father).find(".cover").find("span").width();
+            var newWid=wid*(num-n);
+            var $cover=$(father).find(".cover");
+            if(n==0){
+                $cover.find("span:first-child").css({"width":newWid+"px","opacity":1});
+                $cover.find("i").css("color",colorer)
+            }else{
+                $cover.find("i").css("color",colorer);
+                $cover.find("span").each(function(i,self){
+                    if(i<n){
+                        $(self).css("opacity",1);
+                    }else if(i==n){
+                        $(self).css({"width":newWid+"px","opacity":1});
+                    }else if(i>n){
+                        $(self).css("opacity",0);
+                    }
+                })
+            }
+        }
+        //保留一位小数
+        function tofixed(dom){
+            var old=parseFloat($(dom).attr("data-score"));
+            var newer=old.toFixed(1);
+            $(dom).text(newer);
+        }
+        tofixed($(".yys-score"));
+        starScore(".yys-score",".yys-video","#f4dd1f");
+        tofixed($(".blr-score"));
+        starScore(".blr-score",".blr-video","#f4dd1f");
+
+
+        //点击视频就可播放/暂停
+        function playPause(dom) {
+            var myVideo = $(dom).get(0);
+            if (myVideo.paused){
+                myVideo.play();
+            }else{
+                myVideo.pause();
+            }
+        }
+        $("video").click(function () {
+            playPause(this);
+        })
+
+    })
+</script>
+</body>
+</html>

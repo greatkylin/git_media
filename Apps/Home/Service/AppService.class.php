@@ -20,6 +20,10 @@ class AppService extends BaseService
     const DATA_SOURCE_MONTH = 2;        //月榜
     const DATA_SOURCE_TOTAL = 3;        //总榜
 
+    const TOPIC_TYPE_TPL = 1;           //游戏专题展示类型 1模板
+    const TOPIC_TYPE_EDITOR = 2;        //游戏专题展示类型 2编辑器
+    const TOPIC_TYPE_H5 = 3;            //游戏专题展示类型 3 H5链接
+
     /**
      * 榜单类型数组
      * @author xy
@@ -940,8 +944,8 @@ class AppService extends BaseService
                 lib.cover_img as zy_cover_img, alib.video_link, lib.video_id, list.`status`, list.`sj_time`, lib.is_my_sdk,
                 (list.app_down_num + list.cardinal) as app_down_num, s.supplier_name, s.supplier_icon, s.supplier_info,
                 alib.beauty_image, GROUP_CONCAT(DISTINCT(`at`.type_name)) as third_app_type_name_str,
-                GROUP_CONCAT(DISTINCT(`att`.id)) as second_app_type_id_str,
-                GROUP_CONCAT(DISTINCT(`att`.type_name)) as second_app_type_name_str'
+                GROUP_CONCAT(DISTINCT(`att`.id)) as app_type_id_str,
+                GROUP_CONCAT(DISTINCT(`att`.type_name)) as parent_app_type_name_str'
             )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
@@ -1213,7 +1217,126 @@ class AppService extends BaseService
             return $this->setError('未找到对应的数据');
         }
         return $appInfo;
-
     }
 
+    /**
+     * 计算游戏每周专题的总数量
+     * @author xy
+     * @since 2017/09/11 09:46
+     * @return bool
+     */
+    public function countAppTopicNum(){
+        //已发布的未删除的每周专题
+        $where = array(
+            'is_publish' => 1,
+            'is_delete' => 1,
+        );
+        $totalNum = M('app_topic')->alias('a')
+            ->field('a.topic_id')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_topic_content as c ON c.topic_id = a.topic_id AND c.topic_type = a.topic_type')
+            ->where($where)
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询每周专题数量失败');
+        }
+        return $totalNum;
+    }
+
+    /**
+     * 获取游戏每周专题的列表
+     * @author xy
+     * @since 2017/09/11 09:55
+     * @param int $currentPage  当前页
+     * @param int $pageSize 页大小
+     * @return bool
+     */
+    public function getAppTopicList($currentPage, $pageSize){
+        //已发布的未删除的每周专题
+        $where = array(
+            'a.is_publish' => 1,   //已上架
+            'a.is_delete' => 1,    //未删除
+            'a.publish_time' => array(array('gt', 0), array('lt', time())) //上架时间小于当前时间的，表示已上架
+        );
+        $topicList = M('app_topic')->alias('a')
+            ->field('a.*, c.content')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_topic_content as c ON c.topic_id = a.topic_id AND c.topic_type = a.topic_type')
+            ->where($where)
+            ->limit($currentPage, $pageSize)
+            ->order('a.publish_time DESC')
+            ->select();
+        if($topicList === false){
+            return $this->setError('查询每周专题失败');
+        }
+        //游戏专题的链接
+        if(!empty($topicList)){
+            foreach ($topicList as $key => $topic){
+                if($topic['topic_type'] == self::TOPIC_TYPE_TPL || $topic['topic_type'] == self::TOPIC_TYPE_EDITOR){
+                    $topicList[$key]['topic_url'] = U('Home/App/app_topic_detail', array('topic_type'=>$topic['topic_type'], 'topic_id' => $topic['topic_id']));
+                }else{
+                    $topicList[$key]['topic_url'] = $topic['content'];
+                }
+            }
+        }
+
+        return $topicList;
+    }
+
+    /**
+     * 获取游戏每周专题的列表页头部的图片
+     * @author xy
+     * @since 2017/09/11 17:10
+     * @return mixed
+     */
+    public function getAppTopicListImage(){
+        $where = array(
+            'c.is_delete' => 1,
+            's.is_publish' => 1,
+            'c.keyword' => 'APP_TOPIC_TOP_IMAGE', //分类关键词 ,
+        );
+        $slideInfo = M('slide_cat')->alias('c')
+            ->field('c.*, s.*, IF(s.sort = 0, 99999999, s.sort) as sort')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'slide as s ON s.slide_cid = c.cid')
+            ->where($where)
+            ->find();
+        if($slideInfo === false){
+            $this->error('获取图片信息失败');
+        }
+        return $slideInfo;
+    }
+
+    /**
+     * 通过每周专题的id获取专题的详情内容
+     * @author xy
+     * @since 2017/09/11 17:02
+     * @param $topicId
+     * @return bool
+     */
+    public function getAppTopicContentByTopicId($topicId){
+        if(empty($topicId)){
+            $this->setError('必填参数缺失');
+        }
+        //已发布的未删除的每周专题
+        $where = array(
+            'a.is_publish' => 1,   //已上架
+            'a.is_delete' => 1,    //未删除
+            'a.publish_time' => array(array('gt', 0), array('lt', time())), //上架时间小于当前时间的，表示已上架
+            'a.topic_id' => $topicId,
+        );
+        $topicContent = M('app_topic')->alias('a')
+            ->field('a.*, c.background_image_path, c.introduce, c.content')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_topic_content as c ON c.topic_id = a.topic_id AND c.topic_type = a.topic_type')
+            ->where($where)
+            ->find();
+        if($topicContent === false){
+            return $this->setError('查询专题详情失败');
+        }
+        if(empty($topicContent)){
+            return $this->setError('该专题不存在或者未发布');
+        }
+        if($topicContent['topic_type'] == self::TOPIC_TYPE_TPL){
+            $topicContent['content'] = unserialize($topicContent['content']);
+        }
+        //var_dump($topicContent['content']);die;
+        return $topicContent;
+    }
 }

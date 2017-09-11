@@ -130,6 +130,14 @@ return array(
             'max_size'   => 2 * 1024 * 1024,
             'exts'       => array('jpg', 'png', 'jpeg'),
         ),
+        'SLIDE_IMAGE_CONF' => array(
+            'file_path'  => 'Uploads',
+            'save_path'  => 'Images/slide/',            // 幻灯片图片
+            'max_width'  => 2000,
+            'max_height' => 1000,
+            'max_size'   => 2 * 1024 * 1024,
+            'exts'       => array('jpg', 'png', 'jpeg'),
+        ),
     ),
 
     'SUPER_ADMIN' => array(1, 14, 25, 42, 45),  // 超级管理员权限（跳过权限验证的管理员ID）

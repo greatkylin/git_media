@@ -306,6 +306,9 @@ class AdminBaseController extends Controller {
             case 'upload_beauty_image':
                 $config = C('FILE_CONFIG.APP_BEAUTY_IMAGE_CONF');//详情页精美图片
                 break;
+            case 'upload_slide_image':
+                $config = C('FILE_CONFIG.SLIDE_IMAGE_CONF'); //幻灯片图片
+                break;
             default:
                 break;
         }
@@ -364,5 +367,21 @@ class AdminBaseController extends Controller {
             $JsonData['data'] = $data;
         }
         $this->ajaxReturn($JsonData, 'JSON');
+    }
+
+    /**
+     * ajax方式验证跳转链接是否符合要求
+     * @author xy
+     * @since 2017/07/24 18:16
+     */
+    public function ajax_check_url(){
+        $url = trim(I('url'));
+        if(empty($url)){
+            $this->outputJSON(true,'100001','跳转链接不能为空');
+        }
+        if(!checkStringIsUrl($url)){
+            $this->outputJSON(true,'100001','跳转链接的格式不正确');
+        }
+        $this->outputJSON(false,'000000','验证通过');
     }
 }

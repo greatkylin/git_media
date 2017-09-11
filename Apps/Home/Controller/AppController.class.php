@@ -167,6 +167,68 @@ class AppController extends HomeBaseController {
     }
 
     /**
+     * 游戏专题列表页
+     * @author xy
+     * @since 2017/09/11 10:17
+     */
+    public function app_topic_list(){
+        $appService = new AppService();
+        //计算游戏每周专题的数量
+        $totalNum = $appService->countAppTopicNum();
+        if($totalNum === false){
+            $this->error($appService->getFirstError());
+        }
+        // 实例化分页类 传入总记录数和每页显示的记录数
+        $page = new NewPage($totalNum,19);
+        // 分页显示输出
+        $show = $page->show();
+        $topicList = $appService->getAppTopicList($page->firstRow, $page->listRows);
+        if($topicList === false){
+            $this->error($appService->getFirstError());
+        }
+        //获取专题列表头部的图片
+        $image = $appService->getAppTopicListImage();
+        if($image === false){
+            $this->error($appService->getFirstError());
+        }
+        $this->assign('image', $image);
+        $this->assign('show', $show);
+        $this->assign('topicList', $topicList);
+        $this->display();
+    }
+
+    /**
+     * 游戏每周专题的详情页
+     * @author xy
+     * @since 2017/09/11 17:29
+     */
+    public function app_topic_detail(){
+        $topicId = intval(I('topic_id'));
+        $topicType = intval(I('topic_type'));
+        if(empty($topicType) || empty($topicId)){
+            $this->error('缺少请求参数');
+        }
+        if(!in_array($topicType, array(1, 2))){
+            $this->error('请求参数错误');
+        }
+        $appService = new AppService();
+        //更具topic_id 获取专题详情
+        $topicContent = $appService->getAppTopicContentByTopicId($topicId);
+        if($topicContent === false){
+            $this->error($appService->getFirstError());
+        }
+        //根据topic_type来显示不同的视图模板
+        $this->assign('topicContent', $topicContent);
+
+        if($topicType == 1){
+            $tplName = 'app_topic_tpl';
+        }else{
+            $tplName = 'app_topic_editor';
+        }
+        $this->display($tplName);
+    }
+
+    /**
      * ajax方式获取指定游戏的游戏攻略列表
      * @author xy
      * @since 2017/09/08 14:30

@@ -776,7 +776,7 @@ class AppService extends BaseService
         }
         //媒体站有游戏详情的优先读取详情数据，没有的话则读取库的数据
         $result = M('app_list')->alias('alist')
-            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, IFNULL(alib.introduct, lib.introduct) as introduct, IFNULL(alib.app_name, lib.app_name) as app_name, vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id, lib.app_file_url')
+            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, IFNULL(alib.introduct, lib.introduct) as introduct, IFNULL(alib.app_name, lib.app_name) as app_name, vlib.video_id, vlib.video_name, vlib.video_url, IFNULL(vlib.video_img, alib.cover_img) as video_img, vlib.file_id, lib.app_file_url')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id=alist.app_id')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id=alist.app_id')//关联游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')//关联媒体库游戏库表
@@ -796,7 +796,7 @@ class AppService extends BaseService
                     $iqiyiVideoInfo = $this->getIqiyiVideoInfo($app['file_id']);
                     $result[$key]['video_info'] = [
                         'video_name' => $app['video_name'],
-                        'video_url' => $app['video_url'],
+                        'video_url' => $result[$key]['video_url'],
                         'video_img' => format_url($app['video_img']),
                         'video_size' => $iqiyiVideoInfo['fileSize'],
                         'video_duration' => $iqiyiVideoInfo['duration'],
@@ -804,8 +804,9 @@ class AppService extends BaseService
                     ];
                 }
             }
+            //前台游戏详情链接
+            $result[$key]['detail_url'] = C('BASE_URL').U('Home/App/app_detail/', array('app_id' => $app['app_id']));
         }
-
         return $result;
     }
 

@@ -48,7 +48,7 @@ class AppTopicService extends BaseService
      * @return bool|mixed
      */
     public function getTopicList($where = NULL,$currentPage,$pageSize){
-        $list = $this->appTopicModel
+        $list = $this->appTopicModel->alias('a')
             ->where($where)
             ->limit($currentPage,$pageSize)
             ->order('publish_time DESC')
@@ -134,7 +134,6 @@ class AppTopicService extends BaseService
                 //使用模板类型的专题时，将保存的游戏信息反序列化
                 if($value['topic_type'] == 1){
                     $returnList[$value['topic_type']]['content'] = unserialize($value['content']);
-                    $returnList[$value['topic_type']]['background_image_path'] = explode(',',$value['background_image_path']);
                 }
             }
             return $returnList;

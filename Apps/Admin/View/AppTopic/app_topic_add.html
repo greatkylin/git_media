@@ -15,13 +15,13 @@
         <div class="row cl">
             <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">开始时间：</label>
             <div class="formControls col-md-6 col-xs-10 col-sm-10">
-                <input id="time_range_start" onfocus="selecttime(this)" type="text" class="input-text app_list_sort" value="{$topic.time_range_start|date='Y-m-d',###}" placeholder="开始时间" name="time_range_start">
+                <input id="time_range_start" onfocus="selectTime(1)" type="text" class="input-text app_list_sort" value="{$topic.time_range_start|date='Y-m-d',###}" placeholder="开始时间" name="time_range_start">
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-md-2 col-xs-2 col-sm-2 text-r">结束时间：</label>
             <div class="formControls col-md-6 col-xs-10 col-sm-10">
-                <input id="time_range_end" onfocus="selecttime(this)" type="text" class="input-text app_list_sort" value="{$topic.time_range_end|date='Y-m-d',###}" placeholder="结束时间" name="time_range_end">
+                <input id="time_range_end" onfocus="selectTime(2)" type="text" class="input-text app_list_sort" value="{$topic.time_range_end|date='Y-m-d',###}" placeholder="结束时间" name="time_range_end">
             </div>
         </div>
         <div class="row cl">
@@ -87,20 +87,19 @@
         parent.layer.close(index);
     });
 
-    /* 自定义时间区间时间 时间控件*/
-    function selecttime(object) {
-        WdatePicker({dateFmt: 'yyyy-MM-dd'});
-/*        var startTime = $('#time_range_start').val();
-        var startTimestamp = Date.parse(new Date(startTime));
-        var endTime = $('#time_range_end').val();
-        var endTimestamp = Date.parse(new Date(endTime));
-        if(startTimestamp>endTimestamp){
-            layer.alert('开始时间要小于结束时间', {
-                skin: 'layui-layer-lan',
-                closeBtn: 0,
-                anim: 4 //动画类型
-            });
-        }*/
+    /* 自定义更新时间 时间控件*/
+    function selectTime(flag) {
+        if(flag==1){
+            var endTime = $("#time_range_start").val();
+            if(endTime != ""){
+                WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:endTime})}else{
+                WdatePicker({dateFmt:'yyyy-MM-dd'})}
+        }else{
+            var startTime = $("#time_range_end").val();
+            if(startTime != ""){
+                WdatePicker({dateFmt:'yyyy-MM-dd',minDate:startTime})}else{
+                WdatePicker({dateFmt:'yyyy-MM-dd'})}
+        }
     }
 
 </script>

@@ -141,12 +141,17 @@ class AppTopicController extends AdminBaseController
                 $this->outputJSON(true,'100001','专题id参数错误');
                 return false;
             }
+
             //当前使用的是哪种类型的专题，1,2,3分别表示模板、编辑器、H5。为空则默认是模板
             $type = intval(I('topic_type'));
             if(empty($type) || !in_array($type,array(1,2,3))){
                 $this->outputJSON(true,'100001','专题类型参数错误');
             }
-
+            //根据专题id获取专题当前的专题类型
+            $topicData = $service->loadAppTopicByPk($topicId);
+            if($topicData === false){
+                $this->outputJSON(true,'100001','查找数据失败');
+            }
             //1.判断是否要更新至最新时间，并更新topic_id为$topicId当前的专题类型
             $topicData['topic_id'] = $topicId;
             $topicData['topic_type'] = $type;
@@ -167,6 +172,7 @@ class AppTopicController extends AdminBaseController
 
             //当前的封面图片
             $currentCover = !empty($topicData['cover_image_path']) ? $topicData['cover_image_path'] : '';
+
             //封面图片
             $topicData['cover_image_path'] = empty(trim(I('img_url_cover'))) ? $currentCover : trim(I('img_url_cover'));
 
@@ -201,32 +207,12 @@ class AppTopicController extends AdminBaseController
                 $content['content'] = !empty($appInfoStr) ? $appInfoStr : '';
 
                 //抬头图片
-                $picUrl = I('pic_url');
-                $delPicUrl = I('pic_url_del');
-                if(!empty($currentInfo['background_image_path'])){
-                    $libPicUrl = explode(',', $currentInfo['background_image_path']);
-                    $delPicUrlArr = array();
-                    if(!empty($delPicUrl)) {
-                        // 删除已经添加都数据库的图片（上传成功后替换的不给删除）
-                        if(!empty($libPicUrl)) {
-                            foreach($delPicUrl as $dVal) {
-                                if(in_array($dVal, $libPicUrl)) {
-                                    $delPicUrlArr[] = $dVal;
-                                }
-                            }
-                        }
-
-                    }
-                    // 将原有的图片添加进去
-                    if(!empty($libPicUrl)) {
-                        foreach ($libPicUrl as $lVal) {
-                            if(!in_array($lVal, $delPicUrlArr)) {
-                                $picUrl[] = $lVal;
-                            }
-                        }
-                    }
+                $imgUrlBg = I('img_url_bg');
+                if(!empty($imgUrlBg)){
+                    $content['background_image_path'] = $imgUrlBg;
+                    unlink($currentInfo['background_image_path']);
                 }
-                $content['background_image_path'] = implode(',', $picUrl);
+
             }else if($type == 2){
                 //编辑器编辑的内容
                 $content['content'] = empty(trim(I('uedit_content'))) ? '' : trim(I('uedit_content'));
@@ -345,4 +331,95 @@ class AppTopicController extends AdminBaseController
         }
     }
 
+    /**
+     * 每周专题列表页头部图片
+     * @author xy
+     * @since 2017/09/11 14:19
+     */
+    public function list_image(){
+        $where = array(
+            'c.is_delete' => 1,
+            's.is_publish' => 1,
+            'c.keyword' => 'APP_TOPIC_TOP_IMAGE', //分类关键词 ,
+        );
+        $slideInfo = M('slide_cat')->alias('c')
+            ->field('c.*, s.*, IF(s.sort = 0, 99999999, s.sort) as sort')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'slide as s ON s.slide_cid = c.cid')
+            ->where($where)
+            ->order('sort ASC')
+            ->find();
+        if($slideInfo === false){
+            $this->error('获取图片信息失败');
+        }
+        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'APP_TOPIC_TOP_IMAGE'))->getField('cid');
+        if(empty($slideCate)){
+            $this->error('获取图片分类信息失败');
+        }
+        $this->assign('slideCateId', $slideCate['cid']);
+        $this->assign('slideInfo', $slideInfo);
+        $this->display();
+    }
+
+    /**
+     * 每周游戏专题聚合页头部图片
+     * @author xy
+     * @since 2017/09/11 15:37
+     */
+    public function list_image_edit(){
+        $slideCid = intval(I('slide_cid'));
+        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'APP_TOPIC_TOP_IMAGE'))->getField('cid');
+        if(empty($slideCate)){
+            $this->outputJSON(true, '100001', '获取图片分类信息失败');
+        }
+        if($slideCid != $slideCate['cid']){
+            $this->outputJSON(true, '100001', '图片分类信息错误');
+        }
+
+        $slideInfo = M('slide')->alias('s')
+            ->field('s.*')
+            ->where(array('slide_cid' => $slideCid))
+            ->order('sort ASC')
+            ->find();
+
+        $data = array(
+            'slide_cid' => $slideCid,
+        );
+        //图片名称
+        $slideName = trim(I('slide_name'));
+        if(empty($slideName)){
+            $this->outputJSON(true, '100001', '请填写图片名称');
+        }
+        $data['slide_name'] = $slideName;
+        //上传的图片的路径
+        $imagePath = trim(I('image_path'));
+        if(empty($slideInfo)){
+            if(empty($imagePath)){
+                $this->outputJSON(true, '100001', '请上传图片');
+            }
+        }
+        if (!empty($imagePath)) {
+            $data['slide_pic'] = $imagePath;
+        }
+        //跳转地址
+        $slideUrl = trim(I('slide_url'));
+        if (!empty($slideUrl)) {
+            $data['slide_url'] = $slideUrl;
+        }
+        //图片说明
+        $slideDes = trim(I('slide_des'));
+        if (!empty($slideDes)) {
+            $data['slide_des'] = $slideDes;
+        }
+        $data['is_publish'] = intval(I('is_publish'));
+        $data['sort'] = intval(I('sort'));
+        if(!empty($slideInfo)){
+            $result = M('slide')->where(array('slide_cid' => $slideCid))->save($data);
+        }else{
+            $result = M('slide')->add($data);
+        }
+        if($result === false){
+            $this->outputJSON(true, '100001', '上传失败');
+        }
+        $this->outputJSON(false, '000000', '上传成功');
+    }
 }

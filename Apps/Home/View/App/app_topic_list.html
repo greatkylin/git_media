@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+</head>
+<body id="game-subject">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--这个是和以前落地页一个，不要随意更改start-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+<!--end-->
+<!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+<!--end-->
+<!--专题列表页banner开始-->
+<if condition="!empty($image['slide_pic'])">
+<div class="banner-container">
+    <if condition="!empty($image['slide_url'])">
+        <a href="{$image.slide_url}" target="_blank"><img src="{$image.slide_pic|format_url}" alt=""></a>
+        <else />
+        <img src="{$image.slide_pic|format_url}" alt="">
+    </if>
+</div>
+</if>
+<!--专题列表页banner结束-->
+<!--主体内容开始-->
+<main class="game-store-box game-store-desp game-subject">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a>>每周专题速看
+    </div>
+    <div class="subject-container">
+        <if condition="count($topicList) gt 0">
+            <volist name="topicList" id="topic">
+                <a href="{$topic.topic_url}" target="_blank" class="subject-box">
+                    <div class="img-box"><img src="{$topic.cover_image_path|format_url}" alt=""></div>
+                    <div class="font-box">
+                        <div class="desp">{$topic.topic_name}</div>
+                        <div class="time">{$topic.time_range_start|date="Y-m-d", ###}-{$topic.time_range_end|date="Y-m-d", ###}</div>
+                    </div>
+                </a>
+            </volist>
+        </if>
+    </div>
+    <div class="page-box">
+        {$show}
+    </div>
+    <div class="to-top">
+        <div><img src="__PUBLIC__/Home/static/img/totop.png" alt=""></div>
+        <div>回到顶部</div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/page.js"></script>
+<script>
+    $(function () {
+        //返回顶部
+        $(".to-top").click(function () {
+            $("body").animate({scrollTop:0},300);
+        })
+    })
+</script>
+</body>
+</html>

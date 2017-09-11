@@ -238,14 +238,40 @@ class MenuService extends BaseService
                     ),
                     array(
                         'name' => 'AppTopic/app_topic_list',
-                        'title' => '游戏专题列表',
+                        'title' => '游戏专题管理',
                         'menu_type' => 4,
                         'css' => 'Hui-iconfont-home',
                         'sort' => 1,
                         "isshow" => 1,
                         "level" => 2,
-                        "has_child" => 0,
+                        "has_child" => 1,
                         "menu_child" => array(
+                            array(
+                                'name' => 'AppTopic/app_topic_list',
+                                'title' => '游戏专题列表',
+                                'menu_type' => 4,
+                                'css' => 'Hui-iconfont-home',
+                                'sort' => 1,
+                                "isshow" => 1,
+                                "level" => 2,
+                                "has_child" => 0,
+                                "menu_child" => array(
+
+                                ),
+                            ),
+                            array(
+                                'name' => 'AppTopic/list_image',
+                                'title' => '专题列表图片',
+                                'menu_type' => 4,
+                                'css' => 'Hui-iconfont-home',
+                                'sort' => 1,
+                                "isshow" => 1,
+                                "level" => 2,
+                                "has_child" => 0,
+                                "menu_child" => array(
+
+                                ),
+                            ),
                         ),
                     ),
                 ),
