@@ -134,6 +134,9 @@ class AppTopicService extends BaseService
                 //使用模板类型的专题时，将保存的游戏信息反序列化
                 if($value['topic_type'] == 1){
                     $returnList[$value['topic_type']]['content'] = unserialize($value['content']);
+                    foreach ($returnList[$value['topic_type']]['content'] as $k=>$val){
+                        $returnList[$value['topic_type']]['content'][$k]['video_url'] = htmlspecialchars_decode($val['video_url']);
+                    }
                 }
             }
             return $returnList;

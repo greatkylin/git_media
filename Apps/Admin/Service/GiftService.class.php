@@ -30,12 +30,17 @@ class GiftService extends BaseService
         //礼包码中未发放，去向礼包库的礼包码的数量
         $subQueryOne = ' SELECT `gift_id`, count(*) AS code_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE status = 0 AND use_type = 0 GROUP BY gift_id ';
 
+        //媒体站礼包库中礼包id对应的游戏以及礼包全名，避免通过gift_id关联查询时对应的礼包已删除无法正确关联正确的礼包
+        $subQueryTwo = ' SELECT a.*, CONCAT(glib.app_id,\'-\',glib.gift_name,\'-\',glib.original_name) AS id_gift_name FROM ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS a LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS glib ON glib.gift_id = a.gift_id ';
+
         $giftList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('gl')
             ->field('gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, CONCAT(al.app_name,\'-\',gl.gift_name,\'-\',gl.original_name) AS full_gift_name, count(gl.gift_id) as batch_num')
             //INNER JOIN避免取到没有礼包码的礼包
             ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
             ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_list AS list ON list.`app_id` = gl.`app_id`')
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS al ON al.`app_id` = gl.`app_id`')
+            //关联获取设置上限数量的礼包
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) = sgl.`id_gift_name`')
             ->where($where)
             ->group('full_gift_name')
             ->select();
@@ -90,7 +95,7 @@ class GiftService extends BaseService
             //关联获取下载量与上架时间
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS alist ON alist.`app_id` = gl.`app_id`')
             //关联获取设置上限数量的礼包
-            ->join('LEFT JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) = sgl.`id_gift_name`')
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) = sgl.`id_gift_name`')
             ->where($where)
             ->group('full_gift_name')
             ->order($orderBy)
@@ -777,7 +782,7 @@ class GiftService extends BaseService
         }
 
         //开启事务
-        M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->startTrans();
+        M()->startTrans();
         //申请礼包码操作
         foreach ($giftCodeData as $value) {
             $code_where = array(
@@ -794,7 +799,7 @@ class GiftService extends BaseService
                 # 更新礼包码表
                 $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->where($code_where)->limit($value['count'])->save($code_data);
                 if (!$result) {
-                    M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->rollback();
+                    M()->rollback();
                     return $this->setError('申请礼包失败');
                     break;
                 }
@@ -802,14 +807,16 @@ class GiftService extends BaseService
             } else {    # 够
                 $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->where($code_where)->limit($applyNum)->save($code_data);
                 if (!$result) {
-                    M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->rollback();
+                    M()->rollback();
                     return $this->setError('申请礼包失败');
                     break;
                 }
                 break;
             }
         }
-        M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->commit();
+        //申请礼包时，媒体站礼包的发布时间为当前时间
+        M('sync_gift_lib')->where(array('gift_id' => $giftId))->save(array('publish_time' => time()));
+        M()->commit();
         $userInfo = self::getUserInfo();
         $adminId = $userInfo['id'];
         //指娱记录礼包去向

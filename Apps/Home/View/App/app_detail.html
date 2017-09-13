@@ -383,154 +383,150 @@
 <script>
     $(function () {
         //如果是横屏的话
-        if ($(".hengping").length !== 0) {
+        if($(".hengping").css("display")!=="none"){
             //根据右下角有几个缩略图写UL标签的长度
-            var imgNum = $(".right-tag-container").children().length;
-
-            $(".img-tag").each(function (i, self) {
-                var tagImg = $(self).html();
-                var liHtml = '<li>' + tagImg + '</li>';
+            var imgNum=$(".right-tag-container").children().length;
+            $(".img-tag").each(function (i,self) {
+                var tagImg=$(self).html();
+                var liHtml='<li>'+tagImg+'</li>';
                 $(".change-to-page").append(liHtml);
             });
-            $(".change-to-page").css("width", (810 * imgNum) + "px").find("li").css("width", "810px");
+            $(".change-to-page").css("width",(810*imgNum)+"px").find("li").css("width","810px");
             //点击滑动背景图，并且自身加白色边框
             $(".img-tag").click(function () {
-                var num = $(this).attr("data-num");
-                var moveLeft = num * (-810);
-                $(".change-to-page").css("left", moveLeft + "px");
+                var num=$(this).attr("data-num");
+                var moveLeft=num*(-810);
+                $(".change-to-page").css("left",moveLeft+"px");
                 $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
             })
         }
         //如果是竖屏的话
-        if ($(".shuping").length !== 0) {
-            var leftBackImg = $(this).find('.img-tag:first-child img').data('src');
-            $(".left-sub-container").css("background", "url("+leftBackImg+")");
-            $("ul.change-to-page").css("margin-left", "270px");
+        if($(".shuping").css("display")!=="none"){
+            $(".left-sub-container").css("background","url(__PUBLIC__/Home/static/img/left-back.png)");
+            $("ul.change-to-page").css("margin-left","270px");
 
             //根据缩略图确定几个可滑动的背景Li标签
-            $(".img-tag-shuping").each(function (i, self) {
-                var tagImg = $(self).html();
-                var liHtml = '<li>' + tagImg + '</li>';
+            $(".img-tag-shuping").each(function (i,self) {
+                var tagImg=$(self).html();
+                var liHtml='<li>'+tagImg+'</li>';
                 $(".change-to-page").append(liHtml);
             });
-            $("ul.change-to-page>li").css("border-right", "solid 10px #fff").css("width", "270px");
+            $("ul.change-to-page>li").css("border-right","solid 10px #fff").css("width","270px");
             //点击滑动背景图，并且自身加白色边框
             $(".img-tag-shuping").click(function () {
-                var num = $(this).attr("data-num");
-                var moveLeft = num * (-270);
-                $(".change-to-page").css("left", moveLeft + "px");
+                var num=$(this).attr("data-num");
+                var moveLeft=num*(-270);
+                $(".change-to-page").css("left",moveLeft+"px");
                 $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
             })
         }
-        // 游戏详情的游戏总评分，保留一位小数
-        var newtext = parseFloat($(".star-score").attr("data-score")).toFixed(1);
+// 游戏详情的游戏总评分，保留一位小数
+        var newtext=parseFloat($(".star-score").attr("data-score")).toFixed(1);
         $(".star-score").text(newtext);
-        function starScore(dom, father, colorer) {
-            var num = $(dom).attr("data-score");
-            var n = Math.floor(num);
+        function starScore(dom,father,colorer){
+            var num=$(dom).attr("data-score");
+            var n=Math.floor(num);
 //            var wid=$(father).find(".cover").find("span").width();
 //            console.log(wid)
-            var newWid = 12 * (num - n);
-            var $cover = $(father).find(".cover");
-            if (n == 0) {
-                $cover.find("span:first-child").css({"width": newWid + "px", "opacity": 1});
-                $cover.find("i").css("color", colorer)
-            } else {
-                $cover.find("i").css("color", colorer);
-                $cover.find("span").each(function (i, self) {
-                    if (i < n) {
-                        $(self).css("opacity", 1);
-                    } else if (i == n) {
-                        $(self).css({"width": newWid + "px", "opacity": 1});
-                    } else if (i > n) {
-                        $(self).css("opacity", 0);
+            var newWid=12*(num-n);
+            var $cover=$(father).find(".cover");
+            if(n==0){
+                $cover.find("span:first-child").css({"width":newWid+"px","opacity":1});
+                $cover.find("i").css("color",colorer)
+            }else{
+                $cover.find("i").css("color",colorer);
+                $cover.find("span").each(function(i,self){
+                    if(i<n){
+                        $(self).css("opacity",1);
+                    }else if(i==n){
+                        $(self).css({"width":newWid+"px","opacity":1});
+                    }else if(i>n){
+                        $(self).css("opacity",0);
                     }
                 })
             }
         }
-
-        starScore(".star-score", ".star-container", "yellow");//取数、cover图的span的父亲、颜色
-        //保留一位小数
-        function tofixed(dom) {
-            var old = parseFloat($(dom).attr("data-score"));
-            var newer = old.toFixed(1);
+        starScore(".star-score",".star-container","yellow");//取数、cover图的span的父亲、颜色
+//保留一位小数
+        function tofixed(dom){
+            var old=parseFloat($(dom).attr("data-score"));
+            var newer=old.toFixed(1);
             $(dom).text(newer);
         }
-
         tofixed($(".quality-score"));
-        starScore(".quality-score", ".zsx-quality-container", "#f4dd1f");
+        starScore(".quality-score",".zsx-quality-container","#f4dd1f");
         tofixed($(".huamian-score"));
-        starScore(".huamian-score", ".zsx-huamian-container", "#ff553b");
+        starScore(".huamian-score",".zsx-huamian-container","#ff553b");
         tofixed($(".nandu-score"));
-        starScore(".nandu-score", ".zsx-nandu-container", "#5add0a");
+        starScore(".nandu-score",".zsx-nandu-container","#5add0a");
         tofixed($(".shangshou-score"));
-        starScore(".shangshou-score", ".zsx-shangshou-container", "#2ea4ff");
+        starScore(".shangshou-score",".zsx-shangshou-container","#2ea4ff");
         $(".click-dload>a").mouseenter(function () {
             $(this).addClass("active").siblings().removeClass("active");
-            var newurl = $(this).attr("data-url");
-            $(".for-border").find(".erm").find("img").attr("src", newurl);
+            var newurl=$(this).attr("data-url");
+            $(".for-border").find(".erm").find("img").attr("src",newurl);
         })
         $(".get-gift-bag.download").mouseenter(function () {
             $(".dload-hover-container").show();
         })
-        $(".dload-hover-container").mouseover(function () {
+        $(".dload-hover-container").mouseover(function(){
             $(this).show()
         }).mouseout(function () {
             $(this).hide();
         });
-        //        点击播放视频
-        $(".v-turnon-video").click(function () {
+//        点击播放视频
+        $(".v-turnon-video").click(function(){
             $(".video-play-mask").fadeIn();
-            $(".close-video").click(function () {
+            $(".close-video").click(function(){
                 $(".video-play-mask").fadeOut();
             });
         })
-        //        是否展开简介
-        var len = $(".font-desp").height();
+//        是否展开简介
+        var len=$(".font-desp").height();
         console.log(len);
-        if (len > $(".game-desp").height()) {
-            $(".font-desp").height(87).css("overflow", "hidden");
+        if(len>$(".game-desp").height()){
+            $(".font-desp").height(87).css("overflow","hidden");
             //下面为什么不能写成$(".game-desp .more").show();
-            $(".game-desp .more").css("display", "block");
-            $(".game-desp").css("height", "112px");
+            $(".game-desp .more").css("display","block");
+            $(".game-desp").css("height","112px");
             $(".more").click(function () {
-                if ($(this).attr("data-num") == 0) {
+                if($(this).attr("data-num")==0){
                     $(this).html("收起简介<img class='active' src='__PUBLIC__/Home/static/img/sanjiao.png' alt=''>");
-                    $(this).attr("data-num", 1);
-                    $(".game-desp").css("height", "auto").css("max-height", "2000px");
-                    $(".font-desp").css("height", "auto");
-                } else {
-                    $(this).html("展开简介<img src='__PUBLIC__/Home/static/img/sanjiao.png' alt=''>");
-                    $(this).attr("data-num", 0);
-                    $(".game-desp").css("height", "112px");
-                    $(".font-desp").css("height", "87px");
+                    $(this).attr("data-num",1);
+                    $(".game-desp").css("height","auto").css("max-height","2000px");
+                    $(".font-desp").css("height","auto");
+                }else{
+                    $(this).html("展开简介<img src='../../static/img/sanjiao.png' alt=''>");
+                    $(this).attr("data-num",0);
+                    $(".game-desp").css("height","112px");
+                    $(".font-desp").css("height","87px");
                 }
             })
         }
 
         $(".news-tag").mouseenter(function () {
-            var time = $(this).attr("data-time");
-            var timeHtml = '<div class="news-time">' + time + '</div>';
+            var time=$(this).attr("data-time");
+            var timeHtml='<div class="news-time">'+time+'</div>';
             $(this).append(timeHtml);
         }).mouseleave(function () {
             $(this).find(".news-time").remove();
         })
         //初始化新手对就的攻略进入页面就要展示
-        $(".key-news").find("a").each(function (i, self) {
-            if ($(self).attr("data-type") == "xs") {
+        $(".key-news").find("a").each(function (i,self) {
+            if($(self).attr("data-type")=="xs"){
                 $(self).show();
-            } else {
+            }else{
                 $(self).hide();
             }
         });
         //点击新手、高阶等标签，下面对应的攻略展示，非对应隐藏
         $(".key-words>a").click(function () {
             $(this).addClass("active").siblings().removeClass("active");
-            var dataType = $(this).attr("data-type");
-            $(".key-news").find("a").each(function (i, self) {
-                if ($(self).attr("data-type") == dataType) {
+            var dataType=$(this).attr("data-type");
+            $(".key-news").find("a").each(function (i,self) {
+                if($(self).attr("data-type")==dataType){
                     $(self).show();
-                } else {
+                }else{
                     $(self).hide();
                 }
             });
@@ -539,22 +535,22 @@
 
         //轮播图目前最多有五张,排版样式
         //动态添加总页数
-        var imgNum = $(".game-beauty").children("a").length;
+        var imgNum=$(".game-beauty").children("a").length;
         $(".page-all").text(imgNum)
-        if (imgNum == 2) {
-            $(".game-beauty").find("a:eq(1)").css("right", 0);
-        } else if (imgNum == 3) {
-            $(".game-beauty").find("a:eq(2)").css("right", 0);
-            $(".game-beauty").find("a:eq(1)").css("left", "13%");
-        } else if (imgNum == 4) {
-            $(".game-beauty").find("a:eq(3)").css("right", 0);
-            $(".game-beauty").find("a:eq(2)").css("right", "9%");
-            $(".game-beauty").find("a:eq(1)").css("left", "8%");
-        } else if (imgNum == 5) {
-            $(".game-beauty").find("a:eq(4)").css({"right": 0, "top": 0});
-            $(".game-beauty").find("a:eq(3)").css({"right": "7%", "top": 0});
-            $(".game-beauty").find("a:eq(2)").css({"right": "13%", "top": 0});
-            $(".game-beauty").find("a:eq(1)").css({"left": "6%", "top": 0});
+        if(imgNum==2){
+            $(".game-beauty").find("a:eq(1)").css("right",0);
+        }else if(imgNum==3){
+            $(".game-beauty").find("a:eq(2)").css("right",0);
+            $(".game-beauty").find("a:eq(1)").css("left","13%");
+        }else if(imgNum==4){
+            $(".game-beauty").find("a:eq(3)").css("right",0);
+            $(".game-beauty").find("a:eq(2)").css("right","9%");
+            $(".game-beauty").find("a:eq(1)").css("left","8%");
+        }else if(imgNum==5){
+            $(".game-beauty").find("a:eq(4)").css({"right":0,"top":0});
+            $(".game-beauty").find("a:eq(3)").css({"right":"7%","top":0});
+            $(".game-beauty").find("a:eq(2)").css({"right":"13%","top":0});
+            $(".game-beauty").find("a:eq(1)").css({"left":"6%","top":0});
         }
         // 轮播图自动播放
         var beautyPlay = {
@@ -572,7 +568,7 @@
                     $this.addClass('active').siblings('a').removeClass('active');
                     that.handle(that.currentNum);
                 });
-                that.$target.on('mouseleave', function () {
+                that.$target.on('mouseleave', function() {
                     that.autoPlay();
                 });
                 that.autoPlay();
@@ -590,19 +586,19 @@
                     $('[data-num=4]').css('z-index', 2);
                     $('[data-num=3]').css('z-index', 3);
                     $('[data-num=2]').css('z-index', 4);
-                } else if (num === 2) {
+                }else if (num === 2) {
                     $('[data-num=2]').css('z-index', 100);
                     $('[data-num=5]').css('z-index', 1);
                     $('[data-num=4]').css('z-index', 2);
                     $('[data-num=3]').css('z-index', 3);
                     $('[data-num=1]').css('z-index', 4);
-                } else if (num === 3) {
+                }else if (num === 3) {
                     $('[data-num=3]').css('z-index', 100);
                     $('[data-num=5]').css('z-index', 4);
                     $('[data-num=4]').css('z-index', 3);
                     $('[data-num=2]').css('z-index', 2);
                     $('[data-num=1]').css('z-index', 1);
-                } else if (num == 5) {
+                }else if(num==5){
                     $('[data-num=5]').css('z-index', 100);
                     $('[data-num=4]').css('z-index', 4);
                     $('[data-num=3]').css('z-index', 3);
@@ -617,7 +613,7 @@
                     this.currentNum = 1;
                 }
                 this.$target.removeClass('active');
-                $('[data-num=' + this.currentNum + ']').addClass('active');
+                $('[data-num='+ this.currentNum +']').addClass('active');
                 this.handle(this.currentNum);
                 this.timer = setTimeout(function () {
                     that.autoPlay();
@@ -633,19 +629,18 @@
         beautyPlay.go($('.game-beauty a'));
 
         //点击切换新闻、测评、精美图片
-        function turnLink(dom, target) {
+        function turnLink(dom,target){
             $(dom).addClass("active").siblings().removeClass("active");
-            $(".game-news-container>" + target).show().siblings().hide();
+            $(".game-news-container>"+target).show().siblings().hide();
         }
-
-        $("#news").click(function () {
-            turnLink(this, ".game-news");
+        $("#news").click(function(){
+            turnLink(this,".game-news");
         });
-        $("#check").click(function () {
-            turnLink(this, ".game-check");
+        $("#check").click(function(){
+            turnLink(this,".game-check");
         });
-        $("#beauty").click(function () {
-            turnLink(this, ".game-beauty");
+        $("#beauty").click(function(){
+            turnLink(this,".game-beauty");
         })
     })
 </script>

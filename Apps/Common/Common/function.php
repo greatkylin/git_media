@@ -1206,3 +1206,46 @@ function get_a_week_time_start_and_end($currentTimeStamp, $weekStart = 0) {
     $eTimeStamp = strtotime ( "$currentDate  +6  days " ) + (86400 - 1);
     return array ($sTimeStamp, $eTimeStamp ); //返回开始和结束日期
 }
+
+/**
+ * 获取字符串的第一个字符的拼音的首字母
+ * @author xy
+ * @since 2017/09/13 15:57
+ * @param $string
+ * @return bool|string
+ */
+function get_string_first_char_pinyin($string){
+    if(empty($string)){
+        return false;
+    }
+    if(is_array($string)){
+        return false;
+    }
+    //取游戏的第一个字符，转换为拼音
+    $firstChar = mb_substr($string, 0, 1, 'UTF-8');
+    $numberToEn = array(
+        '1' => 'One',
+        '2' => 'Two',
+        '3' => 'Three',
+        '4' => 'Four',
+        '5' => 'Five',
+        '6' => 'Six',
+        '7' => 'Seven',
+        '8' => 'Eight',
+        '9' => 'Nine',
+        '10' => 'Ten',
+    );
+    if (!empty($numberToEn[$firstChar])) {
+        //如果第一个是数字，则找对应的英文
+        $firstCharPy = $numberToEn[$firstChar];
+    } else {
+        //如果是汉字则转换为拼音
+        $firstCharPy = \Org\Util\PinYin::utf8_to($firstChar);
+    }
+    $char = strtoupper(mb_substr($firstCharPy, 0, 1, 'UTF-8'));
+    $letterArr = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','z',);
+    if(!in_array($char, $letterArr)){
+        $char = $letterArr[0];
+    }
+    return strtoupper($char);
+}

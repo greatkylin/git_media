@@ -154,7 +154,7 @@ class AppService extends BaseService
             'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
         $appList = M('app_list')->alias('alist')
-            ->field('list.app_id, list.status, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, lib.start_score as yz_start_score, lib.update_time as zy_update_time, alib.start_score, alib.update_time')
+            ->field('list.app_id, list.status, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.start_score, lib.start_score) as start_score, lib.update_time as zy_update_time, alib.start_score, alib.update_time')
             ->join('INNER JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list list on list.app_id=alist.app_id')
             ->join('INNER JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib lib on lib.app_id=alist.app_id')
             ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = alist.`app_id`')
@@ -170,45 +170,19 @@ class AppService extends BaseService
         //用来保存处理后的游戏数组
         $tempArr = array();
         foreach ($appList as $key => $app){
-            if (empty($app['app_name'])) {
-                $app['app_name'] = $app['zy_app_name'];
-                unset($app['zy_app_name']);
-            }
-            if (empty($app['icon'])) {
-                $app['icon'] = $app['zy_icon'];
-                unset($app['zy_icon']);
-            }
             //取游戏的第一个字符，转换为拼音
-            $firstChar = mb_substr($app['app_name'], 0, 1, 'UTF-8');
-            $numberToEn = array(
-                '1' => 'One',
-                '2' => 'Two',
-                '3' => 'Three',
-                '4' => 'Four',
-                '5' => 'Five',
-                '6' => 'Six',
-                '7' => 'Seven',
-                '8' => 'Eight',
-                '9' => 'Nine',
-                '10' => 'Ten',
-            );
-            if (!empty($numberToEn[$firstChar])) {
-                //如果第一个是数字，则找对应的英文
-                $firstCharPy = $numberToEn[$firstChar];
-            } else {
-                //如果是汉字则转换为拼音
-                $firstCharPy = PinYin::utf8_to($firstChar);
+            $pyChar = get_string_first_char_pinyin($app['app_name']);
+            if(empty($pyChar)){
+                $pyChar = 'A';
             }
-            $char = strtoupper(mb_substr($firstCharPy, 0, 1, 'UTF-8'));
-            $app['pin_yin'] = strtoupper($char);
-            $tempArr[$char][] = $app;
+            $tempArr[$pyChar][] = $app;
         }
         $returnArr = array(
             'ABCD' => array(),
             'EFGH' => array(),
             'IJKL' => array(),
             'MNOP' => array(),
-            'RSTU' => array(),
+            'QRST' => array(),
             'UVWX' => array(),
             'YZ' => array(),
         );
@@ -228,7 +202,7 @@ class AppService extends BaseService
                 $returnArr['MNOP'][$letter] = $tempArr[$letter];
             }
             if(in_array($letter, array('R','S','T','U'))){
-                $returnArr['RSTU'][$letter] = $tempArr[$letter];
+                $returnArr['QRST'][$letter] = $tempArr[$letter];
             }
             if(in_array($letter, array('U','V','W','X'))){
                 $returnArr['UVWX'][$letter] = $tempArr[$letter];
@@ -237,7 +211,7 @@ class AppService extends BaseService
                 $returnArr['YZ'][$letter] = $tempArr[$letter];
             }
         }
-        //var_dump($returnArr);die;
+        //var_dump($returnArr['ABCD']);die;
         return $returnArr;
     }
 
@@ -281,7 +255,7 @@ class AppService extends BaseService
             ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,gl.gift_name,gl.original_name) = sgl.`id_gift_name`')
             ->where($where)
             ->group('full_gift_name')
-            ->order(' sgl.final_hot_sort ASC, down_num DESC ')
+            ->order('final_hot_sort ASC, down_num DESC ')
             ->limit($limit)
             ->select();
         if($giftList === false){
@@ -303,7 +277,7 @@ class AppService extends BaseService
     public function getHotAppRankWeek($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
-        $where['app_down_num'] = array('neq', 0);
+        $where['adown.down_num'] = array('neq', 0);
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -320,6 +294,27 @@ class AppService extends BaseService
             $this->setError('查询失败');
             return false;
         }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
+        }
         return $result;
     }
 
@@ -333,7 +328,7 @@ class AppService extends BaseService
     public function getHotAppRankMonth($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
-        $where['app_down_num'] = array('neq', 0);
+        $where['adown.down_num'] = array('neq', 0);
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -343,12 +338,33 @@ class AppService extends BaseService
             ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
             ->order('final_sort ASC, app_down_num DESC')
             ->where($where)
-            ->limit($limit = 10)
+            ->limit($limit)
             ->select();
 //        var_dump(M('app_list')->getLastSql());
         if($result === false){
             $this->setError('查询失败');
             return false;
+        }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
         }
         return $result;
     }
@@ -363,7 +379,7 @@ class AppService extends BaseService
     public function getHotAppRankTotal($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
-        $where['app_down_num'] = array('neq', 0);
+        $where['(list.app_down_num + list.cardinal)'] = array('neq', 0);
 
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.app_down_num + list.cardinal) as app_down_num, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
@@ -378,6 +394,27 @@ class AppService extends BaseService
         if($result === false){
             $this->setError('查询失败');
             return false;
+        }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', array_unique($tempTypeNameArr));
+                    $result[$key]['parent_type_name_str'] = implode('、', array_unique($tempParentTypeNameArr));
+                }
+            }
         }
         return $result;
     }
@@ -418,6 +455,8 @@ class AppService extends BaseService
     public function getPopularAppRankWeek($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
+        $where['total_money'] = array('neq', 0);
+
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -434,6 +473,27 @@ class AppService extends BaseService
             $this->setError('查询失败');
             return false;
         }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
+        }
         return $result;
     }
 
@@ -447,6 +507,8 @@ class AppService extends BaseService
     public function getPopularAppRankMonth($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
+        $where['total_money'] = array('neq', 0);
+
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
@@ -463,6 +525,27 @@ class AppService extends BaseService
             $this->setError('查询失败');
             return false;
         }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
+        }
         return $result;
     }
 
@@ -476,6 +559,8 @@ class AppService extends BaseService
     public function getPopularAppRankTotal($limit = 10){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
+        $where['(list.pay_total_money)'] = array('neq', 0);
+
         $result = M('app_list')->alias('alist')
             ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
@@ -490,6 +575,27 @@ class AppService extends BaseService
             $this->setError(M('app_list')->getDbError());
             return false;
         }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
+        }
         return $result;
     }
 
@@ -500,7 +606,7 @@ class AppService extends BaseService
         }
         if ($dataSource == self::DATA_SOURCE_WEEK) {
             //周榜
-            $rankList = $this->getPopularAppRankMonth($limit);
+            $rankList = $this->getPopularAppRankWeek($limit);
         } elseif ($dataSource == self::DATA_SOURCE_MONTH) {
             //月榜
             $rankList = $this->getPopularAppRankMonth($limit);
@@ -536,6 +642,27 @@ class AppService extends BaseService
             $this->setError('查询失败');
             return false;
         }
+        if(!empty($result)){
+            //获取游戏分类的名称与父级分类名称信息
+            foreach ($result as $key=>$value){
+                $newWhere['at.id'] = array('IN', $value['app_type']);
+                $appTypeInfo = $this->getAppTypeAndParentInfoById($newWhere);
+                if($appTypeInfo === false){
+                    $this->setError('查询失败');
+                    return false;
+                }
+                if(!empty($appTypeInfo)){
+                    $tempTypeNameArr = array();
+                    $tempParentTypeNameArr = array();
+                    foreach ($appTypeInfo as $val){
+                        $tempTypeNameArr[] = $val['type_name'];
+                        $tempParentTypeNameArr[] = $val['parent_type_name'];
+                    }
+                    $result[$key]['type_name_str'] = implode('、', $tempTypeNameArr);
+                    $result[$key]['parent_type_name_str'] = implode('、', $tempParentTypeNameArr);
+                }
+            }
+        }
         return $result;
     }
 
@@ -566,6 +693,15 @@ class AppService extends BaseService
         if($appTopic === false){
             return $this->setError('查询专题失败');
         }
+        //生成专题的详情页链接
+        if(!empty($appTopic)){
+            if($appTopic['topic_type'] == self::TOPIC_TYPE_TPL || $appTopic['topic_type'] == self::TOPIC_TYPE_EDITOR){
+                $appTopic['topic_url'] = U('Home/App/app_topic_detail', array('topic_type'=>$appTopic['topic_type'], 'topic_id' => $appTopic['topic_id']));
+            }else{
+                $appTopic['topic_url'] = htmlspecialchars_decode($appTopic['content']);
+            }
+        }
+
         return $appTopic;
     }
 
@@ -781,8 +917,8 @@ class AppService extends BaseService
                 IFNULL(alib.app_type, lib.app_type) as app_type,  IFNULL(alib.platform, lib.platform) as platform, 
                 IFNULL(alib.introduct, lib.introduct) as introduct, alist.`app_id`, alist.publish_time, 
                 lib.app_file_url, list.`status`, list.`sj_time`, 
-                GROUP_CONCAT(`at`.type_name) as third_app_type_name_str,
-                GROUP_CONCAT(DISTINCT(`att`.type_name)) as second_app_type_name_str')
+                GROUP_CONCAT(`at`.type_name) as app_type_name_str,
+                GROUP_CONCAT(DISTINCT(`att`.type_name)) as parent_app_type_name_str')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
@@ -818,8 +954,8 @@ class AppService extends BaseService
                 IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
                 alist.`app_id`, alist.publish_time, list.`status`, list.`sj_time`, 
                 (list.app_down_num + list.cardinal) as app_down_num, list.create_time,
-                GROUP_CONCAT(`at`.type_name) as third_app_type_name_str,
-                GROUP_CONCAT(DISTINCT(`att`.type_name)) as second_app_type_name_str'
+                GROUP_CONCAT(`at`.type_name) as app_type_name_str,
+                GROUP_CONCAT(DISTINCT(`att`.type_name)) as parent_app_type_name_str'
             )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
@@ -837,17 +973,17 @@ class AppService extends BaseService
         //处理游戏所属的二级分类与三级分类数据
         if($appList){
             foreach ($appList as $key=> $app){
-                if(!empty($app['third_app_type_name_str'])){
-                    $app['third_app_type_name_str'] = explode(',', $app['third_app_type_name_str']);
-                    $app['third_app_type_name_str'] = implode(' ', $app['third_app_type_name_str']);
+                if(!empty($app['app_type_name_str'])){
+                    $app['app_type_name_str'] = explode(',', $app['app_type_name_str']);
+                    $app['app_type_name_str'] = implode(' ', $app['app_type_name_str']);
                 }else{
-                    $app['third_app_type_name_str'] = '未知';
+                    $app['app_type_name_str'] = '未知';
                 }
-                if(!empty($app['second_app_type_name_str'])){
-                    $app['second_app_type_name_str'] = explode(',', $app['second_app_type_name_str']);
-                    $app['second_app_type_name_str'] = implode(' ', $app['second_app_type_name_str']);
+                if(!empty($app['parent_app_type_name_str'])){
+                    $app['parent_app_type_name_str'] = explode(',', $app['parent_app_type_name_str']);
+                    $app['parent_app_type_name_str'] = implode(' ', $app['parent_app_type_name_str']);
                 }else{
-                    $app['second_app_type_name_str'] = '未知';
+                    $app['parent_app_type_name_str'] = '未知';
                 }
                 $appList[$key] = $app;
             }
@@ -943,7 +1079,7 @@ class AppService extends BaseService
                 IFNULL(alib.game_diff_value, lib.game_diff_value) as game_diff_value, alib.cover_img, lib.app_file_url, 
                 lib.cover_img as zy_cover_img, alib.video_link, lib.video_id, list.`status`, list.`sj_time`, lib.is_my_sdk,
                 (list.app_down_num + list.cardinal) as app_down_num, s.supplier_name, s.supplier_icon, s.supplier_info,
-                alib.beauty_image, GROUP_CONCAT(DISTINCT(`at`.type_name)) as third_app_type_name_str,
+                alib.beauty_image, GROUP_CONCAT(DISTINCT(`at`.type_name)) as app_type_name_str,
                 GROUP_CONCAT(DISTINCT(`att`.id)) as app_type_id_str,
                 GROUP_CONCAT(DISTINCT(`att`.type_name)) as parent_app_type_name_str'
             )
@@ -961,8 +1097,8 @@ class AppService extends BaseService
         if(empty($appInfo)){
             return $this->setError('未查询到对应的游戏信息');
         }
-        //判断游戏总库是否有设置游戏视频，有的话获取视频链接
-        if(empty($appInfo['video_id'])){
+        //判断游戏总库是否有设置游戏视频，有的话获取视频链接,无详情页的视频封面则取视频库的视频封面
+        if(!empty($appInfo['video_id'])){
             $videoInfo = $this->getAppVideoUrlByVideoId($appInfo['video_id']);
             if($videoInfo){
                 $appInfo['video_url'] = $videoInfo['video_url'];
@@ -987,19 +1123,18 @@ class AppService extends BaseService
             $appInfo['app_size'] = 0;
         }
         //游戏分类所属的二级分类与三级分类名称数据处理
-        if(!empty($appInfo['third_app_type_name_str'])){
-            $appInfo['third_app_type_name_str'] = explode(',', $appInfo['third_app_type_name_str']);
-            $appInfo['third_app_type_name_str'] = implode(' ', $appInfo['third_app_type_name_str']);
+        if(!empty($appInfo['app_type_name_str'])){
+            $appInfo['app_type_name_str'] = explode(',', $appInfo['app_type_name_str']);
+            $appInfo['app_type_name_str'] = implode(' ', $appInfo['app_type_name_str']);
         }else{
-            $appInfo['third_app_type_name_str'] = '未知';
+            $appInfo['app_type_name_str'] = '未知';
         }
-        if(!empty($appInfo['second_app_type_name_str'])){
-            $appInfo['second_app_type_name_str'] = explode(',', $appInfo['second_app_type_name_str']);
-            $appInfo['second_app_type_name_str'] = implode(' ', $appInfo['second_app_type_name_str']);
+        if(!empty($appInfo['parent_app_type_name_str'])){
+            $appInfo['parent_app_type_name_str'] = explode(',', $appInfo['parent_app_type_name_str']);
+            $appInfo['parent_app_type_name_str'] = implode(' ', $appInfo['parent_app_type_name_str']);
         }else{
-            $appInfo['second_app_type_name_str'] = '未知';
+            $appInfo['parent_app_type_name_str'] = '未知';
         }
-
         return $appInfo;
     }
 
@@ -1029,14 +1164,8 @@ class AppService extends BaseService
 
             if ($result['video_url']) {
                 $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id']);
-                $result = [
-                    'video_name' => $result['video_name'],
-                    'video_url' => $result['video_url'],
-                    'video_img' => format_url($result['video_img']),
-                    'video_size' => $iqiyiVideoInfo['fileSize'],
-                    'video_duration' => $iqiyiVideoInfo['duration'],
-                    'file_id' => $result['file_id'],
-                ];
+                $result['video_size'] = $iqiyiVideoInfo['fileSize'];
+                $result['video_duration'] = $iqiyiVideoInfo['duration'];
                 return $result;
             }else{
                 return $this->setError('未找到对应视频数据');
@@ -1220,6 +1349,27 @@ class AppService extends BaseService
     }
 
     /**
+     * 根据条件获取游戏分类id，名称，以及父类名称
+     * @author xy
+     * @since 2017/09/13 14:25
+     * @param array $where
+     * @return bool|array
+     */
+    public function getAppTypeAndParentInfoById(array $where = array()){
+        $appTypeInfo = M(C('DB_ZHIYU.DB_NAME').'.'.'app_type', C('DB_ZHIYU.DB_PREFIX'))->alias('at')
+            ->field(
+                '`at`.id, `at`.type_name, `at`.parent_id, `att`.type_name as parent_type_name'
+            )
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_type `att` ON `at`.parent_id = att.id')
+            ->where($where)
+            ->select();
+        if($appTypeInfo === false){
+            return $this->setError('');
+        }
+        return $appTypeInfo;
+    }
+
+    /**
      * 计算游戏每周专题的总数量
      * @author xy
      * @since 2017/09/11 09:46
@@ -1273,7 +1423,7 @@ class AppService extends BaseService
                 if($topic['topic_type'] == self::TOPIC_TYPE_TPL || $topic['topic_type'] == self::TOPIC_TYPE_EDITOR){
                     $topicList[$key]['topic_url'] = U('Home/App/app_topic_detail', array('topic_type'=>$topic['topic_type'], 'topic_id' => $topic['topic_id']));
                 }else{
-                    $topicList[$key]['topic_url'] = $topic['content'];
+                    $topicList[$key]['topic_url'] = htmlspecialchars_decode($topic['content']);
                 }
             }
         }
@@ -1335,8 +1485,13 @@ class AppService extends BaseService
         }
         if($topicContent['topic_type'] == self::TOPIC_TYPE_TPL){
             $topicContent['content'] = unserialize($topicContent['content']);
+            foreach ($topicContent['content'] as $key=>$app){
+                //获取每款游戏的详情信息
+                $topicContent['content'][$key]['app_detail'] = $this->getAppDetailInfoByAppId($key);
+                //视频链接的特殊字符转义
+                $topicContent['content'][$key]['video_url'] = htmlspecialchars_decode($app['video_url']);
+            }
         }
-        //var_dump($topicContent['content']);die;
         return $topicContent;
     }
 }

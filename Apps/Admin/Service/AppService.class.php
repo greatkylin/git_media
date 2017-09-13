@@ -8,6 +8,7 @@
 
 namespace Admin\Service;
 use Common\Service\BaseService;
+use Org\Util\PinYin;
 
 class AppService extends BaseService
 {
@@ -45,18 +46,19 @@ class AppService extends BaseService
      * @return bool|mixed
      */
     public function getIdAndAppIdFromZhiYu($where = NULL){
-        $defaultField = ' id, app_id ';
-        $zyApplistData = M(C('DB_ZHIYU.DB_NAME').'.'.'app_list', C('DB_ZHIYU.DB_PREFIX'))
+        $defaultField = ' list.id, list.app_id, lib.app_name ';
+        $zyAppListData = M(C('DB_ZHIYU.DB_NAME').'.'.'app_list', C('DB_ZHIYU.DB_PREFIX'))->alias('list')
             ->field($defaultField)
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id=list.app_id')
             ->where($where)
             ->order('id ASC')
             ->select();
-        if($zyApplistData === false){
+        if($zyAppListData === false){
             $this->setError(M(C('DB_ZHIYU.DB_NAME').'.'.'app_list', C('DB_ZHIYU.DB_PREFIX'))->getDbError());
             return false;
         }
-        if(count($zyApplistData)>0){
-            return $zyApplistData;
+        if(count($zyAppListData)>0){
+            return $zyAppListData;
         }
         $this->setError('没有需要同步的数据');
         return false;
@@ -90,9 +92,26 @@ class AppService extends BaseService
         if(!$appList){
             return false;
         }
+        $numberToEn = array(
+            '1' => 'One',
+            '2' => 'Two',
+            '3' => 'Three',
+            '4' => 'Four',
+            '5' => 'Five',
+            '6' => 'Six',
+            '7' => 'Seven',
+            '8' => 'Eight',
+            '9' => 'Nine',
+            '10' => 'Ten',
+        );
         //添加插入到媒体站app_list表的字段
         $insertData = array();
         foreach ($appList as $key=>$app){
+            //取游戏的第一个字符，转换为拼音
+            $char = get_string_first_char_pinyin($app['app_name']);
+            if(empty($char)){
+                $char = 'A';
+            }
             $insertData[$key] = $app;
             $insertData[$key]['final_hot_sort'] = 0;
             $insertData[$key]['final_new_sort'] = 0;
@@ -101,6 +120,7 @@ class AppService extends BaseService
             $insertData[$key]['edit_time'] = 0;
             $insertData[$key]['sync_time'] = time();
             $insertData[$key]['is_publish'] = 2;    //默认同步过来的游戏列表未发布状态
+            $insertData[$key]['pin_yin'] = strtoupper($char); //首字母拼音
         }
         $appList = NULL;
         unset($appList);

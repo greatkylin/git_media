@@ -179,7 +179,7 @@ class AppController extends HomeBaseController {
             $this->error($appService->getFirstError());
         }
         // 实例化分页类 传入总记录数和每页显示的记录数
-        $page = new NewPage($totalNum,19);
+        $page = new NewPage($totalNum,15, array(), false);
         // 分页显示输出
         $show = $page->show();
         $topicList = $appService->getAppTopicList($page->firstRow, $page->listRows);
@@ -226,6 +226,44 @@ class AppController extends HomeBaseController {
             $tplName = 'app_topic_editor';
         }
         $this->display($tplName);
+    }
+
+    /**
+     * 游戏库排行榜列表
+     * @author xy
+     * @since 2017/09/12 13:58
+     */
+    public function app_rank(){
+        $appService = new AppService();
+        //1.获取游戏的热游榜 周榜，月榜，总榜
+        $hotAppListWeek = $appService->getHotAppRankWeek(16);
+        $hotAppListMonth = $appService->getHotAppRankMonth(16);
+        $hotAppListTotal = $appService->getHotAppRankTotal(16);
+        if($hotAppListWeek === false || $hotAppListMonth === false || $hotAppListTotal === false){
+            $this->error($appService->getFirstError());
+        }
+        //2.获取游戏畅游榜 周榜，月榜，总榜
+        $popularAppListWeek = $appService->getPopularAppRankWeek(16);
+        $popularAppListMonth = $appService->getPopularAppRankMonth(16);
+        $popularAppListTotal = $appService->getPopularAppRankTotal(16);
+        if($popularAppListWeek === false || $popularAppListMonth === false || $popularAppListTotal === false){
+            $this->error($appService->getFirstError());
+        }
+        //3.获取游戏新游榜总榜
+        $newAppListTotal = $appService->getNewAppRankTotal(16);
+        if($newAppListTotal === false){
+            $this->error($appService->getFirstError());
+        }
+
+        $this->assign('hotAppListWeek', $hotAppListWeek);
+        $this->assign('hotAppListMonth', $hotAppListMonth);
+        $this->assign('hotAppListTotal', $hotAppListTotal);
+        $this->assign('popularAppListWeek', $popularAppListWeek);
+        $this->assign('popularAppListMonth', $popularAppListMonth);
+        $this->assign('popularAppListTotal', $popularAppListTotal);
+        $this->assign('newAppListTotal', $newAppListTotal);
+
+        $this->display();
     }
 
     /**

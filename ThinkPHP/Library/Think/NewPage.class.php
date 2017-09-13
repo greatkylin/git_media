@@ -23,6 +23,8 @@ class NewPage{
     private $url     = ''; //当前链接URL
     private $nowPage = 1;
 
+    private $isAjax = true;
+
 	// 分页显示定制
     private $config  = array(
         'header' => '',
@@ -38,8 +40,9 @@ class NewPage{
      * @param int $totalRows  总的记录数
      * @param int $listRows  每页显示记录数
      * @param array $parameter  分页跳转的参数
+     * @param boolean $isAjax  是否ajax分页
      */
-    public function __construct($totalRows, $listRows=20, $parameter = array()) {
+    public function __construct($totalRows, $listRows=20, $parameter = array(), $isAjax = true) {
         C('VAR_PAGE') && $this->p = C('VAR_PAGE'); //设置分页参数名称
         /* 基础设置 */
         $this->totalRows  = $totalRows; //设置总记录数
@@ -48,6 +51,7 @@ class NewPage{
         $this->nowPage    = empty($_GET[$this->p]) ? 1 : intval($_GET[$this->p]);
         $this->nowPage    = $this->nowPage>0 ? $this->nowPage : 1;
         $this->firstRow   = $this->listRows * ($this->nowPage - 1);
+        $this->isAjax = $isAjax;
     }
 
     /**
@@ -93,22 +97,38 @@ class NewPage{
 
         //上一页
         $up_row  = $this->nowPage - 1;
-        $up_page = $up_row > 0 ? '<div class="font" data-href="' . $this->url($up_row) . '">' . $this->config['prev'] . '</div>' : '';
+        if($this->isAjax){
+            $up_page = $up_row > 0 ? '<div class="font" data-href="' . $this->url($up_row) . '">' . $this->config['prev'] . '</div>' : '';
+        }else{
+            $up_page = $up_row > 0 ? '<a class="font" href="' . $this->url($up_row) . '">' . $this->config['prev'] . '</a>' : '';
+        }
 
         //下一页
         $down_row  = $this->nowPage + 1;
-        $down_page = ($down_row <= $this->totalPages) ? '<div class="font" data-href="' . $this->url($down_row) . '">' . $this->config['next'] . '</div>' : '';
+        if($this->isAjax){
+            $down_page = ($down_row <= $this->totalPages) ? '<div class="font" data-href="' . $this->url($down_row) . '">' . $this->config['next'] . '</div>' : '';
+        }else{
+            $down_page = ($down_row <= $this->totalPages) ? '<a class="font" href="' . $this->url($down_row) . '">' . $this->config['next'] . '</a>' : '';
+        }
 
         //第一页
         $the_first = '';
         if($this->totalPages > $this->rollPage && ($this->nowPage - $now_cool_page) >= 1){
-            $the_first = '<div class="font" data-href="' . $this->url(1) . '">' . $this->config['first'] . '</div>';
+            if($this->isAjax) {
+                $the_first = '<div class="font" data-href="' . $this->url(1) . '">' . $this->config['first'] . '</div>';
+            }else{
+                $the_first = '<a class="font" href="' . $this->url(1) . '">' . $this->config['first'] . '</a>';
+            }
         }
 
         //最后一页
         $the_end = '';
         if($this->totalPages > $this->rollPage && ($this->nowPage + $now_cool_page) < $this->totalPages){
-            $the_end = '<div class="font" data-href="' . $this->url($this->totalPages) . '">' . $this->config['last'] . '</div>';
+            if($this->isAjax){
+                $the_end = '<div class="font" data-href="' . $this->url($this->totalPages) . '">' . $this->config['last'] . '</div>';
+            }else{
+                $the_end = '<a class="font" href="' . $this->url($this->totalPages) . '">' . $this->config['last'] . '</a>';
+            }
         }
 
         //数字连接
@@ -124,13 +144,21 @@ class NewPage{
             if($page > 0 && $page != $this->nowPage){
 
                 if($page <= $this->totalPages){
-                    $link_page .= '<div class="num" data-href="' . $this->url($page) . '">' . $page . '</div>';
+                    if($this->isAjax){
+                        $link_page .= '<div class="num" data-href="' . $this->url($page) . '">' . $page . '</div>';
+                    }else{
+                        $link_page .= '<a class="num" href="' . $this->url($page) . '">' . $page . '</a>';
+                    }
                 }else{
                     break;
                 }
             }else{
                 if($page > 0 && $this->totalPages != 1){
-                    $link_page .= '<div class="num active" data-href="'.$this->url($this->nowPage).'">' . $page . '</div>';
+                    if($this->isAjax){
+                        $link_page .= '<div class="num active" data-href="'.$this->url($this->nowPage).'">' . $page . '</div>';
+                    }else{
+                        $link_page .= '<a class="num active" href="'.$this->url($this->nowPage).'">' . $page . '</a>';
+                    }
                 }
             }
         }

@@ -26,7 +26,16 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        width: 75px;
+        width: 64px;
+    }
+    .game-rank .gr-desp-box .hotgame-bag .hotgame-list .type{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 60px;
+    }
+    .game-rank .gr-desp-box .hotgame-bag .active .type{
+        width: 100%;
     }
 </style>
 <div class="swiper-container" id="mySwiper">
@@ -62,7 +71,7 @@
             <div class="specialselect-box" style="display: none;">
                 <div class="alphabet-box">
                     <volist name="carefulChoiceApp" id="careAppArr" key="i">
-                        <div  data-sort="{$i}" <if condition="$i eq 1">class="active"</if>><span>{$key}</span></div>
+                        <div  data-sort="{$i}" class="letter <if condition='$i eq 1'>active</if>"><span>{$key}</span></div>
                     </volist>
                     <div><span class="check-all">查看全部</span></div>
                 </div>
@@ -365,35 +374,49 @@
                     <div><span id="week-rank" class="lightColor">周榜</span><span id="month-rank">月榜</span><span id="all-rank">总榜</span></div>
                 </div>
                 <div class="week-rank">
-                    <volist name="downloadWeek" id="appdw">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $appdw['app_id']))}"><div class="hotgame-list" data-num="0" data-url="{$appdw.icon|format_url}">
-                            <div class="num"></div>
-                            <div class="name-and-type"><div class="nameer">{$appdw.app_name}</div><div class="type">卡牌、角色</div></div>
-                            <div class="download"><if condition="empty($appdw[app_down_num])">0<else />{$appdw.app_down_num}</if>人下载</div>
-                        </div></a>
-                    </volist>
+                    <if condition="count($downloadWeek) gt 0">
+                        <volist name="downloadWeek" id="appdw">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $appdw['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$appdw.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$appdw.app_name}</div><div class="type">{$appdw.type_name_str}</div></div>
+                                    <div class="download"><if condition="empty($appdw[app_down_num])">0<else />{$appdw.app_down_num}</if>人下载</div>
+                                </div>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
                 <div class="month-rank">
-                    <volist name="downloadMonth" id="appdm">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $appdm['app_id']))}">
-                        <div class="hotgame-list" data-num="0" data-url="{$appdm.icon|format_url}">
-                            <div class="num"></div>
-                            <div class="name-and-type"><div class="nameer">{$appdm.app_name}</div><div class="type">卡牌、角色</div></div>
-                            <div class="download"><if condition="empty($appdm[app_down_num])">0<else />{$appdm.app_down_num}人下载</if></div>
-                        </div>
-                        </a>
-                    </volist>
+                    <if condition="count($downloadMonth) gt 0">
+                        <volist name="downloadMonth" id="appdm">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $appdm['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$appdm.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$appdm.app_name}</div><div class="type">{$appdm.type_name_str}</div></div>
+                                    <div class="download"><if condition="empty($appdm[app_down_num])">0<else />{$appdm.app_down_num}人下载</if></div>
+                                </div>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
                 <div class="all-rank">
-                    <volist name="downloadTotal" id="appdt">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $appdt['app_id']))}">
-                            <div class="hotgame-list" data-num="0" data-url="{$appdt.icon|format_url}">
-                                <div class="num"></div>
-                                <div class="name-and-type"><div class="nameer">{$appdt.app_name}</div><div class="type">卡牌、角色</div></div>
-                                <div class="download"><if condition="empty($appdt[app_down_num])">0<else />{$appdt.app_down_num}人下载</if></div>
-                            </div>
-                        </a>
-                    </volist>
+                    <if condition="count($downloadTotal) gt 0">
+                        <volist name="downloadTotal" id="appdt">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $appdt['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$appdt.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$appdt.app_name}</div><div class="type">{$appdt.type_name_str}</div></div>
+                                    <div class="download"><if condition="empty($appdt[app_down_num])">0<else />{$appdt.app_down_num}人下载</if></div>
+                                </div>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
             </div>
             <!--畅销榜-->
@@ -403,55 +426,67 @@
                     <div><span id="week-rank-sale" class="lightColor">周榜</span><span id="month-rank-sale">月榜</span><span id="all-rank-sale">总榜</span></div>
                 </div>
                 <div class="week-rank-sale">
-                    <volist name="popularWeek" id="apppw">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $apppw['app_id']))}">
-                            <div class="hotgame-list" data-num="0" data-url="{$apppw.icon|format_url}">
-                                <div class="num"></div>
-                                <div class="name-and-type"><div class="nameer">{$apppw.app_name}</div><div class="type">卡牌、角色</div></div>
-                                <div class="download" data-huomiaonum="3">
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
+                    <if condition="count($popularWeek) gt 0">
+                        <volist name="popularWeek" id="apppw">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $apppw['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$apppw.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$apppw.app_name}</div><div class="type">{$apppw.type_name_str}</div></div>
+                                    <div class="download" data-huomiaonum="{$apppw.start_score}">
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </volist>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
                 <div class="month-rank-sale">
-                    <volist name="popularMonth" id="apppm">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $appnm['app_id']))}">
-                            <div class="hotgame-list" data-num="0" data-url="{$appnm.icon|format_url}">
-                                <div class="num"></div>
-                                <div class="name-and-type"><div class="nameer">{$apppm.app_name}</div><div class="type">卡牌、角色</div></div>
-                                <div class="download" data-huomiaonum="3">
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
+                    <if condition="count($popularMonth) gt 0">
+                        <volist name="popularMonth" id="apppm">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $appnm['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$appnm.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$apppm.app_name}</div><div class="type">{$apppm.type_name_str}</div></div>
+                                    <div class="download" data-huomiaonum="{$apppm.start_score}">
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </volist>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
                 <div class="all-rank-sale">
-                    <volist name="popularTotal" id="apppt">
-                        <a href="{:U('Home/App/app_detail', array('app_id' => $apppt['app_id']))}">
-                            <div class="hotgame-list" data-num="0" data-url="{$apppt.icon|format_url}">
-                                <div class="num"></div>
-                                <div class="name-and-type"><div class="nameer">{$apppt.app_name}</div><div class="type">卡牌、角色</div></div>
-                                <div class="download" data-huomiaonum="2">
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
-                                    <i class="iconfont icon-huomiao"></i>
+                    <if condition="count($popularTotal) gt 0">
+                        <volist name="popularTotal" id="apppt">
+                            <a href="{:U('Home/App/app_detail', array('app_id' => $apppt['app_id']))}">
+                                <div class="hotgame-list" data-num="0" data-url="{$apppt.icon|format_url}">
+                                    <div class="num"></div>
+                                    <div class="name-and-type"><div class="nameer">{$apppt.app_name}</div><div class="type">{$apppt.type_name_str}</div></div>
+                                    <div class="download" data-huomiaonum="{$apppt.start_score}">
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                        <i class="iconfont icon-huomiao"></i>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </volist>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
                 </div>
             </div>
             <!--新游榜-->
@@ -460,15 +495,19 @@
                     <div>新游榜</div>
                     <div><span>上线时间</span></div>
                 </div>
-                <volist name="newRankTotal" id="appnt">
-                    <a href="{:U('Home/App/app_detail', array('app_id' => $appnt['app_id']))}">
-                        <div class="hotgame-list" data-num="0" data-url="{$appnt.icon|format_url}">
-                            <div class="num"></div>
-                            <div class="name-and-type"><div class="nameer">{$appnt.app_name}</div><div class="type">卡牌、角色</div></div>
-                            <div class="download">{$appnt.sj_time|date='Y-m-d',###}</div>
-                        </div>
-                    </a>
-                </volist>
+                <if condition="count($newRankTotal) gt 0">
+                    <volist name="newRankTotal" id="appnt">
+                        <a href="{:U('Home/App/app_detail', array('app_id' => $appnt['app_id']))}">
+                            <div class="hotgame-list" data-num="0" data-url="{$appnt.icon|format_url}">
+                                <div class="num"></div>
+                                <div class="name-and-type"><div class="nameer">{$appnt.app_name}</div><div class="type">{$appnt.type_name_str}</div></div>
+                                <div class="download">{$appnt.publish_time|date='Y-m-d',###}</div>
+                            </div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无数据
+                </if>
             </div>
         </div>
     </section>
@@ -854,7 +893,7 @@
 
         //ABCD的应该在加载的时候就调用
         //切换菜单
-        $(".alphabet-box>div").click(function(){
+        $(".alphabet-box>div.letter").click(function(){
             var sort = $(this).data('sort');
             $(this).addClass("active").siblings().removeClass("active");
             $(this).prev().find("span").addClass("active");

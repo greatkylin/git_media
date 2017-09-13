@@ -67,7 +67,7 @@
             </div>
             </if>
             <if condition ="!empty($thisWeekTopic)">
-                <a href="#" class="week-topic">
+                <a href="{$thisWeekTopic.topic_url}" class="week-topic">
                     <div class="title">本周游戏专题</div>
                     <div class="img-and-desp">
                         <div class="img-box"><img alt="" src="{$thisWeekTopic.cover_image_path|format_url}"></div>

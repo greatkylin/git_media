@@ -195,12 +195,14 @@ class AppTopicController extends AdminBaseController
                 if(!empty($appIds)){
                     $appInfo = array();
                     foreach ($appIds as $key=>$val){
-                        $appInfo[$val]['app_id'] = $val;
-                        $appInfo[$val]['app_name'] = empty($appNames[$key])?'':$appNames[$key];
-                        $appInfo[$val]['video_url'] = empty($videoUrls[$key])?'':$videoUrls[$key];
-                        $appInfo[$val]['detail_url'] = empty($detailUrl[$key])?'':$detailUrl[$key];
-                        $appInfo[$val]['download_url'] = empty($downloadUrl[$key])?'':$downloadUrl[$key];
-                        $appInfo[$val]['app_introduce'] = empty($appIntroduce[$key])?'':$appIntroduce[$key];
+                        if(!empty($val)){
+                            $appInfo[$val]['app_id'] = $val;
+                            $appInfo[$val]['app_name'] = empty($appNames[$key]) ? '' : $appNames[$key];
+                            $appInfo[$val]['video_url'] = empty($videoUrls[$key]) ? '' : $videoUrls[$key];
+                            $appInfo[$val]['detail_url'] = empty($detailUrl[$key]) ? '' : $detailUrl[$key];
+                            $appInfo[$val]['download_url'] = empty($downloadUrl[$key]) ? '' : $downloadUrl[$key];
+                            $appInfo[$val]['app_introduce'] = empty($appIntroduce[$key]) ? '' : $appIntroduce[$key];
+                        }
                     }
                     $appInfoStr = serialize($appInfo);
                 }

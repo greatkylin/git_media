@@ -29,10 +29,10 @@
                     <video id="video-{$app.app_id}" controls poster="{$app.video_img|format_url}" src="{$app.video_url}">您的浏览器版本太低，暂不支持视频播放！</video>
                 </div>
                 <div class="video-desp">
-                    <div class="icon"><img alt="" src="../../static/img/game-gift.png"></div>
+                    <div class="icon"><img alt="" src="{$app.app_detail.icon}"></div>
                     <div class="name-type-intr">
                         <div class="name">{$app.app_name}</div>
-                        <div class="type">卡牌、角色扮演</div>
+                        <div class="type">{$app.app_detail.app_type_name_str}</div>
                         <div class="intr">{$app.app_introduce}</div>
                     </div>
                     <div class="star-btn">
@@ -53,7 +53,7 @@
                                     <span><i class="iconfont icon-xingxing"></i></span>
                                 </div>
                             </div>
-                            <div class="yys-score" data-score="4"></div>
+                            <div class="yys-score" data-score="{$app.app_detail.start_score}"></div>
                         </div>
                         <div class="video-btn">
                             <a href="{:U('Home/App/app_detail', array('app_id' => $app['app_id']))}" target="_blank" class="btn1">查看详情</a>
@@ -110,14 +110,14 @@
         }
         //保留一位小数
         function tofixed(dom){
-            var old=parseFloat($(dom).attr("data-score"));
-            var newer=old.toFixed(1);
-            $(dom).text(newer);
+            $(dom).each(function (index,elem) {
+                var old=parseFloat($(elem).attr("data-score"));
+                var newer=old.toFixed(1);
+                $(elem).text(newer);
+            });
         }
         tofixed($(".yys-score"));
         starScore(".yys-score",".yys-video","#f4dd1f");
-        tofixed($(".blr-score"));
-        starScore(".blr-score",".blr-video","#f4dd1f");
 
 
         //点击视频就可播放/暂停

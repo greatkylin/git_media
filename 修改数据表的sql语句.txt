@@ -19,6 +19,11 @@ ALTER TABLE `zy_media_app_guide`
 ADD COLUMN `guide_title`  varchar(120) NULL COMMENT '精选攻略标题' AFTER `sort`;
 ALTER TABLE `zy_media_app_lib`
 ADD COLUMN `beauty_image`  text NULL COMMENT '精美图片url，以（,）分割' AFTER `cover_img`;
+/*20170913 添加拼音字母字段*/
+ALTER TABLE `zy_media_app_list`
+ADD COLUMN `pin_yin`  varchar(10) NULL DEFAULT 'A' COMMENT '游戏名称的第一个字拼音的首字母';
+ALTER TABLE `zy_media_sync_gift_lib`
+ADD COLUMN `publish_time`  int(11) NULL DEFAULT 0 COMMENT '上架时间' AFTER `gift_detail`;
 
 
 

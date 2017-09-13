@@ -166,7 +166,7 @@
                                 <div class="col-md-11 col-xs-11 col-sm-11 r">
                                     <label class="form-label col-md-1 col-xs-1 col-sm-1 text-r">游戏名称:</label>
                                     <div class="formControls col-md-2 col-xs-2 col-sm-2">
-                                        <el-autocomplete class="inline-input" placeholder="请输入游戏名称" v-model="app_name" :fetch-suggestions="querySearch" :trigger-on-focus="false" @select="handleSelect">
+                                        <el-autocomplete class="inline-input" placeholder="请输入游戏名称" v-model="app_name" :fetch-suggestions="querySearch" :trigger-on-focus="false" :on-icon-click="handleIconClick" icon="close" @select="handleSelect">
                                         </el-autocomplete>
                                         <input class="app_id" type="hidden" name="app_id[]"  v-model="app_id">
                                         <input class="app_name" type="hidden" name="app_name[]"  v-model="app_name">
@@ -372,7 +372,16 @@
                             obj.apps = res.data
                         }
                     });
+                },
+                handleIconClick: function(){
+                    this.app_id = '';
+                    this.app_name = '';
+                    this.introduce = '';
+                    this.video_url = '';
+                    this.app_file_url = '';
+                    this.detail_url = '';
                 }
+
             }
         });
     }
@@ -396,6 +405,8 @@
                         ':fetch-suggestions="querySearch"'+
                         ':trigger-on-focus="false"'+
                         '@select="handleSelect"'+
+                        ':on-icon-click="handleIconClick"'+
+                        'icon="close"'+
                     '></el-autocomplete>'+
                     '<input class="app_id" type="hidden" name="app_id[]"  v-model="app_id">'+
                     '<input class="app_name" type="hidden" name="app_name[]"  v-model="app_name">'+
@@ -431,6 +442,7 @@
     function removeApp() {
         $('#game-container .close-btn').click(function(){
             $(this).parent('.app-box').remove()
+            currentAppNum--;
         })
     }
 
@@ -983,6 +995,16 @@
             if(currentType == 1){
                 if(!is_bg_success && !no_upload_bg && is_update_bg) {
                     layer.alert('请先上传抬头图', {
+                        skin: 'layui-layer-lan',
+                        closeBtn: 0,
+                        anim: 4 //动画类型
+                    });
+                    $(form).find(":submit").attr("disabled", false).attr("value", "提交");
+                    return false;
+                }
+                //判断当前添加的游戏数量是否不足5款
+                if(currentAppNum < 5){
+                    layer.alert('请至少添加5款游戏', {
                         skin: 'layui-layer-lan',
                         closeBtn: 0,
                         anim: 4 //动画类型
