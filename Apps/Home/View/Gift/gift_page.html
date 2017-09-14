@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--2017-7-6！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+</head>
+<body id="singleGiftPage" class="bodygiftCenter">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏结束-->
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a href="{:U('Home/Gift/index')}" target="_blank" >礼包中心</a>
+        <a href="{:U('Home/Gift/all_gift')}" target="_blank" class="active">礼包大全</a>
+        <a href="#" target="_blank">我的礼包</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<!--主体内容开始-->
+<main class="hotgame-rank">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a><span>></span><a href="{:U('Home/Gift/index')}">礼包中心</a><span>></span>礼包大全
+    </div>
+    <div class="single-page-banner">
+        <div class="banner-img">
+            <if condition="!empty($banner)">
+                <img alt="" src="{$banner.banner_path|format_url}">
+                <else />
+                <img alt="" src="__PUBLIC__/Home/static/img/single-gift-banner.png">
+            </if>
+        </div>
+        <div class="cover">
+            <if condition="!empty($appInfo)">
+                <div class="icon"><img alt="" src="{$appInfo.icon|format_url}"></div>
+                <div class="desp">
+                    <div class="name">{$appInfo.app_name}</div>
+                    <div class="download">
+                        <a href="{:U('Home/App/app_detail', array('app_id' => $appInfo['app_id']))}" target="_blank"><img alt="" src="__PUBLIC__/Home/static/img/game-zq-icon.png">游戏专区</a>
+                        <a href="{:U('Home/App/down', array('app_id' => $appInfo['app_id']))}" target="_blank"><img alt="" src="__PUBLIC__/Home/static/img/download-icon-little.png">点击下载</a>
+                    </div>
+                </div>
+            </if>
+        </div>
+    </div>
+    <div id="app-gift-list">
+
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+
+<!--领取礼包的弹框-->
+<div class="system-alert get-gift-mask" style="display: none;">
+    <div class="container">
+        <div class="hd">
+            <span>系统提示</span><img class="close" alt="" src="__PUBLIC__/Home/static/img/close-mask.png">
+        </div>
+        <div class="main-content">
+            <div><img alt="" src="__PUBLIC__/Home/static/img/success.png"></div>
+            <div>
+                <div class="text">
+                    <span>ABCDEFGHIJ</span>
+                    <span class="copy copy-gift" data-clipboard-target="">复制</span></div>
+                <div>领取成功，请尽快使用</div>
+            </div>
+        </div>
+        <div class="use-now"><img alt="" src="__PUBLIC__/Home/static/img/dengpao.png">您领取的礼包将60分钟后进入淘号，请您尽快激活使用</div>
+    </div>
+</div>
+<div class="system-alert taohao-mask" style="display: none;">
+    <div class="container">
+        <div class="hd">
+            <span>系统提示1</span><img class="close" alt="" src="__PUBLIC__/Home/static/img/close-mask.png">
+        </div>
+        <div class="main-content">
+            <div><img alt="" src="__PUBLIC__/Home/static/img/success.png"></div>
+            <div>
+                <div class="has-tao">您淘到的激活码为</div>
+                <div class="text">
+                    <span class="taohao-num">ABCDEFGHIJ</span>
+                    <span class="copy copy-taohao" data-clipboard-target="">复制</span></div>
+                <div class="tao-again" data-clipboard-target="随便">再淘一次</div>
+            </div>
+        </div>
+        <div class="use-now"><img alt="" src="__PUBLIC__/Home/static/img/dengpao.png">在淘号区存在的礼包均被他人领取过，很可能无法使用，可以多淘几次碰碰运气</div>
+    </div>
+</div>
+<button class="copy-button" data-clipboard-text="这次是认真2的2">复制</button>
+<script src="__PUBLIC__/Home/static/js/ZeroClipboard.js"></script>
+<script src="__PUBLIC__/Home/static/js/ZeroClipboard.swf"></script>
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script>
+    $(function () {
+        //根据百分比来定长度
+        $(".line-in").each(function (i, self) {
+            var newWidth = $(self).parent().next().text();
+            $(self).css("width", newWidth);
+        });
+        //点击弹出mask
+        $(".r").click(function () {
+            var type = $(this).parents(".gift-bag").attr("data-type");
+            if (type == "get-gift") {
+                $(".get-gift-mask").show();
+                $(".taohao-mask").hide();
+                $(".close").click(function () {
+                    $(".get-gift-mask").hide();
+                })
+            } else {
+                $(".get-gift-mask").hide();
+                $(".taohao-mask").show();
+                $(".close").click(function () {
+                    $(".taohao-mask").hide();
+                })
+            }
+        })
+
+        // 复制相关
+        //先给按钮进行data-clipboard-text赋值
+        function giveVal(dom){
+            var value=$(dom).prev().text();
+            $(dom).attr("data-clipboard-text",value);
+        }
+        giveVal(".copy-taohao");
+
+        var client = new ZeroClipboard( $(".copy-taohao") );
+        client.on( 'ready', function(client) {
+            client.on( 'complete', function(client, args) {
+                alert("Copied text to clipboard: " + args.text );
+            } );
+        } );
+        client.on( 'wrongflash noflash', function() {
+            ZeroClipboard.destroy();
+        } );
+
+        //这个能行
+        var client2 = new ZeroClipboard( $(".copy-button") );
+        client2.on( 'wrongflash noflash', function() {
+            ZeroClipboard.destroy();
+        } );
+
+        //ajax方式获取全部礼包分页列表
+        $.ajax({
+            type: 'POST',
+            url: "{:U('Home/Gift/ajax_get_gift_belong_app_list')}",
+            dataType: 'json',
+            data: {app_id: '{$appId}'},
+            async: false, //默认为true 异步
+            success: function (res) {
+                $('#app-gift-list').empty().html(res);
+            },
+            error: function () {
+            }
+        });
+    })
+</script>
+</body>
+</html>

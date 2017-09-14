@@ -1,0 +1,61 @@
+<if condition="count($giftList) gt 0">
+    <div class="title"><span></span>其他礼包</div>
+    <div class="gift-box">
+        <volist name="giftList" id="gift">
+            <a href="{:U('Home/Gift/gift_page', array('app_id' => $gift['app_id']))}">
+                <div class="gift-tag">
+                <div class="icon-and-name">
+                    <div class="icon"><img alt="" src="{$gift.icon|format_url}"></div>
+                    <div class="name">
+                        <div class="self">{$gift.app_name}</div>
+                        <div class="get">立即领取</div>
+                    </div>
+                </div>
+                <div class="desp-and-icon">
+                    <div>{$gift.latest_gift}</div>
+                    <if condition="$gift['platform'] eq 1">
+                        <div><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"></div>
+                    </if>
+                    <if condition="$gift['platform'] eq 2">
+                        <div><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></div>
+                    </if>
+                </div>
+                <div class="percent">
+                    <div class="yu">剩余礼包：
+                        <div class="outer"><span class="inner"></span></div>
+                    </div>
+                    <div class="yu-num">{$gift.residue_rate}%</div>
+                </div>
+            </div>
+            </a>
+        </volist>
+    </div>
+    <div class="page-box">
+        {$show}
+    </div>
+    <script>
+        $(function () {
+            //分页跳转
+            $(".page-box div, .page-jump").on('click',function(){
+                var pageObj = this;
+                var url = $(pageObj).attr('data-href');
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    success:function(res){
+                        $('#other-gift-list').empty().html(res);
+                    },
+                    error : function() {
+                    }
+                });
+                return false;
+            });
+
+            //根据百分比来定长度
+            $(".inner").each(function (i,self) {
+                var newWidth=$(self).parents(".yu").next().text();
+                $(self).css("width",newWidth);
+            });
+        });
+    </script>
+</if>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--2017-7-6！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+</head>
+<body class="bodygiftCenter bodygift-pocket">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏结束-->
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a href="{:U('Home/Gift/index')}" target="_blank" >礼包中心</a>
+        <a href="{:U('Home/Gift/all_gift')}" target="_blank" class="active">礼包大全</a>
+        <a href="#" target="_blank">我的礼包</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<!--主体内容开始-->
+<main class="hotgame-rank">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a><span>></span><a href="{:U('Home/Gift/index')}">礼包中心</a><span>></span>礼包大全
+    </div>
+    <if condition="count($hotGiftList) gt 0">
+        <div class="title"><span></span>热门礼包</div>
+        <div class="gift-box">
+            <volist name="hotGiftList" id="hotGift">
+                <a href="{:U('Home/Gift/gift_page', array('app_id' => $hotGift['app_id']))}">
+                    <div class="gift-tag">
+                        <div class="icon-and-name">
+                            <div class="icon"><img alt="" src="{$hotGift.icon|format_url}"></div>
+                            <div class="name">
+                                <div class="self">{$hotGift.app_name}</div>
+                                <div class="get">立即领取</div>
+                            </div>
+                        </div>
+                        <div class="desp-and-icon">
+                            <div>{$hotGift.latest_gift}</div>
+                            <if condition="$hotGift['platform'] eq 1">
+                                <div><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"></div>
+                            </if>
+                            <if condition="$hotGift['platform'] eq 2">
+                                <div><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></div>
+                            </if>
+                        </div>
+                        <div class="percent">
+                            <div class="yu">剩余礼包：
+                                <div class="outer"><span class="inner"></span></div>
+                            </div>
+                            <div class="yu-num">{$hotGift.residue_rate}%</div>
+                        </div>
+                    </div>
+                </a>
+            </volist>
+        </div>
+    </if>
+    <div id="all-gift-list">
+
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<!--下面有两个js脚本是其他页面没有的start-->
+<script src="__PUBLIC__/Home/static/js/pinyin_dict_firstletter.js"></script>
+<script src="__PUBLIC__/Home/static/js/pinyinUtil.js"></script>
+<!--end-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
+<script>
+    $(function () {
+        //根据百分比来定长度
+        $(".inner").each(function (i,self) {
+            var newWidth=$(self).parents(".yu").next().text();
+            $(self).css("width",newWidth);
+        });
+
+        //根据游戏名生成其首字母
+        /*function dataLetter(dom){
+            var letter=$(dom).find(".name").text();
+            var firstLe=pinyinUtil.getFirstLetter(letter).charAt(0);
+            $(dom).attr("data-letter",firstLe);
+        }
+        $(".whole-gift>.gift-tag").each(function(i,self){
+            dataLetter(this);
+        });*/
+
+        //相应首字母的游戏出现
+        /*$(".alphabet-list>span").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+            $(".alphabet-choose").text($(this).text());
+            var txt=$(this).text();
+            if(txt=="#"){
+                $(".whole-gift>.gift-tag").show();
+            }else{
+                $(".whole-gift>.gift-tag").each(function(i,self){
+                    if($(self).attr("data-letter")==txt){
+                        $(self).show();
+                    }else{
+                        $(self).hide();
+                    }
+                });
+            }
+        });*/
+
+        //ajax方式获取全部礼包分页列表
+        $.ajax({
+            type: 'POST',
+            url: "{:U('Home/Gift/ajax_get_all_gift_by_letter')}",
+            dataType: 'json',
+            data: {app_ids: ''},
+            async: false, //默认为true 异步
+            success: function (res) {
+                $('#all-gift-list').empty().html(res);
+            },
+            error: function () {
+            }
+        });
+    })
+</script>
+</body>
+</html>

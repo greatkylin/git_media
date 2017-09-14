@@ -540,6 +540,93 @@ class GiftController extends AdminBaseController
         }
     }
 
+    /**
+     * 礼包中心首页的轮播列表
+     * @author xy
+     * @since 2017/09/14 17:53
+     */
+    public function gift_slide_list(){
+        // 获取搜索条件
+        $slideTitle = trim(I('slide_title'));
+        $publishStatus = intval(I('publish_status'));
 
+        $where = array();
+        if(!empty($slideTitle)) {
+            $where['gs.slide_title']    = array('like', "%$slideTitle%");
+        }
+        $nowTime = time();
+        if ($publishStatus == 1) { // 待上线
+            $where['gs.is_publish'] = 1;
+            $where['gs.start_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 2) {// 已上线
+            $where['gs.is_publish'] = 1;
+            $where['gs.start_time'] = array('lt', $nowTime);
+            $where['gs.end_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 3) {// 已下线
+            $where['gs.is_publish'] = 2;
+        }
+
+        // 分页
+        $service = new GiftService();
+
+        $totalCount = $service->countGiftSlideNum($where); //获取总条数
+        $page     = intval(I('p'));
+        $pageSize = intval(I('pagesize'));
+        $pageSize = $pageSize > 0 ? $pageSize : DEFAULT_PAGE_SIZE; //每页显示条数
+        $totalPages = ceil($totalCount / $pageSize);        //总页数
+        $page       = $page > $totalPages ? $totalPages : $page;
+        $page       = $page > 0 ? $page : 1;
+        $currentPage   = $pageSize * ($page-1);
+        $this->assign('firstRow', $currentPage);
+        $this->assign('page',     $page);
+        $this->assign('pages',    $totalPages);
+        $this->assign('pagesize', $pageSize);
+        //根据游戏列表的类型获取游戏列表
+        $slideList = $service->getGiftSlideListByPage($where, $currentPage, $pageSize);
+        if($slideList === false){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('slideTitle',$slideTitle);
+        $this->assign('publishStatus',$publishStatus);
+        $this->assign('slideList', $slideList);
+        $this->display();
+    }
+
+    public function gift_slide_add(){
+        if(IS_AJAX) {
+            $data['status'] = 1;    // 上架
+            $data['admin_id'] = $this->user_info['id'];
+            $data['start_time'] = strtotime(I('start_time'));
+            $data['end_time'] = strtotime(I('end_time'));
+            if (M('gift_slide')->add($data)) {
+                $res['code'] = 1;
+                $res['info'] = '您已添加成功！';
+                $this->ajaxReturn($res);
+            } else {
+                $res['code'] = 0;
+                $res['info'] = '添加失败';
+                $this->ajaxReturn($res);
+            }
+
+        } else {
+//            $where = array(
+//                //'alist.status' => 1,
+//                //'alist.sj_time' => array('lt', time()),
+//                'gl.start_time' => array('lt',time()),
+//                'gl.end_time' => array('gt',time()),
+//                'gl.is_del' => array('neq', 1),
+//            );
+//            $app_list = M('hot_gift hg')
+//                ->join(C('DB_PREFIX') . 'gift_lib gl ON hg.gift_id = gl.gift_id', 'LEFT')
+//                ->join(C('DB_PREFIX') . 'app_lib al ON gl.app_id = al.app_id', 'LEFT')
+//                //->join(C('DB_PREFIX') . 'app_list alist ON alist.app_id = al.app_id', 'LEFT')
+//                ->where($where)->getField('distinct al.app_id, al.app_name');
+//            $this->assign('app_list', $app_list);
+//            $this->assign('reload_url', U('Giftbanner/index'));
+//            $this->assign('start_time', time());
+//            $this->assign('end_time', strtotime("+30 day"));
+            $this->display();
+        }
+    }
 
 }

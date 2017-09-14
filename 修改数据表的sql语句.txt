@@ -24,6 +24,21 @@ ALTER TABLE `zy_media_app_list`
 ADD COLUMN `pin_yin`  varchar(10) NULL DEFAULT 'A' COMMENT '游戏名称的第一个字拼音的首字母';
 ALTER TABLE `zy_media_sync_gift_lib`
 ADD COLUMN `publish_time`  int(11) NULL DEFAULT 0 COMMENT '上架时间' AFTER `gift_detail`;
-
+/*20170914礼包中心轮播表*/
+CREATE TABLE `zy_media_gift_slide` (
+  `slide_id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `slide_title` varchar(100) DEFAULT '' COMMENT '标题',
+  `relation_type` tinyint(1) DEFAULT '0' COMMENT '关联类型 1:游戏礼包列表  2:礼包详情页',
+	`open_type` tinyint(1) DEFAULT '0' COMMENT '打开方式，1当前页，2新标签',
+  `app_id` int(6) DEFAULT '0' COMMENT '关联游戏id',
+  `gift_id` int(10) DEFAULT '0' COMMENT '关联礼包',
+  `sort` smallint(6) DEFAULT '0' COMMENT '轮播排序',
+  `slide_img` varchar(200) DEFAULT '' COMMENT '图片',
+  `start_time` int(10) DEFAULT '0' COMMENT '开始时间',
+  `end_time` int(10) DEFAULT '0' COMMENT '结束时间',
+  `is_publish` tinyint(1) DEFAULT NULL COMMENT '状态 1上架 2下架',
+  `admin_id` smallint(6) DEFAULT NULL COMMENT '操作人',
+  PRIMARY KEY (`slide_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='礼包中心幻灯片';
 
 

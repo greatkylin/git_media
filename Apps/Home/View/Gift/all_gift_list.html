@@ -1,0 +1,53 @@
+
+    <div class="title all-gift"><span></span>全部礼包</div>
+    <div class="alphabet">
+        <div class="alphabet-list">
+            <span class="page-jump <if condition='empty($currentLetter)'>active</if>" data-href="{:U('Home/gift/ajax_get_all_gift_by_letter', array('p' => $currentPage))}">#</span>
+            <volist name="allowLetterArr" id="letter">
+                <span class="page-jump <if condition='$currentLetter eq $letter'>active</if>" data-href="{:U('Home/gift/ajax_get_all_gift_by_letter', array('letter' => $letter, 'p' => $currentPage))}">{$letter}</span>
+            </volist>
+        </div>
+    </div>
+    <div class="alphabet-choose"><if condition='empty($currentLetter)'>#<else />{$currentLetter}</if></div>
+    <if condition="count($giftList) gt 0">
+        <div class="whole-gift">
+            <!--每个gift-tag后来会有data-letter，js自动生成的，为游戏名的首字母-->
+            <volist name="giftList" id="gift">
+                    <div class="gift-tag">
+                        <a class="icon" href="{:U('Home/Gift/gift_page', array('app_id' => $gift['app_id']))}"><img alt="" src="{$gift.icon|format_url}"></a>
+                        <div class="name-and-num">
+                            <a class="name" href="{:U('Home/Gift/gift_page', array('app_id' => $gift['app_id']))}">{$gift.app_name}</a>
+                            <div class="num today-add">
+                                今日新增：<span><if condition="!empty($gift['gift_publish_num'])">{$gift.gift_publish_num}<else />0</if></span>
+                            </div>
+                            <div class="num">
+                                礼包总数：<span><if condition="!empty($gift['gift_kind_num'])">{$gift.gift_kind_num}<else />0</if></span>
+                            </div>
+                        </div>
+                    </div>
+            </volist>
+        </div>
+        <div class="page-box">
+            {$show}
+        </div>
+    </if>
+    <script>
+        $(function () {
+            //分页跳转
+            $(".page-box div, .page-jump").on('click',function(){
+                var pageObj = this;
+                var url = $(pageObj).attr('data-href');
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    success:function(res){
+                        $('#all-gift-list').empty().html(res);
+                    },
+                    error : function() {
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+

@@ -567,17 +567,21 @@
                                 <input style="width: 70%" type="text" class="input-text limited_count" name="limited_count[{$gift.gift_id}]" value="{$gift.limited_count}" data-giftId="{$gift.gift_id}" placeholder="请输入上限数量">
                             </div>
                         </div>
-                        <php>
-                            if(empty($gift[gift_detail])){
-                                $gift[gift_detail] = $gift[gift_desc];
-                            }
-                        </php>
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-2"></label>
                             <div class="formControls col-xs-8 col-sm-8">
                                 <span class="c-green">详情:</span>
                                 <div class="skin-minimal">
-                                    <textarea name="gift_detail[{$gift.gift_id}]" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*10-100">{$gift.gift_detail}</textarea>
+                                    <!--<textarea name="gift_detail[{$gift.gift_id}]" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*10-100">{$gift.gift_detail}</textarea>-->
+                                    <script id="editor-{$gift.gift_id}" name="gift_detail[{$gift.gift_id}]" type="text/plain">{$gift.gift_desc}</script>
+                                    <script>
+                                        $(function(){
+                                            UE.getEditor('editor-{$gift.gift_id}',{
+                                                allowDivTransToP: false,
+                                                autoHeightEnabled: true
+                                            });
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         </div>
@@ -699,6 +703,7 @@
 </script>
 <script type="text/javascript">
 
+    //游戏简介
     var ue = UE.getEditor('editor',{
         allowDivTransToP: false,
         autoHeightEnabled: true
@@ -774,7 +779,7 @@
                     $('#game_diff_span').empty().html(result.data.app_info.game_diff);
                     if(result.data.gift_info != false){
                         isLimitNumAllow = false;
-                        addGiftLis(result.data.gift_info);
+                        addGiftList(result.data.gift_info);
                         checkLimitNumValid();
                     }
                 }else{
@@ -842,7 +847,7 @@
     }
 
     //拉取数据时生成礼包的列表的html
-    function addGiftLis(giftList) {
+    function addGiftList(giftList) {
         if(typeof (giftList) !== "object"){
             return false;
         }
@@ -850,7 +855,15 @@
         for(var i = 0; i<giftList.length; i++ ){
             html = html + giftListHtml(giftList[i]);
         }
+
         $('#gift_box').empty().html(html);
+        for(var i = 0; i<giftList.length; i++ ){
+            $('textarea[name="gift_detail['+giftList[i].gift_id+']"]').remove();
+            UE.getEditor('neditor-'+giftList[i].gift_id,{
+                allowDivTransToP: false,
+                autoHeightEnabled: true
+            });
+        }
         isLimitNumAllow = false;
     }
 
@@ -888,7 +901,8 @@
                     '<div class="formControls col-xs-8 col-sm-8">'+
                         '<span class="c-green">详情:</span>'+
                         '<div class="skin-minimal">'+
-                            '<textarea name="gift_detail['+giftDate.gift_id+']" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*10-100">'+giftDate.gift_detail+'</textarea>'+
+                            //'<textarea id="editor-'+giftDate.gift_id+'" name="gift_detail['+giftDate.gift_id+']" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*10-100">'+giftDate.gift_desc+'</textarea>'+
+            '<script id="neditor-'+giftDate.gift_id+'" name="gift_detail['+giftDate.gift_id+']" type="text/plain">'+giftDate.gift_desc+'<'+'/script>'+
                         '</div>'+
                     '</div>'+
                 '</div>'+

@@ -29,16 +29,24 @@ class GiftController extends HomeBaseController
         if($hotGiftList === false){
             $this->error($giftService->getFirstError());
         }
-        $giftIdArr = array();
+        $appIdArr = array();
         foreach ($hotGiftList as $gift){
-            $giftIdArr[] = $gift['gift_id'];
+            $appIdArr[] = $gift['app_id'];
         }
-        //4.获取其他礼包列表 ajax分页
-        if(IS_AJAX){
-            $this->ajaxGetIndexOtherGiftList();
+        //4.获取新游礼包
+        $newGiftList = $giftService->getNewGiftList(8);
+        if($newGiftList === false){
+            $this->error($giftService->getFirstError());
         }
-        $this->assign('giftIdArr', $giftIdArr);
+        foreach ($newGiftList as $nGift){
+            $appIdArr[] = $nGift['app_id'];
+        }
+        $appIdArr = array_unique($appIdArr);
+        $appIdStr= implode(',', $appIdArr);
+
+        $this->assign('appIdStr', $appIdStr);
         $this->assign('hotGiftList', $hotGiftList);
+        $this->assign('newGiftList', $newGiftList);
         $this->display();
     }
 
@@ -81,16 +89,12 @@ class GiftController extends HomeBaseController
      * @since 2017/09/12 17:59
      */
     public function all_gift(){
-        if(empty($appId)){
-            $this->error('必填参数缺失');
-        }
         //1.获取热门礼包 8款
         $giftService = new GiftService();
         $hotGiftList = $giftService->getHotGiftList(8);
         if($hotGiftList === false){
             $this->error($giftService->getFirstError());
         }
-        //TODO 2.ajax方式获取全部礼包, 字母分类
 
         $this->assign('hotGiftList', $hotGiftList);
         $this->display();
@@ -101,16 +105,16 @@ class GiftController extends HomeBaseController
      * @author xy
      * @since 2017/09/12 17:05
      */
-    public function ajaxGetIndexOtherGiftList(){
-        $giftIds = I('gift_ids');
+    public function ajax_get_index_other_gift_list(){
+        $appIds = I('app_ids');
         $currentPage = intval(I('p'));
         if(empty($currentPage)){
             $currentPage = 1;
         }
         $where = array();
-        if(!empty($giftIds)){
+        if(!empty($appIds)){
             $where = array(
-                'sgl.gift_id' => array('NOT IN', $giftIds),
+                'gl.app_id' => array('NOT IN', $appIds),
             );
 
         }
@@ -120,27 +124,27 @@ class GiftController extends HomeBaseController
         if($totalNum === false){
             $this->error($giftService->getFirstError());
         }
-        $page = new NewPage($totalNum, 8);
+        $page = new NewPage($totalNum, 1);
         // 分页显示输出
         $show = $page->show();
         //计算媒体站有礼包的游戏列表
         $giftList = $giftService->getAppGiftListByPage($where, $page->firstRow, $page->listRows);
         //var_dump($giftList);
-        $this->assign('giftIds', $giftIds);
+        $this->assign('appIds', $appIds);
         $this->assign('currentPage', $currentPage);
         $this->assign('show', $show);
         $this->assign('giftList', $giftList);
 
-        $html = $this->fetch('index_gift_list');
+        $html = $this->fetch('index_other_gift_list');
         $this->ajaxReturn($html);
     }
 
     /**
-     * ajax方式获取游戏礼包也该礼包下的礼包
+     * ajax方式获取游戏礼包页该礼包下的礼包
      * @author xy
      * @since 2017/09/13 17:14
      */
-    public function ajaxGetGiftBelongAppList(){
+    public function ajax_get_gift_belong_app_list(){
         $appId = intval(I('app_id'));
         if(empty($appId)){
             $this->error('必填参数缺失');
@@ -155,7 +159,11 @@ class GiftController extends HomeBaseController
         if($totalNum === false){
             $this->error($giftService->getFirstError());
         }
-        $page = new NewPage($totalNum, 6);
+        $urlParam = array();
+        if(!empty($appId)){
+            $urlParam['app_id'] = $appId;
+        }
+        $page = new NewPage($totalNum, 6, $urlParam);
         // 分页显示输出
         $show = $page->show();
         //计算媒体站有礼包的游戏列表
@@ -170,23 +178,29 @@ class GiftController extends HomeBaseController
         $this->ajaxReturn($html);
     }
 
-    public function ajaxGetAllGiftByLetter(){
+    /**
+     * ajax方式获取礼包大全页礼包列表
+     * @author xy
+     * @since 2017/09/14 10:52
+     * @return bool
+     */
+    public function ajax_get_all_gift_by_letter(){
 
         $currentPage = intval(I('p'));
         if(empty($currentPage)){
             $currentPage = 1;
         }
-        $letter = strtoupper(trim(I('letter')));
+        $currentLetter = strtoupper(trim(I('letter')));
         $where = array();
         $allowLetterArr = array(
             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
         );
-        if(!empty($letter)){
-            if(!in_array($letter, $allowLetterArr)){
+        if(!empty($currentLetter)){
+            if(!in_array($currentLetter, $allowLetterArr)){
                 return false;
             }
             $where = array(
-                'alist.pin_yin' => strtoupper($letter),
+                'alist.pin_yin' => strtoupper($currentLetter),
             );
         }
         $giftService = new GiftService();
@@ -195,16 +209,21 @@ class GiftController extends HomeBaseController
         if($totalNum === false){
             $this->error($giftService->getFirstError());
         }
-        $page = new NewPage($totalNum, 10);
+        $urlParam = array();
+        if(!empty($currentLetter)){
+            $urlParam['letter'] = $currentLetter;
+        }
+        $page = new NewPage($totalNum, 10, $urlParam);
         // 分页显示输出
         $show = $page->show();
         //计算媒体站有礼包的游戏列表
         $giftList = $giftService->getAppGiftListByPage($where, $page->firstRow, $page->listRows);
 
-        $this->assign('letter', $letter);
+        $this->assign('currentLetter', $currentLetter);
         $this->assign('currentPage', $currentPage);
         $this->assign('show', $show);
         $this->assign('giftList', $giftList);
+        $this->assign('allowLetterArr', $allowLetterArr);
 
         $html = $this->fetch('all_gift_list');
         $this->ajaxReturn($html);

@@ -538,7 +538,13 @@ class GiftService extends BaseService
         $subQueryTwo = ' SELECT a.*, CONCAT(glib.app_id,\'-\',glib.gift_name,\'-\',glib.original_name) AS id_gift_name FROM ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS a LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS glib ON glib.gift_id = a.gift_id ';
 
         $giftList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('gl')
-            ->field('sgl.gift_id as sync_gift_id, sgl.limited_count, sgl.gift_detail, gl.gift_desc, gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, CONCAT(al.app_name,\'-\',gl.gift_name,\'-\',gl.original_name) AS gift_full_name, CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) AS id_gift_name, sum(cn.code_num) as all_code_num ')
+            ->field(
+                'sgl.gift_id as sync_gift_id, sgl.limited_count, IFNULL(sgl.gift_detail, gl.gift_desc) as gift_desc,
+                gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, 
+                CONCAT(al.app_name,\'-\',gl.gift_name,\'-\',gl.original_name) AS gift_full_name, 
+                CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) AS id_gift_name, 
+                sum(cn.code_num) as all_code_num 
+                ')
             //INNER JOIN避免取到没有礼包码的礼包
             ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
             //INNER JOIN 媒体站游戏列表 避免取到未同步到媒体站的游戏 的礼包
@@ -546,13 +552,16 @@ class GiftService extends BaseService
             //关联获取游戏名称
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS al ON al.`app_id` = gl.`app_id`')
             //关联获取设置上限数量的礼包
-            ->join('LEFT JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) = sgl.`id_gift_name`')
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) = sgl.`id_gift_name`')
             ->where($where)
             ->group('gift_full_name')
             ->select();
         if(empty($giftList)){
             $this->setError('未找到对应礼包数据');
             return false;
+        }
+        foreach ($giftList as $key=>$gift){
+            $giftList[$key]['gift_desc'] = htmlspecialchars_decode($gift['gift_desc']);
         }
         return $giftList;
 
@@ -948,5 +957,60 @@ class GiftService extends BaseService
         return false;
     }
 
+    /**
+     * 获取礼包中心首页轮播图片的数量
+     * @author xy
+     * @since 2017/09/14 18:08
+     * @param array $where
+     * @return bool
+     */
+    public function countGiftSlideNum($where = array()){
+        $totalNum = M('gift_slide')->alias('gs')
+            ->field('gs.*, IF(gs.sort = 0, 999999999) as new_sort, au.nickname')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON gs.admin_id = au.id')
+            ->where($where)
+            ->order('new_sort')
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询轮播图片数量失败');
+        }
+        return $totalNum;
+    }
 
+    /**
+     * 分页获取礼包中心首页的轮播图片
+     * @author xy
+     * @since 2017/09/14 18:08
+     * @param array $where
+     * @param $currentPage
+     * @param $pageSize
+     * @return bool
+     */
+    public function getGiftSlideListByPage($where = array(), $currentPage, $pageSize){
+        $slideList = M('gift_slide')->alias('gs')
+            ->field('gs.*, IF(gs.sort = 0, 999999999) as new_sort, au.nickname')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON gs.admin_id = au.id')
+            ->where($where)
+            ->order('new_sort')
+            ->limit($currentPage. ',' .$pageSize)
+            ->select();
+        if($slideList === false){
+            return $this->setError('查询轮播失败');
+        }
+        $now_time = time();
+        foreach ($slideList as &$value) {
+            # 自动下架
+            if ($value['end_time'] < $now_time) {
+                M('gift_slide')->save(array('slide_id' => $value['slide_id'], 'is_publish' => 2));
+            }
+            if ($now_time < $value['start_time'] && $value['is_publish'] == 1) {
+                $value['publish_name'] = '待上线';
+            } elseif ($value['start_time'] < $now_time && $value['end_time'] > $now_time && $value['is_publish'] == 1) {
+                $value['publish_name'] = '已上线';
+            } elseif ($value['end_time'] < $now_time || $value['is_publish'] == 2) {
+                $value['publish_name'] = '已下线';
+            }
+        }
+        return $slideList;
+    }
 }

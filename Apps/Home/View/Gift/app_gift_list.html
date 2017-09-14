@@ -1,0 +1,107 @@
+<if condition="count($giftList) gt 0">
+    <div class="lotsof-bags">
+        <volist name="giftList" id="gift">
+            <div class="gift-bag" data-type="get-gift">
+            <div class="inner-bag">
+                <div class="top">
+                    <div class="l">
+                        <div class="name">{$gift.short_gift_name}</div>
+                        <div class="system">使用系统：<if condition="$gift['platform'] eq 1">安卓<elseif condition="$gift['platform'] eq 2"/>IOS<else />未知</if></div>
+                        <div class="system yu">
+                            剩余：
+                            <div class="line-out"><span class="line-in"></span></div>
+                            <span class="yu-num">{$gift.residue_rate}%</span>
+                        </div>
+                    </div>
+                    <div class="r">
+                        <div>
+                            <div class="get"><img alt="" src="__PUBLIC__/Home/static/img/gift-icon-little.png"></div>
+                            <div>领取礼包</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <div>使用日期：{$gift.start_time|date="Y.m.d", ###}-{$gift.end_time|date="Y.m.d", ###}</div>
+                    <div class="gift-desp">
+                        <div class="titler">礼包详情：</div>
+                        <div class="desp">
+                            {$gift.gift_desc|htmlspecialchars_decode}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </volist>
+    </div>
+    <div class="page-box">
+        {$show}
+    </div>
+    <script>
+        $(function () {
+            //分页跳转
+            $(".page-box div, .page-jump").on('click',function(){
+                var pageObj = this;
+                var url = $(pageObj).attr('data-href');
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    success:function(res){
+                        $('#app-gift-list').empty().html(res);
+                    },
+                    error : function() {
+                    }
+                });
+                return false;
+            });
+
+            //根据百分比来定长度
+            $(".line-in").each(function (i, self) {
+                var newWidth = $(self).parent().next().text();
+                $(self).css("width", newWidth);
+            });
+
+            //点击弹出mask
+            $(".r").click(function () {
+                var type = $(this).parents(".gift-bag").attr("data-type");
+                if (type == "get-gift") {
+                    $(".get-gift-mask").show();
+                    $(".taohao-mask").hide();
+                    $(".close").click(function () {
+                        $(".get-gift-mask").hide();
+                    })
+                } else {
+                    $(".get-gift-mask").hide();
+                    $(".taohao-mask").show();
+                    $(".close").click(function () {
+                        $(".taohao-mask").hide();
+                    })
+                }
+            })
+
+            // 复制相关
+            //先给按钮进行data-clipboard-text赋值
+            function giveVal(dom){
+                var value=$(dom).prev().text();
+                $(dom).attr("data-clipboard-text",value);
+            }
+            giveVal(".copy-taohao");
+
+            var client = new ZeroClipboard( $(".copy-taohao") );
+            client.on( 'ready', function(client) {
+                client.on( 'complete', function(client, args) {
+                    alert("Copied text to clipboard: " + args.text );
+                } );
+            } );
+            client.on( 'wrongflash noflash', function() {
+                ZeroClipboard.destroy();
+            } );
+
+            //这个能行
+            var client2 = new ZeroClipboard( $(".copy-button") );
+            client2.on( 'wrongflash noflash', function() {
+                ZeroClipboard.destroy();
+            } );
+
+        });
+    </script>
+</if>
