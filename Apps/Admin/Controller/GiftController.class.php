@@ -9,6 +9,7 @@
 namespace Admin\Controller;
 
 use Admin\Service\GiftService;
+use Admin\Service\SlideService;
 use Think\Controller;
 use Admin\Controller\AdminBaseController;
 
@@ -566,6 +567,7 @@ class GiftController extends AdminBaseController
             $where['gs.is_publish'] = 2;
         }
 
+
         // 分页
         $service = new GiftService();
 
@@ -592,41 +594,283 @@ class GiftController extends AdminBaseController
         $this->display();
     }
 
+    /**
+     * 礼包中心首页轮播添加
+     * @author xy
+     * @since 2017/09/15 13:38
+     */
     public function gift_slide_add(){
         if(IS_AJAX) {
-            $data['status'] = 1;    // 上架
+            $slideTitle = trim(I('slide_title'));
+            if(empty($slideTitle)){
+                $this->outputJSON(true, '100001', '请填写标题');
+            }
+            $relationType = intval(I('relation_type'));
+            if(!in_array($relationType, array(1, 2))){
+                $this->outputJSON(true, '100001', '轮播关联类型错误');
+            }
+            $appId = intval(I('app_id'));
+            $giftId = intval(I('gift_id'));
+            if($relationType == 1){
+                if(empty($appId)){
+                    $this->outputJSON(true, '100001', '请选择关联游戏');
+                }
+            }else{
+                if(empty($appId) || empty($giftId)){
+                    $this->outputJSON(true, '100001', '请选择关联游戏或者关联礼包');
+                }
+            }
+            $openType = intval(I('open_type'));
+            if(empty($openType)){
+                $openType = 1;
+            }
+            $slideImage = trim(I('image_path'));
+            if(empty($slideImage)){
+                $this->outputJSON(true, '100001', '请上传图片');
+            }
+            $data['slide_title'] = $slideTitle;
+            $data['relation_type'] = $relationType;
+            $data['open_type'] = $openType;
+            $data['app_id'] = $appId;
+            $data['gift_id'] = $giftId;
+            $data['slide_img'] = $slideImage;
+            $data['create_time'] = time();
+            $data['sort'] = intval(I('sort'));
+            $data['is_publish'] = 1;    // 上架
             $data['admin_id'] = $this->user_info['id'];
             $data['start_time'] = strtotime(I('start_time'));
             $data['end_time'] = strtotime(I('end_time'));
             if (M('gift_slide')->add($data)) {
-                $res['code'] = 1;
-                $res['info'] = '您已添加成功！';
-                $this->ajaxReturn($res);
+                $this->outputJSON(false, '000000', '添加成功');
             } else {
-                $res['code'] = 0;
-                $res['info'] = '添加失败';
-                $this->ajaxReturn($res);
+                $this->outputJSON(true, '100001', '添加失败');
             }
-
         } else {
-//            $where = array(
-//                //'alist.status' => 1,
-//                //'alist.sj_time' => array('lt', time()),
-//                'gl.start_time' => array('lt',time()),
-//                'gl.end_time' => array('gt',time()),
-//                'gl.is_del' => array('neq', 1),
-//            );
-//            $app_list = M('hot_gift hg')
-//                ->join(C('DB_PREFIX') . 'gift_lib gl ON hg.gift_id = gl.gift_id', 'LEFT')
-//                ->join(C('DB_PREFIX') . 'app_lib al ON gl.app_id = al.app_id', 'LEFT')
-//                //->join(C('DB_PREFIX') . 'app_list alist ON alist.app_id = al.app_id', 'LEFT')
-//                ->where($where)->getField('distinct al.app_id, al.app_name');
-//            $this->assign('app_list', $app_list);
-//            $this->assign('reload_url', U('Giftbanner/index'));
-//            $this->assign('start_time', time());
-//            $this->assign('end_time', strtotime("+30 day"));
+            $service = new GiftService();
+            $appList = $service->getHasGiftAppList();
+            if($appList === false){
+                $this->error($service->getFirstError());
+            }
+            $reloadUrl = U('Admin/Gift/gift_slide_list');
+            $this->assign('reloadUrl', $reloadUrl);
+            $this->assign('appList', $appList);
+            $this->assign('start_time', time());
+            $this->assign('end_time', strtotime("+30 day"));
             $this->display();
         }
     }
 
+    /**
+     * 礼包中心首页轮播编辑
+     * @author xy
+     * @since 2017/09/15 13:48
+     */
+    public function gift_slide_edit(){
+        $slideId = intval(I('slide_id'));
+        $service = new GiftService();
+        if(IS_AJAX){
+            if(empty($slideId)){
+                $this->outputJSON(true, '100001', '必填参数缺失');
+            }
+            $slideTitle = trim(I('slide_title'));
+            if(empty($slideTitle)){
+                $this->outputJSON(true, '100001', '请填写标题');
+            }
+            $relationType = intval(I('relation_type'));
+            if(!in_array($relationType, array(1, 2))){
+                $this->outputJSON(true, '100001', '轮播关联类型错误');
+            }
+            $appId = intval(I('app_id'));
+            $giftId = intval(I('gift_id'));
+            if($relationType == 1){
+                if(empty($appId)){
+                    $this->outputJSON(true, '100001', '请选择关联游戏');
+                }
+            }else{
+                if(empty($appId) || empty($giftId)){
+                    $this->outputJSON(true, '100001', '请选择关联游戏或者关联礼包');
+                }
+            }
+            $openType = intval(I('open_type'));
+            if(empty($openType)){
+                $openType = 1;
+            }
+            $slideImage = trim(I('image_path'));
+
+            $data['slide_title'] = $slideTitle;
+            $data['relation_type'] = $relationType;
+            $data['open_type'] = $openType;
+            $data['app_id'] = $appId;
+            $data['gift_id'] = $giftId;
+            if(!empty($slideImage)){
+                $data['slide_img'] = $slideImage;
+            }
+            $data['update_time'] = time();
+            $data['sort'] = intval(I('sort'));
+            $data['is_publish'] = 1;    // 上架
+            $data['admin_id'] = $this->user_info['id'];
+            $data['start_time'] = strtotime(I('start_time'));
+            $data['end_time'] = strtotime(I('end_time'));
+            if (M('gift_slide')->where(array('slide_id' => $slideId))->save($data)) {
+                $this->outputJSON(false, '000000', '编辑成功');
+            } else {
+                $this->outputJSON(true, '100001', '编辑失败');
+            }
+        } else {
+            if(empty($slideId)){
+                $this->outputJSON(true,'100001', '必填参数缺失');
+            }
+            $slide = $service -> getGiftSlideById($slideId);
+            if($slide === false){
+                $this->outputJSON(true,'100001', $service->getFirstError());
+            }
+            $appList = $service->getHasGiftAppList();
+            if($appList === false){
+                $this->error($service->getFirstError());
+            }
+            $reloadUrl = U('Admin/Gift/gift_slide_list');
+            $this->assign('reloadUrl', $reloadUrl);
+            $this->assign('appList', $appList);
+            $this->assign('slide', $slide);
+            $this->display();
+        }
+    }
+
+    /**
+     * ajax方式生成可选择的礼包option
+     * @author xy
+     * @since 2017/09/15 09:51
+     */
+    public function ajax_get_gift_option(){
+        $appId = intval(I('app_id'));
+        $giftId = intval(I('gift_id'));
+        if(empty($appId)){
+            $this->outputJSON(true, '100001', '请选择具体的游戏');
+        }
+        $service = new GiftService();
+        $giftList = $service -> getAppGiftByAppId($appId);
+        if($giftList === false){
+            $this->outputJSON(true, '100001', $service->getFirstError());
+        }
+        $html = '';
+        if(empty($giftList)){
+            $html .= '<option value="">暂无礼包</option>';
+        }else{
+            foreach ($giftList as $gift){
+                if($gift['sync_gift_id'] === $giftId){
+                    $html .= '<option value="'.$gift['sync_gift_id'].'" selected="selected">'.$gift['short_gift_name'].'</option>';
+                }else{
+                    $html .= '<option value="'.$gift['sync_gift_id'].'">'.$gift['short_gift_name'].'</option>';
+                }
+
+            }
+        }
+        $this->outputJSON(false, '000000', '获取成功', $html);
+    }
+
+    /**
+     * 礼包中心轮播图片上下架操作
+     * @author xy
+     * @since 2017/09/15 15:26
+     */
+    public function gift_slide_publish_change(){
+        $slideId = intval(I('slide_id'));
+        if(empty($slideId)){
+            $this->outputJSON(true,'100001','id不能为空');
+        }
+        $slide = M('gift_slide')->field('slide_id, is_publish')->where(array('slide_id'=>$slideId))->find();
+        if(empty($slide)){
+            $this->outputJSON(true,'100001','未找到id为'.$slideId.'的活动');
+        }
+        $slide['update_time'] = time();
+        $slide['admin_id'] = $this->user_info['id'];
+        if($slide['is_publish'] == 1){
+            $slide['is_publish'] = 2;
+        }else{
+            $slide['is_publish'] = 1;
+        }
+        $result = M('gift_slide')->where(array('slide_id'=>$slideId))->save($slide);
+        if(empty($result)){
+            $this->outputJSON(true,'100001','改变状态失败');
+        }
+        $this->outputJSON(false,'000000','改变状态成功');
+    }
+
+    /**
+     * 删除礼包轮播图片
+     * @author xy
+     * @since 2017/09/15 15:43
+     */
+    public function gift_slide_delete(){
+        $slideId = intval(I('slide_id'));
+        if(empty($slideId)){
+            $this->outputJSON(true,'100001','id不能为空');
+        }
+        $result = M('gift_slide')->where(array('slide_id'=>$slideId))->delete();
+        if(empty($result)){
+            $this->outputJSON(true,'100001','删除失败');
+        }
+        $this->outputJSON(false,'000000','删除成功');
+    }
+
+    /**
+     * 礼包中心首页的右侧图文广告
+     * @author xy
+     * @since 2017/09/15 18:13
+     */
+    public function gift_index_ad_list(){
+        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
+        // 获取搜索条件
+        if($slideCate === false){
+            $this->error('获取分类信息失败');
+        }
+        $slideName = trim(I('slide_name'));
+        $publishStatus = intval(I('publish_status'));
+        //幻灯片分类
+        $slideCid = intval(I('slide_cid'));
+        $where = array();
+        if(!empty($slideTitle)) {
+            $where['s.slide_name']    = array('like', "%$slideName%");
+        }
+        $nowTime = time();
+        if ($publishStatus == 1) { // 待上线
+            $where['s.is_publish'] = 1;
+            $where['s.start_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 2) {// 已上线
+            $where['s.is_publish'] = 1;
+            $where['s.start_time'] = array('lt', $nowTime);
+            $where['s.end_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 3) {// 已下线
+            $where['s.is_publish'] = 2;
+        }
+
+        if(empty($slideCid)){
+            $slideCid = $slideCate['cid'];
+        }
+        $where['s.slide_cid'] = $slideCid;
+        $service = new SlideService();
+        // 分页
+        $totalCount = $service->countSlideNum($where); //获取总条数
+        $page     = intval(I('p'));
+        $pageSize = intval(I('pagesize'));
+        $pageSize = $pageSize > 0 ? $pageSize : DEFAULT_PAGE_SIZE; //每页显示条数
+        $totalPages = ceil($totalCount / $pageSize);        //总页数
+        $page       = $page > $totalPages ? $totalPages : $page;
+        $page       = $page > 0 ? $page : 1;
+        $currentPage   = $pageSize * ($page-1);
+        $this->assign('firstRow', $currentPage);
+        $this->assign('page',     $page);
+        $this->assign('pages',    $totalPages);
+        $this->assign('pagesize', $pageSize);
+        //根据游戏列表的类型获取游戏列表
+        $slideList = $service->getSlideListByPage($where, $currentPage, $pageSize);
+        if($slideList === false){
+            $this->error('查询失败');
+        }
+        $this->assign('slideName',$slideName);
+        $this->assign('publishStatus',$publishStatus);
+        $this->assign('slideCid',$slideCid);
+        $this->assign('slideList', $slideList);
+        $this->display('Slide/slide_list');
+    }
 }

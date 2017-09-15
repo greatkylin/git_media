@@ -30,17 +30,24 @@
     <div class="lunbo-and-gameshow">
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <a class="swiper-slide"><img src="__PUBLIC__/Home/static/img/giftcenter-banner.png" alt=""></a>
-                <a class="swiper-slide"><img src="__PUBLIC__/Home/static/img/giftcenter-banner.png" alt=""></a>
-                <a class="swiper-slide"><img src="__PUBLIC__/Home/static/img/giftcenter-banner.png" alt=""></a>
+                <if condition="count($slideList) gt 0">
+                    <volist name="slideList" id="slide">
+                        <a href="{$slide.url}" class="swiper-slide" <if condition="$slide['open_type'] eq 2">target="_blank"</if>><img src="{$slide.slide_img|format_url}" alt=""></a>
+                    </volist>
+                    <else />
+                    <a class="swiper-slide"><img src="__PUBLIC__/Home/static/img/giftcenter-banner.png" alt=""></a>
+                </if>
             </div>
             <!-- 如果需要分页器 -->
             <div class="swiper-pagination" style="bottom:18px;"></div>
         </div>
-        <a class="gameshow">
-            <div class="img-show"><img src="__PUBLIC__/Home/static/img/gameshow.png" alt=""></div>
-            <div class="desp"><span>重磅：</span>少年三国志周年活动火热上线，少年三国志周年活动火热上线少年三国志周年活动火热上线豪礼待领！</div>
-        </a>
+        <if condition="count($adList) gt 0">
+            <a href="{$adList[0][slide_url]}" class="gameshow">
+
+                <div class="img-show"><img src="{$adList[0][slide_pic]|format_url}" alt=""></div>
+                <div class="desp"><span>重磅：</span>{$adList[0][slide_name]}</div>
+            </a>
+        </if>
     </div>
     <if condition="count($hotGiftList) gt 0">
         <div class="title"><span></span>热门礼包</div>

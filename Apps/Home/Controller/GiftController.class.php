@@ -20,10 +20,17 @@ class GiftController extends HomeBaseController
      * @since 2017/09/12 14:29
      */
     public function index(){
-        //TODO 1.获取轮播图片
-
-        //TODO 2.获取右侧图片文字
         $giftService = new GiftService();
+        // 1.获取轮播图片
+        $slideList = $giftService->getGiftIndexSlide(3);
+        if($slideList === false){
+            $this->error($giftService->getFirstError());
+        }
+        //2.获取右侧图片文字
+        $adList = $giftService->getGiftIndexLeftAd(1);
+        if($adList === false){
+            $this->error($giftService->getFirstError());
+        }
         //3.获取热门礼包数8款
         $hotGiftList = $giftService->getHotGiftList(8);
         if($hotGiftList === false){
@@ -45,6 +52,8 @@ class GiftController extends HomeBaseController
         $appIdStr= implode(',', $appIdArr);
 
         $this->assign('appIdStr', $appIdStr);
+        $this->assign('adList', $adList);
+        $this->assign('slideList', $slideList);
         $this->assign('hotGiftList', $hotGiftList);
         $this->assign('newGiftList', $newGiftList);
         $this->display();

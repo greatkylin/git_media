@@ -544,4 +544,73 @@ class GiftService extends BaseService
         return count($giftList);
     }
 
+    /**
+     * 获取礼包中心首页轮播
+     * @author xy
+     * @since 2017/09/15 18:31
+     * @param int $limit
+     * @return bool
+     */
+    public function getGiftIndexSlide($limit = 3){
+        //有效时间内，上架状态的轮播数据
+        $where = array(
+            'gs.start_time' => array('lt', time()),
+            'gs.end_time' => array('gt', time()),
+            'gs.is_publish' => 1
+        );
+        $slideList = M('gift_slide')->alias('gs')
+            ->field('gs.*, IF(gs.sort = 0, 999999999, gs.sort) as new_sort')
+            ->where($where)
+            ->order('new_sort ASC')
+            ->limit($limit)
+            ->select();
+        if($slideList === false){
+            return $this->setError('查询失败');
+        }
+        if(!empty($slideList)){
+            foreach ($slideList as &$slide){
+                if($slide['relation_type'] == 1){
+                    $slide['url'] = U('Home/Gift/gift_page', array('app_id'=>$slide['app_id']));
+                }else{
+                    $slide['url'] = U('Home/Gift/all_gift');
+                }
+            }
+        }
+
+        return $slideList;
+    }
+
+    /**
+     * 获取礼包中心首页的右侧广告
+     * @author xy
+     * @since 2017/09/15 18:36
+     * @param int $limit
+     * @return bool
+     */
+    public function getGiftIndexLeftAd($limit = 1){
+        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
+        // 获取搜索条件
+        if($slideCate === false){
+            $this->setError('获取分类信息失败');
+        }
+        //有效的指定分类的广告
+        $where = array(
+            's.slide_cid' => $slideCate['cid'],
+            's.start_time' => array('lt', time()),
+            's.end_time' => array('gt', time()),
+            's.is_publish' => 1
+        );
+        $adList = M('slide')->alias('s')
+            ->field('s.*, IF(s.sort = 0, 999999999, s.sort) as new_sort, au.nickname')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON s.admin_id = au.id')
+            ->where($where)
+            ->order('new_sort ASC')
+            ->limit($limit)
+            ->select();
+        if($adList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $adList;
+    }
 }

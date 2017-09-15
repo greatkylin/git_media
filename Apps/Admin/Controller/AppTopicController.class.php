@@ -9,6 +9,7 @@ namespace Admin\Controller;
 
 use Admin\Service\AppService;
 use Admin\Service\AppTopicService;
+use Admin\Service\SlideService;
 use Think\Controller;
 use Admin\Controller\AdminBaseController;
 
@@ -339,89 +340,58 @@ class AppTopicController extends AdminBaseController
      * @since 2017/09/11 14:19
      */
     public function list_image(){
-        $where = array(
-            'c.is_delete' => 1,
-            's.is_publish' => 1,
-            'c.keyword' => 'APP_TOPIC_TOP_IMAGE', //分类关键词 ,
-        );
-        $slideInfo = M('slide_cat')->alias('c')
-            ->field('c.*, s.*, IF(s.sort = 0, 99999999, s.sort) as sort')
-            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'slide as s ON s.slide_cid = c.cid')
-            ->where($where)
-            ->order('sort ASC')
-            ->find();
-        if($slideInfo === false){
-            $this->error('获取图片信息失败');
-        }
         $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'APP_TOPIC_TOP_IMAGE'))->getField('cid');
-        if(empty($slideCate)){
-            $this->error('获取图片分类信息失败');
+        // 获取搜索条件
+        if($slideCate === false){
+            $this->error('获取分类信息失败');
         }
-        $this->assign('slideCateId', $slideCate['cid']);
-        $this->assign('slideInfo', $slideInfo);
-        $this->display();
-    }
-
-    /**
-     * 每周游戏专题聚合页头部图片
-     * @author xy
-     * @since 2017/09/11 15:37
-     */
-    public function list_image_edit(){
-        $slideCid = intval(I('slide_cid'));
-        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'APP_TOPIC_TOP_IMAGE'))->getField('cid');
-        if(empty($slideCate)){
-            $this->outputJSON(true, '100001', '获取图片分类信息失败');
-        }
-        if($slideCid != $slideCate['cid']){
-            $this->outputJSON(true, '100001', '图片分类信息错误');
-        }
-
-        $slideInfo = M('slide')->alias('s')
-            ->field('s.*')
-            ->where(array('slide_cid' => $slideCid))
-            ->order('sort ASC')
-            ->find();
-
-        $data = array(
-            'slide_cid' => $slideCid,
-        );
-        //图片名称
         $slideName = trim(I('slide_name'));
-        if(empty($slideName)){
-            $this->outputJSON(true, '100001', '请填写图片名称');
+        $publishStatus = intval(I('publish_status'));
+        //幻灯片分类
+        $slideCid = intval(I('slide_cid'));
+        $where = array();
+        if(!empty($slideTitle)) {
+            $where['s.slide_name']    = array('like', "%$slideName%");
         }
-        $data['slide_name'] = $slideName;
-        //上传的图片的路径
-        $imagePath = trim(I('image_path'));
-        if(empty($slideInfo)){
-            if(empty($imagePath)){
-                $this->outputJSON(true, '100001', '请上传图片');
-            }
+        $nowTime = time();
+        if ($publishStatus == 1) { // 待上线
+            $where['s.is_publish'] = 1;
+            $where['s.start_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 2) {// 已上线
+            $where['s.is_publish'] = 1;
+            $where['s.start_time'] = array('lt', $nowTime);
+            $where['s.end_time'] = array('gt', $nowTime);
+        } elseif ($publishStatus == 3) {// 已下线
+            $where['s.is_publish'] = 2;
         }
-        if (!empty($imagePath)) {
-            $data['slide_pic'] = $imagePath;
+
+        if(empty($slideCid)){
+            $slideCid = $slideCate['cid'];
         }
-        //跳转地址
-        $slideUrl = trim(I('slide_url'));
-        if (!empty($slideUrl)) {
-            $data['slide_url'] = $slideUrl;
+        $where['s.slide_cid'] = $slideCid;
+        $service = new SlideService();
+        // 分页
+        $totalCount = $service->countSlideNum($where); //获取总条数
+        $page     = intval(I('p'));
+        $pageSize = intval(I('pagesize'));
+        $pageSize = $pageSize > 0 ? $pageSize : DEFAULT_PAGE_SIZE; //每页显示条数
+        $totalPages = ceil($totalCount / $pageSize);        //总页数
+        $page       = $page > $totalPages ? $totalPages : $page;
+        $page       = $page > 0 ? $page : 1;
+        $currentPage   = $pageSize * ($page-1);
+        $this->assign('firstRow', $currentPage);
+        $this->assign('page',     $page);
+        $this->assign('pages',    $totalPages);
+        $this->assign('pagesize', $pageSize);
+        //根据游戏列表的类型获取游戏列表
+        $slideList = $service->getSlideListByPage($where, $currentPage, $pageSize);
+        if($slideList === false){
+            $this->error('查询失败');
         }
-        //图片说明
-        $slideDes = trim(I('slide_des'));
-        if (!empty($slideDes)) {
-            $data['slide_des'] = $slideDes;
-        }
-        $data['is_publish'] = intval(I('is_publish'));
-        $data['sort'] = intval(I('sort'));
-        if(!empty($slideInfo)){
-            $result = M('slide')->where(array('slide_cid' => $slideCid))->save($data);
-        }else{
-            $result = M('slide')->add($data);
-        }
-        if($result === false){
-            $this->outputJSON(true, '100001', '上传失败');
-        }
-        $this->outputJSON(false, '000000', '上传成功');
+        $this->assign('slideName',$slideName);
+        $this->assign('publishStatus',$publishStatus);
+        $this->assign('slideCid',$slideCid);
+        $this->assign('slideList', $slideList);
+        $this->display('Slide/slide_list');
     }
 }

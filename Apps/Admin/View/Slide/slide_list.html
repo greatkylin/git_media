@@ -3,15 +3,15 @@
 </head>
 <body>
 <nav class="breadcrumb">
-    礼包中心>图片轮播管理
+    图片轮播管理
 </nav>
 <div class="page-container">
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="text-c">
-            <form action="{:U('Admin/Gift/gift_slide_list')}">
+            <form action="{:U('Admin/Slide/slide_list')}">
                 标题名称：
-                <input type="text" class="input-text" data-name="" style="width:250px" placeholder="输入标题名称" id="slide_title"
-                       name="slide_title" value="{$slideTitle}">
+                <input type="text" class="input-text" data-name="" style="width:250px" placeholder="输入标题名称" id="slide_name"
+                       name="slide_name" value="{$slideName}">
                 状态：
                 <span class="select-box" style="width:100px;">
                     <select id="publish_status" name="publish_status" class="select" >
@@ -28,7 +28,7 @@
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="r">
-            <a href="{:U('/Admin/Gift/gift_slide_add')}" class="btn btn-success radius">
+            <a href="{:U('/Admin/Slide/slide_add', array('slide_cid' => $slideCid))}" class="btn btn-success radius">
                 <i class="Hui-iconfont Hui-iconfont-add"></i> 添加</a>
         </span>
     </div>
@@ -48,14 +48,14 @@
         <volist name="slideList" key="i" id="val">
             <tr class="text-c">
                 <td>{$val.slide_id}</td>
-                <td>{$val.slide_title}</td>
+                <td>{$val.slide_name}</td>
                 <td>{$val.start_time|date='Y-m-d H:i:s', ###}-{$val.end_time|date='Y-m-d H:i:s', ###}</td>
-                <td><img src="{$val.slide_img|format_url}" alt="" style="width: 120px;height: 80px"></td>
+                <td><img src="{$val.slide_pic|format_url}" alt="" style="width: 120px;height: 80px"></td>
                 <td>{$val.nickname}</td>
                 <td>{$val.publish_name}</td>
                 <td>
                     <a title="编辑"
-                       href="{:U('Admin/Gift/gift_slide_edit/slide_id/'.$val[slide_id])}"
+                       href="{:U('Admin/Slide/slide_edit', array('slide_id'=>$val[slide_id], 'slide_cid'=>$val[slide_cid]))}"
                        class="btn btn-success radius" style="text-decoration:none">
                         <i class="Hui-iconfont Hui-iconfont-edit2"></i>编辑
                     </a>
@@ -96,7 +96,7 @@
 <script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
 <script type="text/javascript">
     var pages = "{$pages}";
-    var slideTitle = "{$slideTitle}";
+    var slideName = "{$slideName}";
     var publishStatus = '{$publishStatus}';
 
     if(parseInt(pages) > 1)
@@ -110,7 +110,7 @@
             jump: function(e, first){ //触发分页后的回调
                 if(!first) { //一定要加此判断，否则初始时会无限刷新
                     var pagesize = $("#pagesize").val();
-                    var url = "{:U('Admin/Gift/gift_slide_list/slide_title/"+slideTitle+"/publish_status/"+publishStatus+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
+                    var url = "{:U('Admin/Slide/slide_list/slide_name/"+slideName+"/publish_status/"+publishStatus+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
                     var param = '{$param}';
                     var new_url = url.replace('/_param_', param);
                     window.location.href = new_url;
@@ -120,7 +120,7 @@
     }
     $('#page_go').click(function () {
         var page_size = $('#pagesize').val();
-        var url = "{:U('Admin/Gift/gift_slide_list/slide_title/"+slideTitle+"/publish_status/"+publishStatus+"/p/1/pagesize/"+page_size+"/_param_')}";
+        var url = "{:U('Admin/Slide/slide_list/slide_name/"+slideName+"/publish_status/"+publishStatus+"/p/1/pagesize/"+page_size+"/_param_')}";
         var param = '{$param}';
         var new_url = url.replace('/_param_', param);
         window.location.href = new_url;
@@ -130,7 +130,7 @@
     function publish_status_change(message, slide_id) {
         layer.confirm(message, function (index) {
             //此处请求后台程序，下方是成功后的前台处理……
-            $.get("{:U('Admin/Gift/gift_slide_publish_change')}", {slide_id: slide_id}, function (result) {
+            $.get("{:U('Admin/Slide/public_status_change')}", {slide_id: slide_id}, function (result) {
                 if (!result.error) {
                     layer.alert(result.detail, {
                         skin: 'layui-layer-lan',
@@ -160,7 +160,7 @@
     function delete_status_change(message, slide_id) {
         layer.confirm(message, function (index) {
             //此处请求后台程序，下方是成功后的前台处理……
-            $.post("{:U('Admin/Gift/gift_slide_delete')}", {slide_id: slide_id}, function (result) {
+            $.post("{:U('Admin/Slide/slide_delete')}", {slide_id: slide_id}, function (result) {
                 if (!result.error) {
                     layer.alert(result.detail, {
                         skin: 'layui-layer-lan',
@@ -187,7 +187,7 @@
     }
     //搜索表单重置按钮
     $("#reset").click(function(){
-        $("input[name=slide_title]").val('');
+        $("input[name=slide_name]").val('');
         $("seelect[name=publish_status]").val('');
     });
 </script>

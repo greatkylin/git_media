@@ -3,53 +3,16 @@
 <head>
     <include file='Common:meta' />
     <link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet">
-    <title>添加礼包轮播</title>
+    <title>添加图片</title>
 </head>
 <body>
 <article class="page-container">
-    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/Gift/gift_slide_add')}">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/AppTopic/list_image_edit')}">
+        <input type="hidden" id="slide_cid" name="slide_cid" value="{$slideCid}">
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标题名称：</label>
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>名称：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" value="" placeholder="请输入标题名称" id="title" name="slide_title" style="width: 300px">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>轮播关联：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <div class="mt-20 skin-minimal">
-                    <div class="radio-box">
-                        <input type="radio" value="1"  id="relation_type_1" name="relation_type" checked="checked">
-                        <label for="relation_type_1">游戏礼包页</label>
-                    </div>
-                    <div class="radio-box">
-                        <input type="radio" value="2"  id="relation_type_2" name="relation_type">
-                        <label for="relation_type_2">礼包详情页</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span><span class="gift-info">游戏礼包列表</span></label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <span class="app-title"></span>
-                <span class="select-box" style="width: 200px">
-                    <select id="app_id" name="app_id" class="select valid" aria-required="true" aria-invalid="false">
-                        <option value="">请选择</option>
-                        <volist name="appList" id="app">
-                            <option value="{$app.app_id}">{$app.app_name}</option>
-                        </volist>
-                    </select>
-                    <label id="app_id-error" class="error valid" style="display: block;"></label>
-				</span>
-                <span class="gift-box-info" style="display: none">
-                    游戏礼包：
-                    <span class="select-box" style="width: 200px">
-                        <select id="gift_id" name="gift_id" class="select valid" aria-required="true" aria-invalid="false">
-                        </select>
-                        <label id="gift_id-error" class="error valid" style="display: block;"></label>
-                    </span>
-                </span>
+                <input type="text" class="input-text" value="" placeholder="请输入标题名称" id="slide_name" name="slide_name" style="width: 300px">
             </div>
         </div>
         <div class="row cl">
@@ -64,25 +27,40 @@
                     <div class="icon-btn-wrap mt-10">
                         <div id="imagePicker">选择图片</div>
                         <a id="imagePickerUploadBtn" class="btn btn-default">开始上传</a>
-                        <span id="pic_info" style="color: #17983b;margin-top: 5px; " class="r">图片尺寸915*360，大小不超过1M</span>
+                        <span id="pic_info" style="color: #17983b;margin-top: 5px; " class="r">图片大小<2M</span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>打开方式：</label>
+            <label class="form-label col-xs-4 col-sm-2">跳转链接：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入跳转链接" id="slide_url" name="slide_url" style="width: 300px">
+                <span style="color: #17983b;margin-top: 5px; display: block">格式：http://www.baidu.com</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">描述信息：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <textarea id="slide_des" name="slide_des" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*0-150"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否发布：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <span class="select-box" style="width: 300px">
-                    <select id="open_type" name="open_type" class="select valid" aria-required="true" aria-invalid="false">
-                        <option value="1">当前标签页</option>
-                        <option value="2">新建标签页</option>
+                    <select id="is_publish" name="is_publish" class="select valid" aria-required="true" aria-invalid="false">
+                        <option value="1" >发布</option>
+                        <option value="2" >下架</option>
                     </select>
-                    <label id="open_type-error" class="error valid" style="display: block;"></label>
+                    <label id="is_publish-error" class="error valid" style="display: block;"></label>
 				</span>
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2">轮播排序：</label>
+            <label class="form-label col-xs-4 col-sm-2">排序：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" class="input-text" value="" placeholder="请输入整数" id="sort" name="sort" style="width: 300px">
             </div>
@@ -113,27 +91,49 @@
         //表单验证
         $("#form-add").validate({
             rules: {
-                slide_title: {
+                slide_name: {
                     required: true
+                },
+                slide_cid:{
+                    required: true,
+                },
+                slide_url:{
+                    remote:{
+                        url: "{:U('Admin/Slide/ajax_check_url')}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            url: function () {
+                                return $("#slide_url").val();　　　　//这个是取要验证的密码
+                            }
+                        },
+                        dataFilter: function (data) {　　　　//判断控制器返回的内容
+                            data = $.parseJSON(data);
+                            if (data.error) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }
                 },
                 sort: {
-                    required: true,
                     number: true
                 },
-                app_id: {
-                    required: true
+                slide_des: {
+                    minlength: 0,
+                    maxlength : 150
                 }
             },
             messages: {
-                slide_title: {
+                slide_name: {
                     required: "请填写标题名称！"
                 },
-                sort: {
-                    required: "请填写轮播排序",
-                    remote: "请输入整数"
+                slide_cid: {
+                    required: "分类id不能为空"
                 },
-                app_id: {
-                    required: "请选择游戏"
+                slide_url: {
+                    remote: "跳转链接格式不正确"
                 }
             },
             onkeyup: false,
@@ -152,7 +152,7 @@
                     type: "post",  //提交方式
                     dataType: "json", //数据类型
                     data: {image_path:img_url_image[0]},
-                    url: "{:U('Admin/Gift/gift_slide_add')}", //请求url
+                    url: "{:U('Admin/Slide/slide_add')}", //请求url
                     success: function (data) { //提交成功的回调函数
                         if (data.error) {
                             $(form).find(":submit").attr("disabled", false).attr("value", "提交");
@@ -176,51 +176,7 @@
             }
         });
 
-        //获取游戏游礼包
-        var appId = $('#app_id').val();
-        if( !(appId == ''|| typeof (appId) == 'undefined' || appId ==0) ){
-            ajaxGetAppGift(appId);
-        } else {
-            $('#gift_id').empty();
-        }
-
-        //获取获取游戏礼包
-        $('#app_id').change(function(){
-            var appId = $(this).val();
-            if( !(appId == ''|| typeof (appId) == 'undefined' || appId ==0) ){
-                ajaxGetAppGift(appId);
-            } else {
-                $('#gift_id').empty();
-            }
-        });
-
-        $('#relation_type_1').click(function(){
-            $('.gift-info').empty().html('游戏礼包列表');
-            $('.app-title').empty();
-            $('.gift-box-info').hide();
-        });
-        $('#relation_type_2').click(function(){
-            $('.gift-info').empty().html('礼包详情页：');
-            $('.app-title').empty().html('游戏：');
-            $('.gift-box-info').show();
-        });
-
     });
-
-    //获取获取指点游戏的礼包
-    function ajaxGetAppGift(appId, giftId) {
-        $.ajax({
-            type: "post",  //提交方式
-            dataType: "json", //数据类型
-            data: {app_id:appId, gift_id: giftId},
-            url: "{:U('Admin/Gift/ajax_get_gift_option')}", //请求url
-            success: function (data) { //提交成功的回调函数
-                if (!data.error) {
-                    $('#gift_id').empty().html(data.data)
-                }
-            }
-        });
-    }
 
     /*活动开始时间与结束时间*/
     function selectTime(flag){
@@ -240,19 +196,12 @@
             }
         }
     }
-
     //关闭窗口
     function removeIframe(){
         var index = parent.layer.getFrameIndex(window.name);
         // parent.$('.btn-refresh').click();
         parent.layer.close(index);
     }
-    //radio的样式
-    $('.skin-minimal input').iCheck({
-        checkboxClass: 'icheckbox-blue',
-        radioClass: 'iradio-blue',
-        increaseArea: '20%'
-    });
 </script>
 <script>
     /*上传背景图片*/
@@ -269,7 +218,7 @@
 
         swf: '__PUBLIC__/H-ui/lib/webuploader/0.1.5/Uploader.swf',// swf文件路径
 
-        server: "{:U('Admin/Gift/ajax_upload_image')}", // 文件接收服务端。
+        server: "{:U('Admin/IndexCont/ajax_upload_image')}", // 文件接收服务端。
         formData: {fun: 'upload_slide_image'},
 
         // 选择文件的按钮。可选。
@@ -285,7 +234,7 @@
             extensions: 'gif,jpg,jpeg,bmp,png',
             mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp'
         },
-        fileSizeLimit: 1 * 1024 * 1024,
+        fileSizeLimit: 2 * 1024 * 1024,
     });
     // 点击上传
     $('#imagePickerUploadBtn').click(function () {
@@ -293,7 +242,7 @@
     });
     uploader_1.on('error', function (error) {
         if (error == 'Q_EXCEED_SIZE_LIMIT') {
-            layer.alert('文件大小超过1M，不允许上传', {
+            layer.alert('文件大小超过500k，不允许上传', {
                 skin: 'layui-layer-lan',
                 closeBtn: 0,
                 anim: 4 //动画类型

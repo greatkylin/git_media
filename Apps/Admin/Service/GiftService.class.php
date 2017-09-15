@@ -543,7 +543,7 @@ class GiftService extends BaseService
                 gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, 
                 CONCAT(al.app_name,\'-\',gl.gift_name,\'-\',gl.original_name) AS gift_full_name, 
                 CONCAT(al.app_id,\'-\',gl.gift_name,\'-\',gl.original_name) AS id_gift_name, 
-                sum(cn.code_num) as all_code_num 
+                sum(cn.code_num) as all_code_num, CONCAT(gl.gift_name, gl.original_name) as short_gift_name
                 ')
             //INNER JOIN避免取到没有礼包码的礼包
             ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
@@ -966,10 +966,9 @@ class GiftService extends BaseService
      */
     public function countGiftSlideNum($where = array()){
         $totalNum = M('gift_slide')->alias('gs')
-            ->field('gs.*, IF(gs.sort = 0, 999999999) as new_sort, au.nickname')
+            ->field('gs.*, IF(gs.sort = 0, 999999999, gs.sort) as new_sort, au.nickname')
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON gs.admin_id = au.id')
             ->where($where)
-            ->order('new_sort')
             ->count();
         if($totalNum === false){
             return $this->setError('查询轮播图片数量失败');
@@ -988,10 +987,10 @@ class GiftService extends BaseService
      */
     public function getGiftSlideListByPage($where = array(), $currentPage, $pageSize){
         $slideList = M('gift_slide')->alias('gs')
-            ->field('gs.*, IF(gs.sort = 0, 999999999) as new_sort, au.nickname')
+            ->field('gs.*, IF(gs.sort = 0, 999999999, gs.sort) as new_sort, au.nickname')
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON gs.admin_id = au.id')
             ->where($where)
-            ->order('new_sort')
+            ->order('new_sort ASC')
             ->limit($currentPage. ',' .$pageSize)
             ->select();
         if($slideList === false){
@@ -1012,5 +1011,55 @@ class GiftService extends BaseService
             }
         }
         return $slideList;
+    }
+
+    /**
+     * 获取有设置媒体站礼包的游戏数据
+     * @author xy
+     * @since 2017/09/15 09:36
+     * @return bool|array
+     */
+    public function getHasGiftAppList(){
+        //礼包库中有效的未删除的礼包
+        $where['gl.start_time'] = array('lt', time());
+        $where['gl.end_time'] = array('gt', time());
+        $where['gl.is_del'] = array('neq', 1);
+        // 媒体站已发布的游戏
+        $where['alist.is_publish'] = array('IN', array(1));
+
+        $appList = M('app_list')->alias('alist')
+            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as app_name')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS list ON list.`app_id` = alist.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS lib ON lib.`app_id` = alist.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = alist.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS gl ON alist.`app_id` = gl.`app_id`')
+            ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS sgl ON sgl.`gift_id` = gl.`gift_id`')
+            ->where($where)
+            ->group('alist.app_id')
+            ->select();
+
+        if ($appList === false) {
+            return $this->setError('查询失败');
+        }
+
+        return $appList;
+    }
+
+    /**
+     * 根据轮播id获取礼包中心首页的轮播图片
+     * @author xy
+     * @since 2017/09/15 13:58
+     * @param int $slideId
+     * @return bool|mixed
+     */
+    public function getGiftSlideById($slideId){
+        if(empty($slideId)){
+            return $this->setError('必填参数缺失');
+        }
+        $slide = M('gift_slide')->where(array('slide_id' => $slideId))->find();
+        if($slide === false){
+            return $this->setError('查询失败');
+        }
+        return $slide;
     }
 }
