@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
     <include file='Common:header'/>
+    <!--这个是和以前落地页一个，不要随意更改start-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--end-->
+    <!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+    <!--end-->
+    <style>
+        #strategy-collection .gsd-forflex .container-r .wonderful-strategy{
+            height: auto;
+        }
+        .game-store-desp .gsd-forflex .container-r .wonderful-strategy .strategy-container .strategy-tag .imgbox img{
+            height: 70px;
+        }
+    </style>
 </head>
 <body>
 <!--头部注册栏开始-->
@@ -10,25 +24,11 @@
 <!--菜单栏开始-->
 <include file='Common:nav'/>
 <!--菜单栏end-->
-<!--这个是和以前落地页一个，不要随意更改start-->
-<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
-<!--end-->
-<!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
-<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
-<!--end-->
-<style>
-    #strategy-collection .gsd-forflex .container-r .wonderful-strategy{
-        height: auto;
-    }
-    .game-store-desp .gsd-forflex .container-r .wonderful-strategy .strategy-container .strategy-tag .imgbox img{
-        height: 70px;
-    }
-</style>
 <div class="game-store-subnav">
     <div class="subnav-box">
         <a herf="{:U('Home/App/index')}" class="active">游戏库</a>
-        <a>热游排行榜</a>
-        <a>礼包中心</a>
+        <a href="{:U('Home/App/app_rank')}">热游排行榜</a>
+        <a href="{:U('Home/Gift/index')}">礼包中心</a>
     </div>
 </div>
 <if condition="count($appTypeList) gt 0">
@@ -67,11 +67,11 @@
             </div>
             </if>
             <if condition ="!empty($thisWeekTopic)">
-                <a href="{$thisWeekTopic.topic_url}" class="week-topic">
+                <a href="{$thisWeekTopic.href_link}" class="week-topic">
                     <div class="title">本周游戏专题</div>
                     <div class="img-and-desp">
-                        <div class="img-box"><img alt="" src="{$thisWeekTopic.cover_image_path|format_url}"></div>
-                        <div class="desp">{$thisWeekTopic.topic_name}</div>
+                        <div class="img-box"><img alt="" src="{$thisWeekTopic.image_path|format_url}"></div>
+                        <div class="desp">{$thisWeekTopic.title}</div>
                     </div>
                 </a>
             </if>
@@ -120,19 +120,19 @@
 <script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script src="__PUBLIC__/Home/static/js/page.js"></script>
 <script>
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/App/strategy')}" ,
+        dataType:'json',
+        data: {app_id: '{$appId}'},
+        async : false, //默认为true 异步
+        success:function(res) {
+            $('#strategy-list').empty().html(res);
+        },
+        error : function() {
+        }
+    });
     $(function () {
-        $.ajax({
-            type: 'POST',
-            url: "{:U('Home/App/strategy')}" ,
-            dataType:'json',
-            data: {app_id: '{$appId}'},
-            async : false, //默认为true 异步
-            success:function(res) {
-                $('#strategy-list').empty().html(res);
-            },
-            error : function() {
-            }
-        });
 
         //初始化新手对就的攻略进入页面就要展示
 //        $(".key-strategy").find("a").each(function (i,self) {

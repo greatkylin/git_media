@@ -70,5 +70,8 @@ CREATE TABLE `zy_media_slide_cat` (
   PRIMARY KEY (`cid`),
   KEY `keyword` (`keyword`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='幻灯片分类表';
-
-
+/*20170919*/
+ALTER TABLE `zy_media_archives`
+ADD COLUMN `is_question`  tinyint(1) NULL DEFAULT 0 COMMENT '是否为每日一题，0否1是';
+ALTER TABLE `zy_media_gift_slide`
+ADD COLUMN `show_position`  tinyint(2) NULL DEFAULT 0 COMMENT '礼包广告展示位置 1.礼包中心首页，2游戏每日一题页' AFTER `edit_time`;

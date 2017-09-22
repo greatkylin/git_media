@@ -16,9 +16,9 @@
 <!--子导航栏开始-->
 <div class="game-store-subnav">
     <div class="subnav-box">
-        <a href="{:U('Home/Gift/index')}" target="_blank" >礼包中心</a>
-        <a href="{:U('Home/Gift/all_gift')}" target="_blank" class="active">礼包大全</a>
-        <a href="#" target="_blank">我的礼包</a>
+        <a href="{:U('Home/Gift/index')}">礼包中心</a>
+        <a href="{:U('Home/Gift/all_gift')}"  class="active">礼包大全</a>
+        <a href="#">我的礼包</a>
     </div>
 </div>
 <!--子导航栏结束-->
@@ -101,6 +101,20 @@
 <script src="__PUBLIC__/Home/static/js/ZeroClipboard.swf"></script>
 <script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script>
+
+    //ajax方式获取全部礼包分页列表
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/Gift/ajax_get_gift_belong_app_list')}",
+        dataType: 'json',
+        data: {app_id: '{$appId}'},
+        async: false, //默认为true 异步
+        success: function (res) {
+            $('#app-gift-list').empty().html(res);
+        },
+        error: function () {
+        }
+    });
     $(function () {
         //根据百分比来定长度
         $(".line-in").each(function (i, self) {
@@ -149,19 +163,6 @@
             ZeroClipboard.destroy();
         } );
 
-        //ajax方式获取全部礼包分页列表
-        $.ajax({
-            type: 'POST',
-            url: "{:U('Home/Gift/ajax_get_gift_belong_app_list')}",
-            dataType: 'json',
-            data: {app_id: '{$appId}'},
-            async: false, //默认为true 异步
-            success: function (res) {
-                $('#app-gift-list').empty().html(res);
-            },
-            error: function () {
-            }
-        });
     })
 </script>
 </body>

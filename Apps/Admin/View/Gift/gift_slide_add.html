@@ -8,6 +8,7 @@
 <body>
 <article class="page-container">
     <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/Gift/gift_slide_add')}">
+        <input type="hidden" class="input-text" value="{$showPosition}" placeholder="" id="show_position" name="show_position" style="width: 300px">
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标题名称：</label>
             <div class="formControls col-xs-8 col-sm-9">

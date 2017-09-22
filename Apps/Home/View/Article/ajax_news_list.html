@@ -1,0 +1,37 @@
+<if condition="count($articleList) gt 0">
+<div class="news-container">
+    <!--如果不带图，就在a里加个active-->
+    <volist name="articleList" id="article">
+        <a href="{:U('Home/Article/news_detail', array('id'=>$article['id']))}" <if condition="empty($article['img_path'])">class="active"</if>>
+            <img alt="" src="{$article.img_path|format_url}">
+            <div class="desp-box">
+                <div class="title">{$article.title}</div>
+                <div class="time">更新时间：{$article.release_time|date="Y-m-d", ###}</div>
+                <div class="desp">{$article.description}</div>
+            </div>
+        </a>
+    </volist>
+</div>
+<div class="page-box">
+    {$show}
+</div>
+<script>
+    $(function () {
+        //分页跳转
+        $(".page-box div, .page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            $.ajax({
+                type:'GET',
+                url:url,
+                success:function(res){
+                    $('#article-box').empty().html(res);
+                },
+                error : function() {
+                }
+            });
+            return false;
+        });
+    })
+</script>
+</if>

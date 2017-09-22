@@ -20,7 +20,7 @@ class WxChargeQuery extends WxBaseStrategy
      * 返回查询订单的数据
      * @author helei
      */
-    protected function getBuildDataClass()
+    public function getBuildDataClass()
     {
         return ChargeQueryData::class;
     }
@@ -44,6 +44,7 @@ class WxChargeQuery extends WxBaseStrategy
     protected function retData(array $data)
     {
         if ($this->config->returnRaw) {
+            $data['channel'] = Config::WX_CHARGE;
             return $data;
         }
 
@@ -51,7 +52,8 @@ class WxChargeQuery extends WxBaseStrategy
         if ($data['return_code'] != 'SUCCESS') {
             return $retData = [
                 'is_success'    => 'F',
-                'error' => $data['return_msg']
+                'error' => $data['return_msg'],
+                'channel'   => Config::WX_CHARGE,// 支付查询
             ];
         }
 
@@ -59,7 +61,8 @@ class WxChargeQuery extends WxBaseStrategy
         if ($data['result_code'] != 'SUCCESS') {
             return $retData = [
                 'is_success'    => 'F',
-                'error' => $data['err_code_des']
+                'error' => $data['err_code_des'],
+                'channel'   => Config::WX_CHARGE,// 支付查询
             ];
         }
 
@@ -92,7 +95,7 @@ class WxChargeQuery extends WxBaseStrategy
                 'terminal_id' => $data['device_info'],
                 'trade_type' => $data['trade_type'],
                 'bank_type' => $data['bank_type'],
-                'trade_state_desc' => $data['trade_state_desc'],
+                'trade_state_desc' => isset($data['trade_state_desc']) ? $data['trade_state_desc'] : '交易成功',
             ],
         ];
 

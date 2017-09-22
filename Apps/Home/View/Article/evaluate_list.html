@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+</head>
+<body class="newsCenter-strategy">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a href="{:U('Home/Article/news_list')}">资讯</a>
+        <a href="{:U('Home/Article/strategy_list')}">攻略</a>
+        <a class="active" href="{:U('Home/Article/evaluate_list')}">游戏测评</a>
+        <a href="{:U('Home/Article/ques_list')}">每日一题</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<!--主体内容更开始-->
+<main>
+    <div class="main-l">
+        <div class="bread-tag" style="margin-bottom:20px;">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">资讯中心</a><span>></span>游戏测评
+        </div>
+        <div id="article-box">
+
+        </div>
+    </div>
+    <div class="main-r">
+        <if condition="count($hotAppList) gt 0">
+            <div class="hotgame-title">
+                热门游戏
+            </div>
+            <div class="hot-game">
+                <volist name="hotAppList" id="hotApp" key="i">
+                    <a href="{:U('Home/App/app_detail', array('app_id' => $hotApp['app_id']))}" class="hot-game-tag" data-score="<if condition='empty($hotApp[start_score])'>0<else />{$hotApp.start_score}</if>" id="game{$i}">
+                        <div><img src="{$hotApp['icon']|format_url}" alt=""></div>
+                        <div class="name-and-num">
+                            <div>{$hotApp['app_name']}</div>
+                            <div><span><if condition="empty($hotApp['app_down_num'])">0<else />{$hotApp['app_down_num']}</if></span>人下载</div>
+                        </div>
+                        <div class="game-star">
+                            <div class="cover-bottom">
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                            </div>
+                            <div class="cover-top">
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                                <span><i class="iconfont icon-xingxing"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                </volist>
+            </div>
+        </if>
+        <if condition="!empty($thisWeekTopic)">
+            <a href="{$thisWeekTopic.href_link}" class="week-topic">
+                <div class="title">本周游戏专题</div>
+                <div class="img-and-desp">
+                    <div class="img-box"><img alt="" src="{$thisWeekTopic.image_path|format_url}"></div>
+                    <div class="desp">{$thisWeekTopic.title}</div>
+                </div>
+            </a>
+        </if>
+        <if condition="(count($giftDailyList) gt 0) OR (count($giftWeekList) gt 0)">
+            <div class="redTitle">
+                <div><span></span>热门礼包排行榜</div>
+                <div><span class="active" id="day">日榜</span><span id="week">周榜</span></div>
+            </div>
+            <div class="gift-container">
+                <div class="day">
+                    <!--前端根据ui图限制了十条-->
+                    <if condition="count($giftDailyList) gt 0">
+                        <volist name="giftDailyList" id="dailyGift" key="di">
+                            <a href="#" class="gift-tag <if condition='$di elt 3'>ahead-three<else />small</if>">
+                                <div class="num">{$di}</div>
+                                <div class="content">
+                                    <img alt="" src="{$dailyGift.icon|format_url}">
+                                    <div class="name">{$dailyGift.full_gift_name}</div>
+                                </div>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+                <div class="week" style="display: none;">
+                    <if condition="count($giftWeekList) gt 0">
+                        <volist name="giftWeekList" id="weekGift" key="wi">
+                            <a href="#" class="gift-tag <if condition='$wi elt 3'>ahead-three<else />small</if>">
+                                <div class="num">{$wi}</div>
+                                <div class="content">
+                                    <img alt="" src="{$weekGift.icon|format_url}">
+                                    <div class="name">{$weekGift.full_gift_name}</div>
+                                </div>
+                            </a>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+            </div>
+        </if>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script>
+    //ajax方式获取全部评测分页列表
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/Article/evaluate_list')}",
+        dataType: 'json',
+        data: {app_id: ''},
+        async: false, //默认为true 异步
+        success: function (res) {
+            $('#article-box').empty().html(res);
+        },
+        error: function () {
+        }
+    });
+    $(function () {
+        //分页
+        $(".page-box div.num").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $(".link-tag>div").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+
+
+        //游戏星星评分
+        function starScore(dom){
+            var score=$(dom).attr("data-score");
+            var n=Math.floor(score);
+            $(".icon-xingxing",dom).parent().css("width","18px");
+            var starWidth=parseInt($(".icon-xingxing").parent().css("width"));
+            var newWidth=(score-n)*starWidth+"px";
+
+//            console.log(score,n,starWidth,newWidth)
+            if(n>=1){
+                $(dom).find(".cover-top span").each(function (z,ele) {
+                    if(z<n){
+                        $(ele).find("i").addClass("light");
+                    }else if(z==n){
+                        $(ele).find("i").addClass("light");
+//                        console.log(newWidth)
+                        $(ele).css("width",newWidth);
+                    }else if(z>n){
+                        $(ele).hide();
+                    }
+                })
+            }else{
+//            当分数是不足1的时候
+                var newWidth0=score*starWidth+"px";
+                $(dom).find(".cover-top span").each(function(z,ele){
+                    if(z==0){
+                        $(ele).find("i").addClass("light");
+                        $(ele).css("width",newWidth0);
+                    }else{
+                        $(ele).hide();
+                    }
+                })
+            }
+        }
+        starScore($("#game1"));
+        starScore($("#game2"));
+        starScore($("#game3"));
+        starScore($("#game4"));
+        starScore($("#game5"));
+        //自动填充编号
+        function autoAddNum(dom){
+            $(dom).each(function (i,self) {
+                $(self).find(".num").text(i+1);
+                if(i>=10){
+                    $(self).remove();
+                }
+            })
+        }
+        autoAddNum(".day .gift-tag");
+        autoAddNum(".week .gift-tag");
+
+        function showGiftBox(dom,box) {
+            $(dom).addClass("active").siblings().removeClass("active");
+            $(box).show().siblings().hide();
+        }
+        $("#day").click(function () {
+            showGiftBox(this,".day");
+        });
+        $("#week").click(function () {
+            showGiftBox(this,".week");
+        })
+
+
+    })
+</script>
+</body>
+</html>

@@ -214,4 +214,74 @@ class IndexService extends BaseService
         return $activity;
 
     }
+
+    /**
+     * 根据关键字获取本周推荐专题数据
+     * @author xy
+     * @since 2017/09/19 17:34
+     * @return bool|array
+     */
+    public function getThisWeekTopicByKeyword(){
+        //首页管理分类关键字为 WEEK_RECOMMEND 的本周推荐
+        $keyword = 'WEEK_RECOMMEND';
+        if(empty($keyword)){
+            $this->setError('请填写分类关键字');
+            return false;
+        }
+
+        $where = array(
+            'acc.is_delete' => 1, //分类未删除
+            'c.is_delete' => 1, //图片未删除
+            'c.is_publish' => 1, //图片已发布
+            'acc.keyword' => strtoupper($keyword), //指定的分类
+        );
+
+        $recommendTopic = M('index_column_category')->alias('acc')
+            ->field('acc.keyword, c.*, IF(c.sort=0, 9999999, c.sort) AS sort')
+            ->join('INNER JOIN '. C('DB_NAME') . '.' . C('DB_PREFIX') . 'index_column_content as c ON c.category_id = acc.id')
+            ->where($where)
+            ->find();
+
+        if($recommendTopic === false){
+            return $this->setError('查询失败');
+        }
+
+        return $recommendTopic;
+    }
+
+    /**
+     * 根据关键字获取每日一题合集页的每日一题游戏图片
+     * @author xy
+     * @since 2017/09/20 16:02
+     * @param null $limit 查询的数量
+     * @return bool|array
+     */
+    public function getDailyQuestionAppByKeyword($limit = NULL){
+        //首页管理分类关键字为 WEEK_RECOMMEND 的本周推荐
+        $keyword = 'DAILY_QUESTION_APP';
+        if(empty($keyword)){
+            $this->setError('请填写分类关键字');
+            return false;
+        }
+
+        $where = array(
+            'acc.is_delete' => 1, //分类未删除
+            'c.is_delete' => 1, //图片未删除
+            'c.is_publish' => 1, //图片已发布
+            'acc.keyword' => strtoupper($keyword), //指定的分类
+        );
+
+        $dailyQuesImgList = M('index_column_category')->alias('acc')
+            ->field('acc.keyword, c.*, IF(c.sort=0, 9999999, c.sort) AS sort')
+            ->join('INNER JOIN '. C('DB_NAME') . '.' . C('DB_PREFIX') . 'index_column_content as c ON c.category_id = acc.id')
+            ->where($where)
+            ->limit($limit)
+            ->select();
+
+        if($dailyQuesImgList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $dailyQuesImgList;
+    }
 }

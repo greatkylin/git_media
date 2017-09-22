@@ -44,9 +44,9 @@
                 <td>
                     <if condition="$val['is_publish'] eq 0">
                         未知
-                        <elseif condition="$val['status'] eq 1"/>
+                        <elseif condition="$val['is_publish'] eq 1"/>
                         已发布
-                        <elseif condition="$val['status'] eq 2"/>
+                        <elseif condition="$val['is_publish'] eq 2"/>
                         下架
                     </if>
                 </td>

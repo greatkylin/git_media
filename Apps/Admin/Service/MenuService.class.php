@@ -70,6 +70,19 @@ class MenuService extends BaseService
                 $newCategory[$key]['has_child'] = '0';
                 $newCategory[$key]['menu_child'] = array();
             }
+            //游戏每日一题也广告设置
+            $quesAdMenu = array(
+                'name' => U('Admin/Gift/gift_slide_list', array('show_position' => 2)),
+                'title' => '每日一题页礼包广告',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(),
+            );
+            $newCategory[] = $quesAdMenu;
             return $newCategory;
         }
         return $category;
@@ -337,7 +350,7 @@ class MenuService extends BaseService
                         "menu_child" => array(),
                     ),
                     array(
-                        'name' => 'Admin/Gift/gift_slide_list',
+                        'name' => 'Admin/Gift/gift_slide_list/show_position/1',
                         'title' => '礼包中心轮播',
                         'menu_type' => 4,
                         'css' => 'Hui-iconfont-home',

@@ -7,13 +7,11 @@
 
 namespace Payment\Trans;
 
-use Payment\Common\PayException;
 use Payment\Common\Weixin\Data\TransferData;
 use Payment\Common\Weixin\WxBaseStrategy;
 use Payment\Common\WxConfig;
 use Payment\Config;
 use Payment\Utils\Curl;
-use Payment\Utils\DataParser;
 
 /**
  * 微信企业付款接口
@@ -23,7 +21,7 @@ use Payment\Utils\DataParser;
  */
 class WxTransfer extends WxBaseStrategy
 {
-    protected function getBuildDataClass()
+    public function getBuildDataClass()
     {
         return TransferData::class;
     }
@@ -66,6 +64,7 @@ class WxTransfer extends WxBaseStrategy
     protected function retData(array $ret)
     {
         if ($this->config->returnRaw) {
+            $ret['channel'] = Config::WX_TRANSFER;
             return $ret;
         }
 
@@ -73,7 +72,8 @@ class WxTransfer extends WxBaseStrategy
         if ($ret['return_code'] != 'SUCCESS') {
             return $retData = [
                 'is_success'    => 'F',
-                'error' => $ret['return_msg']
+                'error' => $ret['return_msg'],
+                'channel'   => Config::WX_TRANSFER,
             ];
         }
 
@@ -81,7 +81,8 @@ class WxTransfer extends WxBaseStrategy
         if ($ret['result_code'] != 'SUCCESS') {
             return $retData = [
                 'is_success'    => 'F',
-                'error' => $ret['err_code_des']
+                'error' => $ret['err_code_des'],
+                'channel'   => Config::WX_TRANSFER,
             ];
         }
 
@@ -110,27 +111,12 @@ class WxTransfer extends WxBaseStrategy
     }
 
     /**
-     *  这里需要重写的目的是，微信转账，返回结果不需要签名验证
-     * @param array $data
-     * @author helei
-     * @throws PayException
-     * @return array|string
+     * 企业转账，不需要签名，使用返回true
+     * @param array $retData
+     * @return bool
      */
-    public function handle(array $data)
+    protected function verifySign(array $retData)
     {
-        $buildClass = $this->getBuildDataClass();
-
-        try {
-            $this->reqData = new $buildClass($this->config, $data);
-        } catch (PayException $e) {
-            throw $e;
-        }
-
-        $this->reqData->setSign();
-
-        $xml = DataParser::toXml($this->reqData->getData());
-        $ret = $this->sendReq($xml);
-
-        return $this->retData($ret);
+        return true;
     }
 }

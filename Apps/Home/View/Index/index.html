@@ -21,6 +21,9 @@
     #index-main .specialselect-box .alphabet-game-box .abox a:nth-child(6) {
         margin-right: 0
     }
+    #index-main .newgame-box > a{
+        color: #999;
+    }
     /*排行榜游戏名称太长，改成太长则隐藏*/
     .game-rank .gr-desp-box .hotgame-bag .hotgame-list .nameer{
         overflow: hidden;
@@ -143,14 +146,16 @@
             <div class="gameNews-gift-container">
                 <div class="for-hidden">
                     <volist name="indexGiftList" id="gift" key="k">
-                    <div class="tag-gift <if condition='$k eq 1'>active</if>">
-                        <span class="num">{$k}</span>
-                        <div class="content">
-                            <div class="img-box"><img alt="" src="{$gift.icon|format_url}"></div>
-                            <div class="desp">{$gift.full_gift_name}</div>
-                            <span class="get-gift">领取</span>
-                        </div>
-                    </div>
+                        <a href="{:U('Home/Gift/gift_page', array('app_id'=>$gift['app_id']))}">
+                            <div class="tag-gift <if condition='$k eq 1'>active</if>">
+                                <span class="num">{$k}</span>
+                                <div class="content">
+                                    <div class="img-box"><img alt="" src="{$gift.icon|format_url}"></div>
+                                    <div class="desp">{$gift.full_gift_name}</div>
+                                    <span class="get-gift">领取</span>
+                                </div>
+                            </div>
+                        </a>
                     </volist>
                 </div>
             </div>

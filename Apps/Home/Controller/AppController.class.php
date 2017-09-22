@@ -143,7 +143,8 @@ class AppController extends HomeBaseController {
             $this->error($appService->getFirstError());
         }
         //2.获取时间段是本周的游戏专题
-        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        $indexService = new IndexService();
+        $thisWeekTopic = $indexService->getThisWeekTopicByKeyword();
         if($thisWeekTopic === false){
             $this->error($appService->getFirstError());
         }

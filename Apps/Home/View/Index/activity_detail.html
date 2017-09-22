@@ -21,7 +21,7 @@
 </style>
 <main>
     <div class="bread-tag">
-        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：首页>活动详情
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="/">首页</a>>活动详情
     </div>
     <div class="mainl-and-mainr">
         <div class="main-l">
@@ -127,13 +127,15 @@
                 </div>
             </if>
             <if condition="count($thisWeekTopic) gt 0">
+                <a href="{$thisWeekTopic.href_link}">
                 <div class="topic-week">
                     本周游戏专题
                 </div>
                 <div class="topic-week-desp">
-                    <div class="topic-img"><img src="{$thisWeekTopic.cover_image_path|format_url}" alt=""></div>
-                    <div class="topic-xushu">{$thisWeekTopic.topic_name}</div>
+                    <div class="topic-img"><img src="{$thisWeekTopic.image_path|format_url}" alt=""></div>
+                    <div class="topic-xushu">{$thisWeekTopic.title}</div>
                 </div>
+                </a>
             </if>
             <if condition="count($hotAppList) gt 0">
                 <div class="topic-week">

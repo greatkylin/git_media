@@ -17,6 +17,13 @@
     ],
     "require": {
         "riverslei/payment": "~3.0",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "endroid/qrcode": "1.*@dev"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     }
 }

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <style>
+        body.eachTopicSinglePage .game-sugust .gs-tag{
+            color:#666;
+        }
+    </style>
+</head>
+<body class="eachTopicSinglePage">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a href="{:U('Home/Article/news_list')}">资讯</a>
+        <a href="{:U('Home/Article/strategy_list')}">攻略</a>
+        <a href="{:U('Home/Article/evaluate_list')}">游戏测评</a>
+        <a class="active" href="{:U('Home/Article/ques_list')}">每日一题</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<!--主体内容更开始-->
+<main>
+    <div class="bread-tag" style="border:none;">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/Article/index')}">资讯中心</a><span>></span><a href="{:U('Home/Article/ques_list')}">每日一题</a><span>></span>{$appInfo.app_name}
+    </div>
+    <div class="banner-container">
+        <img src="__PUBLIC__/Home/static/img/eachTopic-banner.png" alt="">
+        <div class="banner-content">
+            <img class="icon" src="{$appInfo.icon|format_url}" alt="">
+            <div class="game">
+                <div class="name">{$appInfo.app_name}</div>
+                <div class="type"><span>语言：{$appInfo.app_lang_str}</span><span>类型：{$appInfo.app_type_name_str}</span><span>大小：{$appInfo.app_size}M</span><span>下载人数：<if condition="$appInfo['app_down_num'] gt 10000">1W+<else />{$appInfo.app_down_num}</if></span></div>
+                <div class="desp">
+                    {$appInfo.introduct}
+                </div>
+            </div>
+            <div class="download">
+                <a href="{:U('Home/App/app_detail', array('app_id'=>$appInfo['app_id']))}"><img src="__PUBLIC__/Home/static/img/game-zq-icon.png" alt="">游戏专区</a>
+                <a href="{:U('Home/Gift/gift_page', array('app_id'=>$appInfo['app_id']))}"><img src="__PUBLIC__/Home/static/img/gift-icon-little.png" alt="">领取礼包</a>
+                <a href="{:U('Home/Article/strategy_list', array('app_id'=>$appInfo['app_id']))}"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">游戏攻略</a>
+            </div>
+        </div>
+    </div>
+    <!--<div class="redTitle">-->
+        <!--<div><span></span>游戏图片</div>-->
+        <!--<div style="opacity: 0;"><span class="active">日榜</span><span>周榜</span></div>-->
+    <!--</div>-->
+    <!--<div class="turn-images">-->
+        <!--<div class="game-beauty">-->
+            <!--&lt;!&ndash;每个加相应的data-num,目前前端限制了最多5张，最少两张轮播&ndash;&gt;-->
+            <!--<a target="_blank" href="#" data-num=1><img src="__PUBLIC__/Home/static/img/beauty.png" alt=""></a>-->
+            <!--<a target="_blank" href="#" data-num=2><img src="__PUBLIC__/Home/static/img/beauty.png" alt=""></a>-->
+            <!--<a target="_blank" href="#" data-num=3><img src="__PUBLIC__/Home/static/img/beauty.png" alt=""></a>-->
+            <!--<a target="_blank" href="#" data-num=4><img src="__PUBLIC__/Home/static/img/beauty.png" alt=""></a>-->
+            <!--&lt;!&ndash;<a target="_blank" href="#" data-num=5><img src="__PUBLIC__/Home/static/img/beauty.png" alt=""></a>&ndash;&gt;-->
+            <!--<div class="page"><span class="page-now">1</span>/<span class="page-all"></span></div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div id="article-box">
+
+    </div>
+    <if condition="!empty($giftAd)">
+        <a href="{$giftAd.url}" class="adertise"><img src="{$giftAd.slide_img|format_url}" alt=""></a>
+    </if>
+    <if condition="count($appList) gt 0">
+        <div class="game-titles">
+            <span></span>更多每日一题游戏推荐
+        </div>
+        <div class="game-sugust">
+            <volist name="appList" id="app">
+                <a href="{:U('Home/Article/app_ques', array('app_id'=>$app['app_id']))}" class="gs-tag">
+                    <div class="img-box"><img src="{$app.icon|format_url}" alt=""></div>
+                    <div>{$app.app_name}</div>
+                </a>
+            </volist>
+        </div>
+    </if>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script>
+    //ajax方式获取每日一题分页列表
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/Article/app_ques')}",
+        dataType: 'json',
+        data: {app_id: '{$appId}'},
+        async: false, //默认为true 异步
+        success: function (res) {
+            $('#article-box').empty().html(res);
+        },
+        error: function () {
+        }
+    });
+    $(function () {
+        //分页
+        $(".page-box div.num").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+
+        //轮播图目前最多有五张,排版样式
+        //动态添加总页数
+        var imgNum=$(".game-beauty").children("a").length;
+        $(".page-all").text(imgNum)
+        if(imgNum==2){
+            $(".game-beauty").find("a:eq(1)").css("right",0);
+        }else if(imgNum==3){
+            $(".game-beauty").find("a:eq(2)").css("right",0);
+            $(".game-beauty").find("a:eq(1)").css("left","13%");
+        }else if(imgNum==4){
+            $(".game-beauty").find("a:eq(3)").css("right",0);
+            $(".game-beauty").find("a:eq(2)").css("right","9%");
+            $(".game-beauty").find("a:eq(1)").css("left","8%");
+        }else if(imgNum==5){
+            $(".game-beauty").find("a:eq(4)").css({"right":0,"top":0});
+            $(".game-beauty").find("a:eq(3)").css({"right":"7%","top":0});
+            $(".game-beauty").find("a:eq(2)").css({"right":"13%","top":0});
+            $(".game-beauty").find("a:eq(1)").css({"left":"6%","top":0});
+        }
+
+
+
+        // 轮播图自动播放
+        var beautyPlay = {
+            currentNum: 1,
+            $target: '',
+            length: '',
+            timer: null,
+            init: function () {
+                var that = this;//不管this、that反正都指总对象
+                that.length = that.$target.length;
+                that.$target.on('mouseenter', function () {
+                    clearTimeout(that.timer);
+                    var $this = $(this);//$this指被mouseenter的那个a元素
+                    that.currentNum = $this.data('num');
+                    $this.addClass('active').siblings('a').removeClass('active');
+                    that.handle(that.currentNum);
+                });
+                that.$target.on('mouseleave', function() {
+                    that.autoPlay();
+                });
+                that.autoPlay();
+            },
+            handle: function (num) {
+                if (num === 4) {
+                    $('[data-num=4]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 5);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                } else if (num === 1) {
+                    $('[data-num=1]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 1);
+                    $('[data-num=4]').css('z-index', 2);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 4);
+                }else if (num === 2) {
+                    $('[data-num=2]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 1);
+                    $('[data-num=4]').css('z-index', 2);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=1]').css('z-index', 4);
+                }else if (num === 3) {
+                    $('[data-num=3]').css('z-index', 100);
+                    $('[data-num=5]').css('z-index', 4);
+                    $('[data-num=4]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                }else if(num==5){
+                    $('[data-num=5]').css('z-index', 100);
+                    $('[data-num=4]').css('z-index', 4);
+                    $('[data-num=3]').css('z-index', 3);
+                    $('[data-num=2]').css('z-index', 2);
+                    $('[data-num=1]').css('z-index', 1);
+                }
+            },
+            autoPlay: function () {
+                var that = this;
+                this.currentNum++;
+                if (this.currentNum > this.length) {
+                    this.currentNum = 1;
+                }
+                this.$target.removeClass('active');
+                $('[data-num='+ this.currentNum +']').addClass('active');
+                this.handle(this.currentNum);
+                this.timer = setTimeout(function () {
+                    that.autoPlay();
+                }, 2000);
+                $(".page-now").text(this.currentNum);
+            },
+            go: function ($target) {
+                console.log(this);
+                this.$target = $target;//这个this是调用go函数的那个对象，这里指beautyPlay对象
+                this.init();
+            }
+        };
+        beautyPlay.go($('.game-beauty a'));
+
+
+
+    })
+</script>
+</body>

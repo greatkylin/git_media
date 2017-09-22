@@ -1249,3 +1249,59 @@ function get_string_first_char_pinyin($string){
     }
     return strtoupper($char);
 }
+/**
+ * 获取替换文章中的图片路径
+ * @author xy
+ * @since 2017/09/19 16:22
+ * @param string $content 内容
+ * @return string
+ */
+function replace_content_img($content){
+    //匹配图片的src
+    preg_match_all('#<img.*?src="([^"]*)"[^>]*>#i', $content, $match);
+    foreach($match[1] as $imgUrl){
+        $originalImgUrl = $imgUrl;
+        if(!is_int(strpos($imgUrl, 'http') || !is_int(strpos($imgUrl, 'https')))){
+            $actualUrl = format_url($imgUrl);
+            $content = str_replace($originalImgUrl,$actualUrl,$content);
+        }
+    }
+    return $content;
+}
+
+/**
+ * 生成指定链接的游戏二维码
+ * @author xy
+ * @since 2017/09/21 13:52
+ * @param null $url  二维码跳转地址
+ * @param int $appId 游戏id
+ * @param null $logo logo的图片路径
+ * @return bool
+ */
+function generate_logo_qr_code($url = NULL, $appId, $logo = NULL){
+    if(empty($appId)){
+        return false;
+    }
+    $returnPath = C('QRCODE_SAVE_PATH').'/'.'qrcode_'.$appId.'.png';
+    $savePath = __DIR__.'/../../../'.C('QRCODE_SAVE_PATH');
+    mk_dir_ext($savePath);
+    $qrCodeName = $savePath.'/'.'qrcode_'.$appId.'.png';
+    if(file_exists($qrCodeName)){
+        return $returnPath;
+    }
+    $qrCode = new Endroid\QrCode\QrCode($url);
+    // Create a basic QR code
+    $qrCode->setSize(170);
+    $qrCode->setPadding(5);
+    //设置二维码上的logo
+    $logo = 'http://www.media.local/Uploads/Images/applib/icon2017-08-30/59a675fd8cfe8.png';
+    if(!empty($logo)){
+        if(file_exists($logo)){
+            $qrCode->setLogoSize(48);
+            $qrCode->setLogo($logo);
+        }
+    }
+    header('Content-Type: '.$qrCode->getContentType());
+    $qrCode->save($qrCodeName);
+    return $returnPath;
+}

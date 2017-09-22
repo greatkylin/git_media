@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
     <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--2017-7-6！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <style>
+        .game-store-box .gs-rank-container .for-flexbox .rank-icon-tag{
+            width: 190px;
+        }
+    </style>
 </head>
 <body>
 <!--头部注册栏开始-->
@@ -10,20 +18,12 @@
 <!--菜单栏开始-->
 <include file='Common:nav'/>
 <!--菜单栏end-->
-<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
-<!--2017-7-6！！！！！！！！！！！！！！！！！-->
-<!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
-<style>
-    .game-store-box .gs-rank-container .for-flexbox .rank-icon-tag{
-        width: 190px;
-    }
-</style>
 <!--子导航栏开始-->
 <div class="game-store-subnav">
     <div class="subnav-box">
-        <a class="active" href="index.html">游戏库</a>
-        <a href="hotgameRank.html">热游排行榜</a>
-        <a href="giftCenter.html">礼包中心</a>
+        <a class="active" href="{:U('Home/App/index')}">游戏库</a>
+        <a href="{:U('Home/App/app_rank')}">热游排行榜</a>
+        <a href="{:U('Home/Gift/index')}">礼包中心</a>
     </div>
 </div>
 <!--子导航栏结束-->
@@ -45,19 +45,20 @@
 <!--底部导航结束-->
 <script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script>
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/App/index')}" ,
+        dataType:'json',
+        data:{app_type: '{$appSecondType}'},
+        async : false, //默认为true 异步
+        success:function(res) {
+            $('#app-list').empty().html(res);
+        },
+        error : function() {
+        }
+    });
     $(function () {
-        $.ajax({
-            type: 'POST',
-            url: "{:U('Home/App/index')}" ,
-            dataType:'json',
-            data:{app_type: '{$appSecondType}'},
-            async : false, //默认为true 异步
-            success:function(res) {
-                $('#app-list').empty().html(res);
-            },
-            error : function() {
-            }
-        });
+
     });
 </script>
 </body>

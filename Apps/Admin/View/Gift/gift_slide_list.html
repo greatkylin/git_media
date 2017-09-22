@@ -9,6 +9,8 @@
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="text-c">
             <form action="{:U('Admin/Gift/gift_slide_list')}">
+                <input type="hidden" class="input-text" data-name="" style="width:250px" placeholder="" id="show_position"
+                       name="show_position" value="{$showPosition}">
                 标题名称：
                 <input type="text" class="input-text" data-name="" style="width:250px" placeholder="输入标题名称" id="slide_title"
                        name="slide_title" value="{$slideTitle}">
@@ -28,7 +30,7 @@
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="r">
-            <a href="{:U('/Admin/Gift/gift_slide_add')}" class="btn btn-success radius">
+            <a href="{:U('/Admin/Gift/gift_slide_add',array('show_position' => $showPosition))}" class="btn btn-success radius">
                 <i class="Hui-iconfont Hui-iconfont-add"></i> 添加</a>
         </span>
     </div>

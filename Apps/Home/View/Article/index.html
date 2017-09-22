@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <style>
+        .nav .nav-search{
+            opacity: 0;
+        }
+        .game-sugust .gs-tag{
+            color: #666;
+        }
+    </style>
+</head>
+<body class="newsCenter-index">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--中间的搜索框开始-->
+<div class="index-search">
+    <img alt="" src="__PUBLIC__/Home/static/img/search-bcg.png">
+    <div class="search-container">
+        <div class="nav-search">
+            <div class="nav-search-input">
+                <img alt="" src="__PUBLIC__/Home/static/img/search.png" class="search-img">
+                <input type="text" class="nav-search-input1">
+                <input type="button" value="搜索" class="nav-search-input2">
+            </div>
+            <div class="nav-advice">
+                <div>热门搜索：</div>
+                <a>王者荣誉</a>
+                <a>我有上将</a>
+                <a>王者荣誉</a>
+                <a>我有上将</a>
+                <a>我有上将</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--中间的搜索框结束-->
+<main>
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/Article/index')}">资讯中心</a>
+    </div>
+    <if condition="count($bannerList gt 0)">
+        <div class="banner-box">
+            <volist name="bannerList" id="banner" key="bi">
+                <a href="{$banner.href_link}" <if condition="$bi eq 2">class="active"</if>>
+                    <img src="{$banner.image_path|format_url}" alt="">
+                    <if condition="$bi eq 2"><img class="remen" src="__PUBLIC__/Home/static/img/index-remen.png" alt=""></if>
+                </a>
+            </volist>
+        </div>
+    </if>
+    <div class="three-block">
+        <div>
+            <div class="titles-widthTwo">
+                <div><span></span>游戏资讯</div>
+                <a href="{:U('Home/Article/news_list')}">查看更多+</a>
+            </div>
+            <div class="similar-strategy similar-strategy1">
+                <!--前端根据ui图限定了十个-->
+                <if condition="count($newsList) gt 0">
+                    <volist name="newsList" id="news">
+                        <a href="{:U('Home/Article/news_detail', array('id'=>$news['id']))}" class="similar-tag">
+                            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                            <div class="desp">{$news.title}<span>{$news.create_time|date="Y-m-d", ###}</span></div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无内容
+                </if>
+            </div>
+        </div>
+        <div>
+            <div class="titles-widthTwo">
+                <div><span></span>热游攻略</div>
+                <a href="{:U('Home/Article/strategy_list')}">查看更多+</a>
+            </div>
+            <div class="link-box">
+                <volist name="strategyTypeArr" id="type">
+                    <div class="<if condition='$key eq 1'>active</if>">{$type}</div>
+                </volist>
+            </div>
+            <div class="similar-strategy similar-strategy2 similar-strategy2-1" style="height: 375px;">
+                <!--前端根据ui图限定了十个-->
+                <if condition="count($strategyLowerList) gt 0">
+                    <volist name="strategyLowerList" id="l_list">
+                        <a href="{:U('Home/Article/strategy_detail', array('id'=>$l_list['id']))}" class="similar-tag">
+                            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                            <div class="desp">{$l_list.title}<span>{$l_list.create_time|date="Y-m-d", ###}</span></div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无内容
+                </if>
+            </div>
+            <div class="similar-strategy similar-strategy2 similar-strategy2-2" style="height: 375px; display: none;">
+                <!--前端根据ui图限定了十个-->
+                <if condition="count($strategyMiddleList) gt 0">
+                    <volist name="strategyMiddleList" id="m_list">
+                        <a href="{:U('Home/Article/strategy_detail', array('id'=>$m_list['id']))}" class="similar-tag">
+                            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                            <div class="desp">{$m_list.title}<span>{$m_list.create_time|date="Y-m-d", ###}</span></div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无内容
+                </if>
+            </div>
+            <div class="similar-strategy similar-strategy2 similar-strategy2-3" style="height: 375px; display: none;">
+                <!--前端根据ui图限定了十个-->
+                <if condition="count($strategyHighList) gt 0">
+                    <volist name="strategyHighList" id="h_list">
+                        <a href="{:U('Home/Article/strategy_detail', array('id'=>$h_list['id']))}" class="similar-tag">
+                            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                            <div class="desp">{$h_list.title}<span>{$h_list.create_time|date="Y-m-d", ###}</span></div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无内容
+                </if>
+            </div>
+        </div>
+        <div>
+            <div class="titles-widthTwo">
+                <div><span></span>新游测评</div>
+                <a href="{:U('Home/Article/evaluate_list')}">查看更多+</a>
+            </div>
+            <div class="similar-strategy similar-strategy3">
+                <!--前端根据ui图限定了十个-->
+                <if condition="count($evaluationList) gt 0">
+                    <volist name="evaluationList" id="e_list">
+                        <a href="{:U('Home/Article/evaluate_detail', array('id'=>$e_list['id']))}" class="similar-tag">
+                            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
+                            <div class="desp">{$e_list.title}<span>{$e_list.create_time|date="Y-m-d", ###}</span></div>
+                        </a>
+                    </volist>
+                    <else />
+                    暂无内容
+                </if>
+            </div>
+        </div>
+    </div>
+    <if condition="count($txAppList) gt 0">
+        <div class="game-titles">
+            <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">腾讯热门游戏攻略
+        </div>
+        <div class="game-sugust">
+            <volist name="txAppList" id="txApp">
+                <a href="{:U('Home/Article/strategy_list', array('app_id' => $txApp['app_id']))}" class="gs-tag">
+                    <div class="img-box"><img src="{$txApp.icon|format_url}" alt=""></div>
+                    <div>{$txApp.app_name}</div>
+                </a>
+            </volist>
+        </div>
+    </if>
+    <div id="net-ease-game">
+
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
+<script>
+    //ajax方式获取全部礼包分页列表
+    $.ajax({
+        type: 'POST',
+        url: "{:U('Home/Article/ajax_get_strategy_net_ease_app_list')}",
+        dataType: 'json',
+        data: {app_id: ''},
+        async: false, //默认为true 异步
+        success: function (res) {
+            $('#net-ease-game').empty().html(res);
+        },
+        error: function () {
+        }
+    });
+    $(function () {
+        //分页
+        $(".page-box div.num").click(function () {
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+
+        $(".link-box>div").click(function () {
+            var index = $(this).index();
+            $(this).addClass("active").siblings().removeClass("active");
+            $('.similar-strategy2').eq(index).show().siblings('.similar-strategy2').hide();
+        });
+
+        function showTag(dom,n){
+            $(dom).each(function (i,self) {
+                if(i>=n){
+                    $(self).remove();
+                }
+            })
+        }
+        showTag(".similar-strategy1 .similar-tag",13);
+        showTag(".similar-strategy2-1 .similar-tag",11);
+        showTag(".similar-strategy2-2 .similar-tag",11);
+        showTag(".similar-strategy2-3 .similar-tag",11);
+        showTag(".similar-strategy3 .similar-tag",13);
+
+    })
+</script>
+</body>
+</html>

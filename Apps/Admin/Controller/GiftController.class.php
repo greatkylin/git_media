@@ -550,7 +550,7 @@ class GiftController extends AdminBaseController
         // 获取搜索条件
         $slideTitle = trim(I('slide_title'));
         $publishStatus = intval(I('publish_status'));
-
+        $showPosition = intval(I('show_position'));
         $where = array();
         if(!empty($slideTitle)) {
             $where['gs.slide_title']    = array('like', "%$slideTitle%");
@@ -565,6 +565,10 @@ class GiftController extends AdminBaseController
             $where['gs.end_time'] = array('gt', $nowTime);
         } elseif ($publishStatus == 3) {// 已下线
             $where['gs.is_publish'] = 2;
+        }
+
+        if(!empty($showPosition)){
+            $where['gs.show_position'] = $showPosition;
         }
 
 
@@ -588,6 +592,7 @@ class GiftController extends AdminBaseController
         if($slideList === false){
             $this->error($service->getFirstError());
         }
+        $this->assign('showPosition',$showPosition);
         $this->assign('slideTitle',$slideTitle);
         $this->assign('publishStatus',$publishStatus);
         $this->assign('slideList', $slideList);
@@ -600,6 +605,7 @@ class GiftController extends AdminBaseController
      * @since 2017/09/15 13:38
      */
     public function gift_slide_add(){
+        $showPosition = intval(I('show_position'));
         if(IS_AJAX) {
             $slideTitle = trim(I('slide_title'));
             if(empty($slideTitle)){
@@ -640,6 +646,7 @@ class GiftController extends AdminBaseController
             $data['admin_id'] = $this->user_info['id'];
             $data['start_time'] = strtotime(I('start_time'));
             $data['end_time'] = strtotime(I('end_time'));
+            $data['show_position'] = $showPosition;
             if (M('gift_slide')->add($data)) {
                 $this->outputJSON(false, '000000', '添加成功');
             } else {
@@ -651,7 +658,9 @@ class GiftController extends AdminBaseController
             if($appList === false){
                 $this->error($service->getFirstError());
             }
-            $reloadUrl = U('Admin/Gift/gift_slide_list');
+            $reloadUrl = U('Admin/Gift/gift_slide_list', array('show_position'=>$showPosition));
+
+            $this->assign('showPosition', $showPosition);
             $this->assign('reloadUrl', $reloadUrl);
             $this->assign('appList', $appList);
             $this->assign('start_time', time());
@@ -728,7 +737,7 @@ class GiftController extends AdminBaseController
             if($appList === false){
                 $this->error($service->getFirstError());
             }
-            $reloadUrl = U('Admin/Gift/gift_slide_list');
+            $reloadUrl = U('Admin/Gift/gift_slide_list', array('show_position'=>$slide['show_position']));
             $this->assign('reloadUrl', $reloadUrl);
             $this->assign('appList', $appList);
             $this->assign('slide', $slide);

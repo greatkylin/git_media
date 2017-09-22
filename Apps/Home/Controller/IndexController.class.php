@@ -2,6 +2,7 @@
 namespace Home\Controller;
 use Home\Service\AppService;
 use Home\Service\ArticleService;
+use Home\Service\GiftService;
 use Home\Service\IndexService;
 use Think\Controller;
 use Home\Controller\HomeBaseController;
@@ -156,11 +157,13 @@ class IndexController extends HomeBaseController {
         $activityDetail = $indexService->getValidActivityDetailById($activityId);
 
         $appService = new AppService();
+        $giftService = new GiftService();
         //1.获取热门礼包周榜月榜
-        $giftWeekList = $appService->getHotAppGiftWeekList(10);
-        $giftMonthList = $appService->getHotAppGiftMonthList(10);
+        $giftWeekList = $giftService->getHotAppGiftWeekList(10);
+        $giftMonthList = $giftService->getHotAppGiftMonthList(10);
         //2.获取本周专题
-        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        $indexService = new IndexService();
+        $thisWeekTopic = $indexService->getThisWeekTopicByKeyword();
         //3.获取热门游戏
         $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
 
@@ -184,11 +187,13 @@ class IndexController extends HomeBaseController {
         $activityDetail = $indexService->getActivityDetailById($activityId);
 
         $appService = new AppService();
+        $giftService = new GiftService();
         //1.获取热门礼包周榜月榜
-        $giftWeekList = $appService->getHotAppGiftWeekList(10);
-        $giftMonthList = $appService->getHotAppGiftMonthList(10);
+        $giftWeekList = $giftService->getHotAppGiftWeekList(10);
+        $giftMonthList = $giftService->getHotAppGiftMonthList(10);
         //2.获取本周专题
-        $thisWeekTopic = $appService->getOneAppTopicByTime(time());
+        $indexService = new IndexService();
+        $thisWeekTopic = $indexService->getThisWeekTopicByKeyword();
         //3.获取热门游戏
         $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
 

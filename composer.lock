@@ -4,9 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1ede08d0f58f56d995cdcc06fe313434",
-    "content-hash": "3ab2140c8d4c9b5658728423cb494852",
+    "content-hash": "8792159852b6a9b22b78fce308b159e2",
     "packages": [
+        {
+            "name": "endroid/qrcode",
+            "version": "1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/endroid/QrCode.git",
+                "reference": "c9644bec2a9cc9318e98d1437de3c628dcd1ef93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://files.phpcomposer.com/files/endroid/QrCode/c9644bec2a9cc9318e98d1437de3c628dcd1ef93.zip",
+                "reference": "c9644bec2a9cc9318e98d1437de3c628dcd1ef93",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "php": ">=5.4",
+                "symfony/options-resolver": "^2.3|^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0|^5.0",
+                "sensio/framework-extra-bundle": "^3.0",
+                "symfony/browser-kit": "^2.3|^3.0",
+                "symfony/framework-bundle": "^2.3|^3.0",
+                "symfony/http-kernel": "^2.3|^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Endroid\\QrCode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeroen van den Enden",
+                    "email": "info@endroid.nl",
+                    "homepage": "http://endroid.nl/"
+                }
+            ],
+            "description": "Endroid QR Code",
+            "homepage": "https://github.com/endroid/QrCode",
+            "keywords": [
+                "bundle",
+                "code",
+                "endroid",
+                "qr",
+                "qrcode",
+                "symfony"
+            ],
+            "time": "2017-04-08T09:13:59+00:00"
+        },
         {
             "name": "phpoffice/phpexcel",
             "version": "1.8.1",
@@ -62,20 +121,20 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2015-05-01 07:00:55"
+            "time": "2015-05-01T07:00:55+00:00"
         },
         {
             "name": "riverslei/payment",
-            "version": "v3.0.8",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/helei112g/payment.git",
-                "reference": "9570a17c7fdd6306f3f00c5778f5139482ea7646"
+                "reference": "350733fa6c3240d342b3a57adde4d6c3e731af04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/helei112g/payment/9570a17c7fdd6306f3f00c5778f5139482ea7646.zip",
-                "reference": "9570a17c7fdd6306f3f00c5778f5139482ea7646",
+                "url": "https://files.phpcomposer.com/files/helei112g/payment/350733fa6c3240d342b3a57adde4d6c3e731af04.zip",
+                "reference": "350733fa6c3240d342b3a57adde4d6c3e731af04",
                 "shasum": ""
             },
             "require": {
@@ -100,25 +159,83 @@
                 {
                     "name": "helei",
                     "email": "dayugog@gmail.com",
-                    "homepage": "https://helei112g.github.io/"
+                    "homepage": "https://helei112g.github.io/categories/payment-3/"
                 }
             ],
-            "description": "支付宝支付、微信支付集成SDK。整合集成快速接入，支持支付宝最新接口",
-            "homepage": "https://helei112g.github.io/",
+            "description": "支付宝支付、微信支付、招商一网通支付php SDK。方便快速接入，最完整的开源支付 php sdk",
+            "homepage": "https://helei112g.github.io/categories/payment-3/",
             "keywords": [
                 "alipay",
                 "weixin",
+                "一网通",
                 "微信支付",
+                "招商一网通",
                 "支付宝支付",
                 "集成支付接口SDK"
             ],
-            "time": "2017-04-19 02:44:44"
+            "time": "2017-07-05T15:13:02+00:00"
+        },
+        {
+            "name": "symfony/options-resolver",
+            "version": "v3.3.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/options-resolver.git",
+                "reference": "ee4e22978fe885b54ee5da8c7964f0a5301abfb6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://files.phpcomposer.com/files/symfony/options-resolver/ee4e22978fe885b54ee5da8c7964f0a5301abfb6.zip",
+                "reference": "ee4e22978fe885b54ee5da8c7964f0a5301abfb6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\OptionsResolver\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "config",
+                "configuration",
+                "options"
+            ],
+            "time": "2017-07-29T21:54:42+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "endroid/qrcode": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

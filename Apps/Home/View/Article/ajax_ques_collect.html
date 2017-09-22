@@ -1,0 +1,39 @@
+<div class="redTitle">
+    <div><span></span>最新更新</div>
+    <div style="opacity: 0;"><span class="active">日榜</span><span>周榜</span></div>
+</div>
+<if condition="count($articleList) gt 0">
+    <div class="topic-container">
+        <volist name="articleList" id="article">
+            <a href="{:U('Home/Article/ques_detail', array('id'=>$article['id']))}" class="topic-tag">
+                <img src="{$article.img_path|format_url}" alt="">
+                <div class="content">
+                    <div class="title">{$article.title}</div>
+                    <div class="time">发布时间：{$article.release_time|date="Y年m月d日", ###}</div>
+                </div>
+            </a>
+        </volist>
+    </div>
+    <div class="page-box" style="padding-top: 10px;">
+        {$show}
+    </div>
+</if>
+<script>
+    $(function () {
+        //分页跳转
+        $(".page-box div, .page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            $.ajax({
+                type:'GET',
+                url:url,
+                success:function(res){
+                    $('#article-box').empty().html(res);
+                },
+                error : function() {
+                }
+            });
+            return false;
+        });
+    })
+</script>

@@ -1,0 +1,35 @@
+<if condition="count($appList) gt 0">
+<div class="game-titles">
+    <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">网易热门游戏攻略
+</div>
+<div class="game-sugust">
+    <volist name="appList" id="app">
+        <a href="{:U('Home/Article/strategy_list', array('app_id' => $app['app_id']))}" class="gs-tag">
+            <div class="img-box"><img src="{$app.icon|format_url}" alt=""></div>
+            <div>{$app.app_name}</div>
+        </a>
+    </volist>
+</div>
+<div class="page-box" style="margin-top:15px;">
+    {$show}
+</div>
+<script>
+    $(function () {
+        //分页跳转
+        $(".page-box div, .page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            $.ajax({
+                type:'GET',
+                url:url,
+                success:function(res){
+                    $('#net-ease-game').empty().html(res);
+                },
+                error : function() {
+                }
+            });
+            return false;
+        });
+    })
+</script>
+</if>

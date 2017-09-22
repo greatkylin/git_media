@@ -556,7 +556,8 @@ class GiftService extends BaseService
         $where = array(
             'gs.start_time' => array('lt', time()),
             'gs.end_time' => array('gt', time()),
-            'gs.is_publish' => 1
+            'gs.is_publish' => 1,
+            'gs.show_position' => 1,
         );
         $slideList = M('gift_slide')->alias('gs')
             ->field('gs.*, IF(gs.sort = 0, 999999999, gs.sort) as new_sort')
@@ -612,5 +613,224 @@ class GiftService extends BaseService
         }
 
         return $adList;
+    }
+
+    /**
+     * 获取指定数量游戏礼包周榜列表
+     * @author xy
+     * @since 2017/09/04 16:17
+     * @param int $limit 查询数量
+     * @return bool
+     */
+    public function getHotAppGiftWeekList($limit = 10){
+        //礼包库中有效的未删除的礼包
+        $where['gl.start_time'] = array('lt', time());
+        $where['gl.end_time'] = array('gt', time());
+        $where['gl.is_del'] = array('neq', 1);
+        //获取媒体站已上架的游戏的礼包
+        $where['list.is_publish'] = array('IN', array(1));
+
+        //礼包码表中各个批次被媒体站占用的游戏礼包
+        $subQueryOne = ' SELECT gift_id, count(*) AS total_code_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 GROUP BY gift_id ';
+
+        //媒体站礼包库中礼包id对应的游戏以及礼包全名，避免通过gift_id关联查询时对应的礼包已删除无法正确关联正确的礼包
+        $subQueryTwo = ' SELECT a.*, CONCAT(glib.app_id,glib.gift_name,glib.original_name) AS id_gift_name FROM ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS a LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS glib ON glib.gift_id = a.gift_id ';
+
+        //礼包库中被媒体站占用的上周被领取的礼包码数量
+        $subQueryThree = ' SELECT gift_id, count(*) AS code_use_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 AND use_status IS NOT NULL AND YEARWEEK(date_format(FROM_UNIXTIME(receive_time), \'%Y-%m-%d\')) = YEARWEEK(now())-1  GROUP BY gift_id';
+
+        $giftList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('gl')
+            ->field(
+                'sgl.gift_id as sync_gift_id, sgl.limited_count, 
+                IF(sgl.final_hot_sort=0, 999999999, IFNULL(sgl.final_hot_sort,999999999)) as final_hot_sort, 
+                gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, 
+                CONCAT(al.app_name,gl.gift_name,gl.original_name) AS full_gift_name, 
+                CONCAT(al.app_id,gl.gift_name,gl.original_name) AS id_gift_name, 
+                sum(cn.total_code_num) as total_code_num, sum(un.code_use_num) as total_use_num, 
+                (alist.app_down_num+alist.cardinal) as down_num, IFNULL(lib.icon, al.icon) as icon'
+            )
+            //获取游戏礼包媒体站占用的礼包数量, INNER JOIN 避免取到没有申请到媒体站的礼包
+            ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
+            //获取游戏礼包媒体站已领取的礼包数量
+            ->join('LEFT JOIN (' . $subQueryThree . ') AS un ON un.`gift_id` = gl.`gift_id`')
+            //INNER JOIN 媒体站游戏列表 避免取到未同步到媒体站的游戏 的礼包
+            ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_list AS list ON list.`app_id` = gl.`app_id`')
+            //关联获取游戏名称
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS al ON al.`app_id` = list.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS lib ON lib.`app_id` = list.`app_id`')
+            //关联获取下载量与上架时间
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS alist ON alist.`app_id` = list.`app_id`')
+            //关联获取设置上限数量的礼包
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,gl.gift_name,gl.original_name) = sgl.`id_gift_name`')
+            ->where($where)
+            ->group('full_gift_name')
+            ->order(' sgl.final_hot_sort ASC, down_num DESC ')
+            ->limit($limit)
+            ->select();
+        if($giftList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $giftList;
+    }
+
+    /**
+     * 获取指定数量游戏礼包月榜列表
+     * @author xy
+     * @since 2017/09/04 16:17
+     * @param int $limit 查询数量
+     * @return bool
+     */
+    public function getHotAppGiftMonthList($limit = 10){
+        //礼包库中有效的未删除的礼包
+        $where['gl.start_time'] = array('lt', time());
+        $where['gl.end_time'] = array('gt', time());
+        $where['gl.is_del'] = array('neq', 1);
+        //获取媒体站已上架的游戏的礼包
+        $where['list.is_publish'] = array('IN', array(1));
+
+        //礼包码表中各个批次被媒体站占用的游戏礼包
+        $subQueryOne = ' SELECT gift_id, count(*) AS total_code_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 GROUP BY gift_id ';
+
+        //媒体站礼包库中礼包id对应的游戏以及礼包全名，避免通过gift_id关联查询时对应的礼包已删除无法正确关联正确的礼包
+        $subQueryTwo = ' SELECT a.*, CONCAT(glib.app_id,glib.gift_name,glib.original_name) AS id_gift_name FROM ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS a LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS glib ON glib.gift_id = a.gift_id ';
+
+        //礼包库中被媒体站占用的上月被领取的礼包码数量
+        $subQueryThree = ' SELECT gift_id, count(*) AS code_use_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 AND use_status IS NOT NULL AND date_format(FROM_UNIXTIME(receive_time), \'%Y-%m\') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),\'%Y-%m\')  GROUP BY gift_id';
+
+        $giftList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('gl')
+            ->field(
+                'sgl.gift_id as sync_gift_id, sgl.limited_count, 
+                IF(sgl.final_hot_sort=0, 999999999, IFNULL(sgl.final_hot_sort,999999999)) as final_hot_sort, 
+                gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, 
+                CONCAT(al.app_name,gl.gift_name,gl.original_name) AS full_gift_name, 
+                CONCAT(al.app_id,gl.gift_name,gl.original_name) AS id_gift_name, 
+                sum(cn.total_code_num) as total_code_num, sum(un.code_use_num) as total_use_num, 
+                (alist.app_down_num+alist.cardinal) as down_num, IFNULL(lib.icon, al.icon) as icon'
+            )
+            //获取游戏礼包媒体站占用的礼包数量, INNER JOIN 避免取到没有申请到媒体站的礼包
+            ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
+            //获取游戏礼包媒体站已领取的礼包数量
+            ->join('LEFT JOIN (' . $subQueryThree . ') AS un ON un.`gift_id` = gl.`gift_id`')
+            //INNER JOIN 媒体站游戏列表 避免取到未同步到媒体站的游戏 的礼包
+            ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_list AS list ON list.`app_id` = gl.`app_id`')
+            //关联获取游戏名称
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS al ON al.`app_id` = list.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS lib ON lib.`app_id` = list.`app_id`')
+            //关联获取下载量与上架时间
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS alist ON alist.`app_id` = list.`app_id`')
+            //关联获取设置上限数量的礼包
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,gl.gift_name,gl.original_name) = sgl.`id_gift_name`')
+            ->where($where)
+            ->group('full_gift_name')
+            ->order(' sgl.final_hot_sort ASC, down_num DESC ')
+            ->limit($limit)
+            ->select();
+        if($giftList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $giftList;
+    }
+
+    /**
+     * 获取指定数量的热门游戏礼包的日榜列表
+     * @author xy
+     * @since 2017/09/18 15:04
+     * @param int $limit 获取的数量
+     * @return bool
+     */
+    public function getHotAppGiftDailyList($limit = 10){
+        //每天的开始时间与结束时间
+        $dailyTimeStart = strtotime(date('Y-m-d', time()));
+        $dailyTimeEnd = $dailyTimeStart + (86400 - 1);
+        //礼包库中有效的未删除的礼包
+        $where['gl.start_time'] = array('lt', time());
+        $where['gl.end_time'] = array('gt', time());
+        $where['gl.is_del'] = array('neq', 1);
+        //获取媒体站已上架的游戏的礼包
+        $where['list.is_publish'] = array('IN', array(1));
+
+        //礼包码表中各个批次被媒体站占用的游戏礼包
+        $subQueryOne = ' SELECT gift_id, count(*) AS total_code_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 GROUP BY gift_id ';
+
+        //媒体站礼包库中礼包id对应的游戏以及礼包全名，避免通过gift_id关联查询时对应的礼包已删除无法正确关联正确的礼包
+        $subQueryTwo = ' SELECT a.*, CONCAT(glib.app_id,glib.gift_name,glib.original_name) AS id_gift_name FROM ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'sync_gift_lib AS a LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib AS glib ON glib.gift_id = a.gift_id ';
+
+        //礼包库中被媒体站占用的当天被领取的礼包码数量
+        $subQueryThree = ' SELECT gift_id, count(*) AS code_use_num FROM ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'gift_lib_code WHERE use_type = 3 AND use_status IS NOT NULL AND (receive_time >="'.$dailyTimeStart.'" AND receive_time <= "'.$dailyTimeEnd.'") GROUP BY gift_id';
+
+        $giftList = M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('gl')
+            ->field(
+                'sgl.gift_id as sync_gift_id, sgl.limited_count, 
+                IF(sgl.final_hot_sort=0, 999999999, IFNULL(sgl.final_hot_sort,999999999)) as final_hot_sort, 
+                gl.gift_id, gl.app_id, gl.gift_name, gl.original_name, gl.gift_icon, al.app_name, 
+                CONCAT(al.app_name,gl.gift_name,gl.original_name) AS full_gift_name, 
+                CONCAT(al.app_id,gl.gift_name,gl.original_name) AS id_gift_name, 
+                sum(cn.total_code_num) as total_code_num, sum(un.code_use_num) as total_use_num, 
+                (alist.app_down_num+alist.cardinal) as down_num, IFNULL(lib.icon, al.icon) as icon'
+            )
+            //获取游戏礼包媒体站占用的礼包数量, INNER JOIN 避免取到没有申请到媒体站的礼包
+            ->join('INNER JOIN (' . $subQueryOne . ') AS cn ON cn.`gift_id` = gl.`gift_id`')
+            //获取游戏礼包媒体站已领取的礼包数量
+            ->join('LEFT JOIN (' . $subQueryThree . ') AS un ON un.`gift_id` = gl.`gift_id`')
+            //INNER JOIN 媒体站游戏列表 避免取到未同步到媒体站的游戏 的礼包
+            ->join('INNER JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_list AS list ON list.`app_id` = gl.`app_id`')
+            //关联获取游戏名称
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib AS al ON al.`app_id` = list.`app_id`')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS lib ON lib.`app_id` = list.`app_id`')
+            //关联获取下载量与上架时间
+            ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list AS alist ON alist.`app_id` = list.`app_id`')
+            //关联获取设置上限数量的礼包
+            ->join('INNER JOIN (' . $subQueryTwo . ') AS sgl ON  CONCAT(al.app_id,gl.gift_name,gl.original_name) = sgl.`id_gift_name`')
+            ->where($where)
+            ->group('full_gift_name')
+            ->order(' sgl.final_hot_sort ASC, down_num DESC ')
+            ->limit($limit)
+            ->select();
+        if($giftList === false){
+            return $this->setError('查询失败');
+        }
+
+        return $giftList;
+    }
+
+    /**
+     * 获取游戏每日一题页的礼包广告图片
+     * @author xy
+     * @since 2017/09/21 16:07
+     * @param $appId
+     * @return bool|array
+     */
+    public function getAppQuesGiftImageAd($appId){
+        if(empty($appId)){
+            return $this->setError('必填参数缺失');
+        }
+        //有效时间内，上架状态的轮播数据
+        $where = array(
+            'gs.start_time' => array('lt', time()),
+            'gs.end_time' => array('gt', time()),
+            'gs.is_publish' => 1,
+            'gs.app_id' => $appId,
+            'gs.show_position' => 2,
+        );
+        $slide = M('gift_slide')->alias('gs')
+            ->field('gs.*, IF(gs.sort = 0, 999999999, gs.sort) as new_sort')
+            ->where($where)
+            ->order('new_sort ASC')
+            ->find();
+        if($slide === false){
+            return $this->setError('查询失败');
+        }
+
+        if(!empty($slide)){
+            if ($slide['relation_type'] == 1) {
+                $slide['url'] = U('Home/Gift/gift_page', array('app_id' => $slide['app_id']));
+            } else {
+                $slide['url'] = U('Home/Gift/all_gift');
+            }
+        }
+
+        return $slide;
     }
 }
