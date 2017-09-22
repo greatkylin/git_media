@@ -75,3 +75,39 @@ ALTER TABLE `zy_media_archives`
 ADD COLUMN `is_question`  tinyint(1) NULL DEFAULT 0 COMMENT '是否为每日一题，0否1是';
 ALTER TABLE `zy_media_gift_slide`
 ADD COLUMN `show_position`  tinyint(2) NULL DEFAULT 0 COMMENT '礼包广告展示位置 1.礼包中心首页，2游戏每日一题页' AFTER `edit_time`;
+/*20170922*/
+CREATE TABLE `zy_media_links` (
+  `link_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `link_url` varchar(255) NOT NULL COMMENT '友情链接地址',
+  `link_name` varchar(255) NOT NULL COMMENT '友情链接名称',
+  `link_image` varchar(255) DEFAULT NULL COMMENT '友情链接图标',
+  `link_target` varchar(25) NOT NULL DEFAULT '_blank' COMMENT '友情链接打开方式',
+  `link_description` text NOT NULL COMMENT '友情链接描述',
+  `is_show` int(2) NOT NULL DEFAULT '1' COMMENT '状态，1显示，0不显示',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序',
+  `admin_id` int(11) DEFAULT '0' COMMENT '操作者id',
+  PRIMARY KEY (`link_id`),
+  KEY `link_visible` (`is_show`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='友情链接表';
+
+CREATE TABLE `zy_media_search_key` (
+  `kid` int(11) NOT NULL AUTO_INCREMENT,
+  `keyword` varchar(255) NOT NULL COMMENT '搜索的关键词',
+  `searchCount` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '搜索次数',
+  `suggest` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否显示在建议列表中',
+  `create_time` int(11) NOT NULL DEFAULT '0',
+	`update_time` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`kid`),
+  UNIQUE KEY `key` (`keyword`) USING BTREE
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT '搜索关键词统计表';
+
+CREATE TABLE `zy_media_search_log` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `keyword` varchar(255) NOT NULL COMMENT '搜索的关键词',
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `client_ip` varchar(255) NOT NULL DEFAULT '' COMMENT '客户端ip',
+  `create_time` int(11) NOT NULL DEFAULT '0',
+  `update_time` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`log_id`),
+  KEY `key` (`keyword`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='搜索关键词记录表';

@@ -40,6 +40,10 @@ class MenuService extends BaseService
                 //获取单页内容的菜单
                 $leftMenu = $this->getContentMenu();
                 break;
+            case 6:
+                //获取网站其他设置菜单
+                $leftMenu = $this->getOtherMenu();
+                break;
             default:
                 break;
         }
@@ -631,6 +635,52 @@ class MenuService extends BaseService
             }
         }
         return $menuArr;
+    }
 
+    public function getOtherMenu(){
+        return $menuArr = array(
+            array(
+                'name' => U('Admin/Link/link_list'),
+                'title' => '友情链接',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(
+                    array(
+                    ),
+                ),
+            ),
+            array(
+                'name' => U('Admin/SysConfig/config_list'),
+                'title' => '系统设置',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(
+                    array(
+                    ),
+                ),
+            ),
+            array(
+                'name' => U('Admin/Slide/slide_list'),
+                'title' => '幻灯片管理',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(
+                    array(
+                    ),
+                ),
+            ),
+        );
     }
 }

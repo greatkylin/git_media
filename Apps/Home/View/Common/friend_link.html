@@ -1,9 +1,12 @@
-<div class="friend-link">
-    <div class="link-box">
-        <div>友情链接</div>
-        <div>
-            <a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a>
-            <a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a><a href="#">指娱游戏</a>
+<if condition = "count($friendLink) gt 0">
+    <div class="friend-link">
+        <div class="link-box">
+            <div>友情链接</div>
+            <div>
+                <volist name="friendLink" id="link">
+                    <a href="{$link.link_url}" target="{$link.link_target}">{$link.link_name}</a>
+                </volist>
+            </div>
         </div>
     </div>
-</div>
+</if>

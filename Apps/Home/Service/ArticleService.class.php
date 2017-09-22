@@ -40,12 +40,25 @@ class ArticleService extends BaseService
      * @return bool|array
      */
     public function getLastEveryDayQues($limit = 9){
+
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        //游戏攻略的分类id
+        $cateId = self::ARTICLE_QUESTION;
+        //递归获取指定分类以及该分类子类id
+        $catIdArr = get_id_array_recursive($cateList,$cateId,$newArray,'parent_id','catid');
+        $cateIdStr = implode(',', $catIdArr);
         $where = array(
             'a.status' => self::ART_STATUS_PUBLISH,
             'a.is_delete' => self::ART_DELETE_NO,
+            'a.catid' => array('IN', $cateIdStr),
             '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
         );
-        // TODO 每日一题的筛选文章库还没做
+
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
@@ -759,6 +772,84 @@ class ArticleService extends BaseService
             return $this->setError('查询失败');
         }
         return $appList;
+    }
+
+    /**
+     * 根据关键词分页搜索文章列表
+     * @author xy
+     * @since 2017/09/22 18:01
+     * @param string $keyword 关键字
+     * @param int $currentPage 当前页
+     * @param int $pageSize 每页大小
+     * @return bool|array
+     */
+    public function getArticleByKeywordByPage($keyword, $currentPage, $pageSize = 5){
+        if(empty($keyword)){
+            return $this->setError('必填参数缺失');
+        }
+
+        $map['a.title'] = array('like', '%'.$keyword.'%');
+        $map['a.keywords'] = array('like', '%'.$keyword.'%');
+        $map['a.description'] = array('like', '%'.$keyword.'%');
+        $map['_logic'] = 'OR';
+
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = array(
+            'a.status' => self::ART_STATUS_PUBLISH,
+            'a.is_delete' => self::ART_DELETE_NO,
+            '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
+            '_complex' => $map,
+        );
+
+        $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
+            ->field('a.*')
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
+            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->where($where)
+            ->limit($currentPage, $pageSize)
+            ->order('new_attr ASC, a.release_time DESC')
+            ->select();
+        if($articleList === false){
+            return $this->setError('查询失败');
+        }
+        return $articleList;
+    }
+
+    /**
+     * 计算根据关键词搜索文章的数量
+     * @author xy
+     * @since 2017/09/22 18:01
+     * @param string $keyword 关键字
+     * @return bool|array
+     */
+    public function countArticleByKeywordNum($keyword){
+        if(empty($keyword)){
+            return $this->setError('必填参数缺失');
+        }
+
+        $map['a.title'] = array('like', '%'.$keyword.'%');
+        $map['a.keywords'] = array('like', '%'.$keyword.'%');
+        $map['a.description'] = array('like', '%'.$keyword.'%');
+        $map['_logic'] = 'OR';
+
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = array(
+            'a.status' => self::ART_STATUS_PUBLISH,
+            'a.is_delete' => self::ART_DELETE_NO,
+            '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
+            '_complex' => $map,
+        );
+
+        $artNum = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
+            ->field('a.id')
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
+            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->where($where)
+            ->count();
+        if($artNum === false){
+            return $this->setError('查询失败');
+        }
+        return $artNum;
     }
 
     /**

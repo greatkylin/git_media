@@ -854,6 +854,13 @@ class AppService extends BaseService
                 IF(alist.final_new_sort=0, 9999999, IFNULL( alist.final_new_sort, 9999999 ) ) as final_new_sort, 
                 IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.start_score, lib.start_score) as start_score, 
                 IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                IFNULL(alib.start_score, lib.start_score) as start_score, 
+                IFNULL(alib.platform, lib.platform) as platform, 
+                IFNULL(alib.version_code,lib.version_code) as version_code, 
+                IFNULL(alib.version_name, lib.version_name) as version_name, 
+                IFNULL(alib.app_type, lib.app_type) as app_type, 
+                IFNULL(alib.introduct, lib.introduct) as introduct, 
+                IFNULL(alib.app_size, lib.app_size) as app_size, 
                 alist.`app_id`, alist.publish_time, list.`status`, list.`sj_time`, 
                 (list.app_down_num + list.cardinal) as app_down_num, list.create_time,
                 GROUP_CONCAT(`at`.type_name) as app_type_name_str,
@@ -887,6 +894,13 @@ class AppService extends BaseService
                 }else{
                     $app['parent_app_type_name_str'] = '未知';
                 }
+
+                if(!empty($app['app_size'])){
+                    $app['app_size'] = intval($app['app_size'] / (1024 * 1024));
+                }else{
+                    $app['app_size'] = 0;
+                }
+
                 $appList[$key] = $app;
             }
         }

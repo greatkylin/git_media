@@ -146,6 +146,7 @@ class IndexController extends AdminBaseController {
             array('name'=>'游戏专题','type'=>3),
             array('name'=>'新闻中心','type'=>4),
             array('name'=>'单页内容管理','type'=>5),
+            array('name'=>'其他设置','type'=>6),
         );
     }
 

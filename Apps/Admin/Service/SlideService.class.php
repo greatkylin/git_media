@@ -64,7 +64,8 @@ class SlideService extends BaseService
      */
     public function getSlideListByPage($where = array(), $currentPage, $pageSize){
         $slideList = M('slide')->alias('s')
-            ->field('s.*, IF(s.sort = 0, 999999999, s.sort) as new_sort, au.nickname')
+            ->field('s.*, IF(s.sort = 0, 999999999, s.sort) as new_sort, au.nickname, sc.cat_name')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'slide_cat sc ON s.slide_cid = sc.cid')
             ->join('LEFT JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'admin_user au ON s.admin_id = au.id')
             ->where($where)
             ->order('new_sort ASC')

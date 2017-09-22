@@ -683,7 +683,8 @@ function checkStringIsUrl($url){
     if(empty($url)){
         return false;
     }
-    $pattern = '/^(http|https|ftp):\/\/[A-Za-z0-9][A-Za-z0-9\-\.]+[A-Za-z0-9]\.[A-Za-z]{2,}[\43-\176]*$/';
+    //$pattern = '/^(http|https|ftp):\/\/[A-Za-z0-9][A-Za-z0-9\-\.]+[A-Za-z0-9]\.[A-Za-z]{2,}[\43-\176]*$/';
+    $pattern = '@(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
     if (preg_match($pattern, $url,$matches)){
         return true;
     } else {

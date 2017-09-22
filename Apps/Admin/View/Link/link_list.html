@@ -1,24 +1,20 @@
 <include file='Common:meta'/>
-<title>图片轮播管理</title>
+<title>友情链接管理</title>
 </head>
 <body>
 <nav class="breadcrumb">
-    图片轮播管理
+    友情链接>友情链接列表
 </nav>
 <div class="page-container">
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="text-c">
-            <form action="{:U('Admin/Slide/slide_list')}">
-                标题名称：
-                <input type="text" class="input-text" data-name="" style="width:250px" placeholder="输入标题名称" id="slide_name"
-                       name="slide_name" value="{$slideName}">
-                状态：
-                <span class="select-box" style="width:100px;">
-                    <select id="publish_status" name="publish_status" class="select" >
-                        <option value="">请选择</option>
-                        <option value="1" <if condition="1 eq $publishStatus">selected</if>>待上线</option>
-                        <option value="2" <if condition="2 eq $publishStatus">selected</if>>已上线</option>
-                        <option value="3" <if condition="3 eq $publishStatus">selected</if>>已下线</option>
+            <form action="{:U('Admin/Link/link_list')}">
+                <input type="text" name="link_name" id="link_name" placeholder=" 请输入友情链接名称进行搜索" style="width:250px" class="input-text" value="{$linkName}">
+                <span class="select-box inline">
+                    <select name="is_show" class="select">
+                        <option value="-1" <if condition="$isShow eq -1">selected="selected"</if>>是否显示</option>
+                        <option value="1" <if condition="$isShow eq 1">selected="selected"</if>>显示</option>
+                        <option value="0" <if condition="$isShow eq 0">selected="selected"</if>>隐藏</option>
                     </select>
                 </span>
                 <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
@@ -27,58 +23,60 @@
         </span>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l c-warning pt-5">
+        </span>
         <span class="r">
-            <a href="{:U('/Admin/Slide/slide_add', array('slide_cid' => $slideCid))}" class="btn btn-success radius">
-                <i class="Hui-iconfont Hui-iconfont-add"></i> 添加</a>
+            <a href="javascript:;" onclick="layer_show('新增友情链接','{:U(\'Admin/Link/link_add/\')}', 900, 600)" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-add3"></i>新增友情链接</a>
         </span>
     </div>
     <table class="table table-border table-bordered table-bg">
         <thead>
         <tr class="text-c">
             <th>ID</th>
-            <th>标题名称</th>
-            <th>所属分类</th>
-            <th>上线时间</th>
-            <th>图片</th>
-            <th>操作人</th>
-            <th>状态</th>
+            <th>链接名称</th>
+            <th>链接地址</th>
+            <th>是否显示</th>
             <th>操作</th>
         </tr>
         </thead>
         <tbody id="tbody_data">
-        <volist name="slideList" key="i" id="val">
+        <volist name="linkList" key="i" id="val">
             <tr class="text-c">
-                <td>{$val.slide_id}</td>
-                <td>{$val.slide_name}</td>
-                <td>{$val.cat_name}</td>
-                <td>{$val.start_time|date='Y-m-d H:i:s', ###}-{$val.end_time|date='Y-m-d H:i:s', ###}</td>
-                <td><img src="{$val.slide_pic|format_url}" alt="" style="width: 120px;height: 80px"></td>
-                <td>{$val.nickname}</td>
-                <td>{$val.publish_name}</td>
+                <td>{$val.link_id}</td>
+                <td>{$val.link_name}</td>
+                <td><a href="{$val.link_url}" target="_blank">{$val.link_url}</a></td>
+                <td>
+                    <if condition="$val['is_show'] eq 0">
+                        隐藏
+                        <elseif condition="$val['is_show'] eq 1"/>
+                        显示
+                    </if>
+                </td>
                 <td>
                     <a title="编辑"
-                       href="{:U('Admin/Slide/slide_edit', array('slide_id'=>$val[slide_id], 'slide_cid'=>$val[slide_cid]))}"
+                       href="javascript:;"
+                       onclick="layer_show('活动编辑','{:U(\'Admin/Link/link_edit/link_id/\'.$val[link_id])}', 900, 600)"
                        class="btn btn-success radius" style="text-decoration:none">
-                        <i class="Hui-iconfont Hui-iconfont-edit2"></i>编辑
+                        <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑
                     </a>
-                    <if condition="$val[is_publish] eq 1">
-                        <a title="下架"
+                    <if condition="$val[is_show] eq 1">
+                        <a title="隐藏"
                            href="javascript:;"
-                           onclick="publish_status_change('确定要下架吗？', '{$val[slide_id]}')"
+                           onclick="show_status_change('确定要隐藏吗？', '{$val[link_id]}')"
                            class="btn btn-success radius" style="text-decoration:none">
-                            <i class="Hui-iconfont Hui-iconfont-xiajia"></i>下架
+                            <i class="Hui-iconfont Hui-iconfont-xiajia"></i>隐藏
                         </a>
                         <else />
-                        <a title="发布"
+                        <a title="显示"
                            href="javascript:;"
-                           onclick="publish_status_change('确定要发布吗？', '{$val[slide_id]}')"
+                           onclick="show_status_change('确定要显示吗？', '{$val[link_id]}')"
                            class="btn btn-success radius" style="text-decoration:none">
-                            <i class="Hui-iconfont Hui-iconfont-shangjia"></i>发布
+                            <i class="Hui-iconfont Hui-iconfont-shangjia"></i>显示
                         </a>
                     </if>
                     <a title="删除"
                        href="javascript:;"
-                       onclick="delete_status_change('确定要删除这条记录吗？', '{$val[slide_id]}')"
+                       onclick="delete_link('确定要删除此友情链接吗？', '{$val[link_id]}')"
                        class="btn btn-success radius" style="text-decoration:none">
                         <i class="Hui-iconfont Hui-iconfont-del2"></i>删除
                     </a>
@@ -98,8 +96,8 @@
 <script type="text/javascript" src="__PUBLIC__/H-ui/lib/jquery.ui/jquery-ui.min.js"></script>
 <script type="text/javascript">
     var pages = "{$pages}";
-    var slideName = "{$slideName}";
-    var publishStatus = '{$publishStatus}';
+    var linkName = '{$linkName}';
+    var isShow = '{$isShow}';
 
     if(parseInt(pages) > 1)
     {
@@ -112,7 +110,7 @@
             jump: function(e, first){ //触发分页后的回调
                 if(!first) { //一定要加此判断，否则初始时会无限刷新
                     var pagesize = $("#pagesize").val();
-                    var url = "{:U('Admin/Slide/slide_list/slide_name/"+slideName+"/publish_status/"+publishStatus+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
+                    var url = "{:U('Admin/Link/link_list/link_name/"+linkName+"/is_show/"+isShow+"/p/"+e.curr+"/pagesize/"+pagesize+"/_param_')}";
                     var param = '{$param}';
                     var new_url = url.replace('/_param_', param);
                     window.location.href = new_url;
@@ -122,17 +120,18 @@
     }
     $('#page_go').click(function () {
         var page_size = $('#pagesize').val();
-        var url = "{:U('Admin/Slide/slide_list/slide_name/"+slideName+"/publish_status/"+publishStatus+"/p/1/pagesize/"+page_size+"/_param_')}";
+        var url = "{:U('Admin/Link/link_list/link_name/"+linkName+"/is_show/"+isShow+"/p/1/pagesize/"+page_size+"/_param_')}";
         var param = '{$param}';
         var new_url = url.replace('/_param_', param);
         window.location.href = new_url;
     });
 
-    //活动上下操作
-    function publish_status_change(message, slide_id) {
+
+    //生成列表操作
+    function delete_link(message, link_id) {
         layer.confirm(message, function (index) {
             //此处请求后台程序，下方是成功后的前台处理……
-            $.get("{:U('Admin/Slide/public_status_change')}", {slide_id: slide_id}, function (result) {
+            $.post("{:U('Admin/Link/link_delete')}", {link_id: link_id}, function (result) {
                 if (!result.error) {
                     layer.alert(result.detail, {
                         skin: 'layui-layer-lan',
@@ -158,11 +157,11 @@
         });
     }
 
-    //删除操作
-    function delete_status_change(message, slide_id) {
+    //友情链接显示隐藏
+    function show_status_change(message, link_id) {
         layer.confirm(message, function (index) {
             //此处请求后台程序，下方是成功后的前台处理……
-            $.post("{:U('Admin/Slide/slide_delete')}", {slide_id: slide_id}, function (result) {
+            $.get("{:U('Admin/Link/show_status_change')}", {link_id: link_id}, function (result) {
                 if (!result.error) {
                     layer.alert(result.detail, {
                         skin: 'layui-layer-lan',
@@ -187,10 +186,13 @@
             });
         });
     }
+
+
+
     //搜索表单重置按钮
     $("#reset").click(function(){
-        $("input[name=slide_name]").val('');
-        $("seelect[name=publish_status]").val('');
+        $("input[name=link_name]").val('');
+        $("select[name=is_show]").val(-1);
     });
 </script>
 </body>
