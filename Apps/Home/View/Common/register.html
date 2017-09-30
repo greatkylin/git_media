@@ -1,0 +1,35 @@
+<if condition="empty($userInfo)">
+<div id="register-box" class="register-login-module" style="display: none">
+    <div class="register-module">
+        <div class="module-top"><img alt="" src="__PUBLIC__/Home/static/img/module-top.png"></div>
+        <div class="module-off"><img alt="" src="__PUBLIC__/Home/static/img/off.png"></div>
+        <div class="module-title">注册</div>
+        <form id="register-form" action="{:U('Home/Login/do_register')}" method="post" class="form-box">
+            <div>
+                <input type="text" name="user_name" placeholder="3~20位数字、字母、_和.组成" id="input-account" data-num="0">
+                <img alt="" src="__PUBLIC__/Home/static/img/gth.png" class="no">
+                <img alt="" src="__PUBLIC__/Home/static/img/check-right.png" class="yes">
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="请输入6-16位密码" id="input-pwd" data-num="0" onpaste="return false" onselectstart="return false">
+                <img alt="" src="__PUBLIC__/Home/static/img/gth.png" class="no">
+                <img alt="" src="__PUBLIC__/Home/static/img/check-right.png" class="yes">
+            </div>
+            <div>
+                <input type="password" name="password2" placeholder="再次确认密码" id="input-pwd2" data-num="0" onpaste="return false" onselectstart="return false">
+                <img alt="" src="__PUBLIC__/Home/static/img/gth.png" class="no">
+                <img alt="" src="__PUBLIC__/Home/static/img/check-right.png" class="yes">
+            </div>
+            <div class="ok-rules">
+                <input id="is_agree" name="is_agree" type="hidden" value="1">
+                <img class="ok-rules-img agree-yes" alt="" src="__PUBLIC__/Home/static/img/check-right.png" data-val="1" style="display: inline;cursor: pointer">
+                <img class="ok-rules-img agree-no" alt="" src="__PUBLIC__/Home/static/img/gth.png" data-val="0" style="display: none;cursor: pointer">
+                同意<a href="#">指娱游戏用户服务条款 </a>
+            </div>
+            <div>
+                <input type="button" value="注册" id="register-btn">
+            </div>
+        </form>
+    </div>
+</div>
+</if>

@@ -73,7 +73,7 @@
                                 <i class="Hui-iconfont Hui-iconfont-xiajia"></i>下架
                             </a>
                         </if>
-                        <if condition="$val[is_delete] eq 2">
+                        <if condition="$val[is_delete] eq 1">
                             <a title="删除"
                                href="javascript:;"
                                onclick="topicDeleteChange('{$val.topic_id}', '确定要删除这边文章吗')"
@@ -87,6 +87,13 @@
                                class="btn btn-success radius" style="text-decoration:none">
                                 <i class="Hui-iconfont"></i>恢复
                             </a>
+                        </if>
+                        <if condition="!empty($val['topic_url'])">
+                        <a title="预览"
+                           href="{$val.topic_url}" target="_blank"
+                           class="btn btn-success radius" style="text-decoration:none">
+                            <i class="Hui-iconfont"></i>预览
+                        </a>
                         </if>
                     </td>
                 </tr>

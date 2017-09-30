@@ -3,11 +3,11 @@
 <head>
     <include file='Common:meta' />
     <link href="__PUBLIC__/H-ui/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet">
-    <title>添加图片</title>
+    <title>编辑图片</title>
 </head>
 <body>
 <article class="page-container">
-    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/AppTopic/list_image_edit')}">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/Search/slide_edit')}">
         <input type="hidden" name="slide_id" value="{$slide.slide_id}">
         <input type="hidden" id="slide_cid" name="slide_cid" value="{$slideCid}">
         <div class="row cl">
@@ -71,7 +71,7 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>上架时间：</label>
             <div class="formControls col-xs-8 col-sm-4">
-                <input onfocus="selectTime(1)" type="text" class="input-text Wdate" value="{$slide.start_time|date='Y-m-d H:i:s', ###}" placeholder="" id="astart_time" name="start_time" style="width: 200px">-
+                <input onfocus="selectTime(1)" type="text" class="input-text Wdate" value="{$slide.start_time|date='Y-m-d H:i:s', ###}" placeholder="" id="start_time" name="start_time" style="width: 200px">-
                 <input onfocus="selectTime(2)" type="text" class="input-text Wdate" value="{$slide.end_time|date='Y-m-d H:i:s', ###}" placeholder="" id="end_time" name="end_time" style="width: 200px">
             </div>
         </div>

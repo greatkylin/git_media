@@ -826,7 +826,7 @@ class GiftService extends BaseService
         //申请礼包时，媒体站礼包的发布时间为当前时间
         M('sync_gift_lib')->where(array('gift_id' => $giftId))->save(array('publish_time' => time()));
         M()->commit();
-        $userInfo = self::getUserInfo();
+        $userInfo = self::getAdminUserInfo();
         $adminId = $userInfo['id'];
         //指娱记录礼包去向
         $this->giftLibIncome($giftId, 17, -$applyNum, $adminId, '上架到媒体站礼包中心');
@@ -867,7 +867,7 @@ class GiftService extends BaseService
         if ($giftIds === false) {
             return false;
         }
-        $userInfo = self::getUserInfo();
+        $userInfo = self::getAdminUserInfo();
         //开启事务
         M()->startTrans();
         //礼包码中被媒体站占用的礼包，退回到礼包库中

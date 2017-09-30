@@ -15,6 +15,11 @@ class ArticleService extends BaseService
     const ARTICLE_TYPE_APP = 0;         //文章分类类型 0 游戏专题
     const ARTICLE_TYPE_NEWS = 1;        //文章分类类型 1 新闻中心
 
+    const ARTICLE_STRATEGY = 1;    //游戏攻略
+    const ARTICLE_NEWS= 2;         //游戏资讯
+    const ARTICLE_EVALUATION = 3;  //游戏测评
+    const ARTICLE_QUESTION = 50;   //游戏每日一题
+
     /**
      * 获取游戏文章分类
      * @author xy
@@ -26,7 +31,7 @@ class ArticleService extends BaseService
         if(empty($appId) || !is_numeric($appId)){
             return array();
         }
-        $userInfo = self::getUserInfo();
+        $userInfo = self::getAdminUserInfo();
         if($userInfo){
             //子查询，查询分类下展示在媒体站文章的数量
             $subQuery =
@@ -128,7 +133,7 @@ class ArticleService extends BaseService
             $data['create_time'] = time();
         }
         if(empty($data['admin_id'])){
-            $userInfo = self::getUserInfo();
+            $userInfo = self::getAdminUserInfo();
             $data['admin_id'] = $userInfo['id'];
         }
 
@@ -179,7 +184,7 @@ class ArticleService extends BaseService
             $data['create_time'] = time();
         }
         if(empty($data['admin_id'])){
-            $userInfo = self::getUserInfo();
+            $userInfo = self::getAdminUserInfo();
             $data['admin_id'] = $userInfo['id'];
         }
 
@@ -220,7 +225,7 @@ class ArticleService extends BaseService
             $data['create_time'] = time();
         }
         if(empty($data['admin_id'])){
-            $userInfo = self::getUserInfo();
+            $userInfo = self::getAdminUserInfo();
             $data['admin_id'] = $userInfo['id'];
         }
 
@@ -275,7 +280,7 @@ class ArticleService extends BaseService
             $data['create_time'] = time();
         }
         if(empty($data['admin_id'])){
-            $userInfo = self::getUserInfo();
+            $userInfo = self::getAdminUserInfo();
             $data['admin_id'] = $userInfo['id'];
         }
 
@@ -358,7 +363,7 @@ class ArticleService extends BaseService
      */
     public function getArticleListByPage($where = NULL, $currentPage, $pageSize){
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
-            ->field('a.id, a.app_id, a.catid, a.title, a.status, IF(a.sort = 0, 999999999, IFNULL(a.sort, 999999999)) as self_sort, a.release_time, a.create_time, a.update_time, a.is_delete, alb.app_name, u.nickname, arc.id as arc_id, IF(arc.pre_sort_rank = 0,999999999, arc.pre_sort_rank) as pre_sort_rank, arc.page_view')
+            ->field('a.id, a.app_id, a.catid, a.title, a.status, IF(a.sort = 0, 999999999, IFNULL(a.sort, 999999999)) as self_sort, a.release_time, a.create_time, a.update_time, a.is_delete, alb.app_name, u.nickname, arc.id as arc_id, IF(arc.pre_sort_rank = 0,999999999, arc.pre_sort_rank) as pre_sort_rank, arc.page_view, a.click_num')
             ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib AS alb ON alb.app_id = a.app_id')
             ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'admin_user AS u ON u.`id` = a.`admin_id`')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives AS arc ON arc.`article_id` = a.`id`')
@@ -366,7 +371,49 @@ class ArticleService extends BaseService
             ->order('a.create_time DESC')
             ->limit($currentPage,$pageSize)
             ->select();
+        if(!empty($articleList)){
+            foreach ($articleList as &$art){
+                $art['top_parent_id'] = $this->getTopCateIdByChildCateId($art['catid']);
+                if($art['top_parent_id'] == self::ARTICLE_STRATEGY){
+                    $art['url'] = U('Home/Article/strategy_detail', array('preview'=>1, 'id' => $art['id']));
+                }else if($art['top_parent_id'] == self::ARTICLE_NEWS){
+                    $art['url'] = U('Home/Article/news_detail', array('preview'=>1, 'id' => $art['id']));
+                }else if($art['top_parent_id'] == self::ARTICLE_EVALUATION){
+                    $art['url'] = U('Home/Article/evaluate_detail', array('preview'=>1, 'id' => $art['id']));
+                }else if($art['top_parent_id'] == self::ARTICLE_QUESTION){
+                    $art['url'] = U('Home/Article/ques_detail', array('preview'=>1, 'id' => $art['id']));
+                }
+            }
+        }
         return $articleList;
+    }
+
+    /**
+     * 根据子栏目id获取顶级栏目id
+     * @author xy
+     * @since 2017/09/25 15:43
+     * @param int $cateId 栏目id
+     * @return mixed
+     */
+    public function getTopCateIdByChildCateId($cateId){
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        $topParentId = null;
+        foreach ($cateList as $value){
+            if($cateId == $value['catid']){
+                if($value['parent_id'] == 0){
+                    $topParentId = $value['catid'];
+                    break;
+                }else{
+                    $topParentId = $this->getTopCateIdByChildCateId($value['parent_id']);
+                }
+            }
+        }
+        return $topParentId;
     }
 
     /**
@@ -397,7 +444,7 @@ class ArticleService extends BaseService
      */
     public function getAllArticleListByPage($where = NULL, $currentPage, $pageSize){
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
-            ->field('a.id, a.app_id, a.catid, a.title, a.status, IF(a.sort = 0, 999999999, IFNULL(a.sort, 999999999)) as self_sort, a.release_time, a.create_time, a.update_time, a.is_delete, a.show_position, alb.app_name, u.nickname, arc.id as arc_id, IF(arc.pre_sort_rank = 0,999999999, arc.pre_sort_rank) as pre_sort_rank, arc.page_view')
+            ->field('a.id, a.app_id, a.catid, a.title, a.status, IF(a.sort = 0, 999999999, IFNULL(a.sort, 999999999)) as self_sort, a.release_time, a.create_time, a.update_time, a.is_delete, a.show_position, alb.app_name, u.nickname, arc.id as arc_id, IF(arc.pre_sort_rank = 0,999999999, arc.pre_sort_rank) as pre_sort_rank, arc.page_view, a.click_num')
             ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib AS alb ON alb.app_id = a.app_id')
             ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'admin_user AS u ON u.`id` = a.`admin_id`')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives AS arc ON arc.`article_id` = a.`id`')
@@ -418,6 +465,17 @@ class ArticleService extends BaseService
                     if(in_array(self::ART_SHOW_POSITION_APP,$value['show_position'])){
                         $articleList[$key]['show_app'] = 1;
                     }
+                }
+                //生成预览的url
+                $articleList[$key]['top_parent_id'] = $this->getTopCateIdByChildCateId($value['catid']);
+                if($articleList[$key]['top_parent_id'] == self::ARTICLE_STRATEGY){
+                    $articleList[$key]['url'] = U('Home/Article/strategy_detail', array('preview'=>1, 'id' => $value['id']));
+                }else if($articleList[$key]['top_parent_id'] == self::ARTICLE_NEWS){
+                    $articleList[$key]['url'] = U('Home/Article/news_detail', array('preview'=>1, 'id' => $value['id']));
+                }else if($articleList[$key]['top_parent_id'] == self::ARTICLE_EVALUATION){
+                    $articleList[$key]['url'] = U('Home/Article/evaluate_detail', array('preview'=>1, 'id' => $value['id']));
+                }else if($articleList[$key]['top_parent_id'] == self::ARTICLE_QUESTION){
+                    $articleList[$key]['url'] = U('Home/Article/ques_detail', array('preview'=>1, 'id' => $value['id']));
                 }
             }
         }

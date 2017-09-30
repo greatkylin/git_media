@@ -54,10 +54,10 @@
                     <if condition="$val[status] eq 1">已发布</if>
                 </td>
                 <td>
-                    <if condition="empty($val[page_view])">
+                    <if condition="empty($val[click_num])">
                         0
                         <else />
-                        {$val.page_view}
+                        {$val.click_num}
                     </if>
                 </td>
                 <td>
@@ -116,6 +116,11 @@
                        href="http://app.zhiyu.local{:U('Admin/Articlelib/edit_article/artid/'.$val[id])}"
                        class="btn btn-success radius" style="text-decoration:none">
                         <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑文章
+                    </a>
+                    <a title="预览" target="_blank"
+                       href="{$val.url}"
+                       class="btn btn-success radius" style="text-decoration:none">
+                        <i class="Hui-iconfont Hui-iconfont-yulan"></i>预览
                     </a>
                 </td>
             </tr>

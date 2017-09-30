@@ -437,15 +437,16 @@ class ArticleLibController extends AdminBaseController
         if (!empty($title)) {
             $where['a.title'] = array('like', '%' . $title . '%');
         }
+        $where['a.app_id'] = $appId;
         //根据分类获取该分类以及该分类子类的所有文章
         $service = new ArticleService();
         $cateIdArr = $service->getAppArticleColumnIdAndChildColumnIdByCatIdAndAppId($catId, $appId);
         if (empty($cateIdArr)) {
             //当前栏目分类下，且游戏id为$appId的文章
-            $where['_string'] = 'a.catid =' . $catId . ' AND a.app_id = ' . $appId . ' AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
+            $where['_string'] = 'a.catid =' . $catId . ' AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
         } else {
             //当前栏目分类以及子分类下，且游戏id为$appId的文章
-            $where['_string'] = 'a.catid IN (' . implode(',', $cateIdArr) . ') AND a.app_id = ' . $appId . ' AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
+            $where['_string'] = 'a.catid IN (' . implode(',', $cateIdArr) . ') AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
         }
 
         $totalCount = $service->getArticleListTotalNum($where); //获取总条数
@@ -464,7 +465,6 @@ class ArticleLibController extends AdminBaseController
 
         //根据分页条件获取文章列表 , 按自定义升序排序
         $articleList = $service->getArticleListByPage($where, $currentPage, $pageSize);
-
         $this->assign('title', $title);
         $this->assign('articleList', $articleList);
         $this->assign('catId', $catId);
@@ -607,21 +607,6 @@ class ArticleLibController extends AdminBaseController
 
     }
 
-    /**
-     * 文章预览
-     * @author xy
-     * @since 2017/08/01 10:20
-     */
-    public function preview() {
-        $articleId = intval(I('artid'));
-        $article = M(C('DB_ZHIYU.DB_NAME') . '.' . 'article', C('DB_ZHIYU.DB_PREFIX'))->where('id = ' . $articleId)->find();
-        if (empty($article)) {
-            $this->error('id为的' . $article . '文章不存在');
-        }
-        $this->assign('article', $article);
-        //TODO 预览需要前台模板
-        $this->display();
-    }
 
     /**
      * ajax方式获取一级栏目

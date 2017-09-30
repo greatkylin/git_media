@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--这个是和以前落地页一个，不要随意更改start-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--end-->
+    <!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
+    <!--end-->
+</head>
+<body class="searchApp">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--主体内容开始-->
+<main class="search-app">
+    <div class="gift_list">
+
+    </div>
+    <button id="showList">列表</button>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script src="__PUBLIC__/Home/static/js/page.js"></script>
+<script>
+    var currentPage = "{$currentPage}";
+    var pageSize = "{$pageSize}";
+    ajaxGetSearchResult();
+    $('#showList').click(function(){
+        ajaxGetSearchResult();
+    });
+    function ajaxGetSearchResult() {
+        var url = "{:U('Home/User/my_gift_list')}";
+        console.log(url);
+        $.ajax({
+            type: 'POST',
+            url: url ,
+            dataType:'json',
+            data:{p: currentPage, page_size: pageSize},
+            async : false, //默认为true 异步
+            success:function(res) {
+                if(res.error){
+                    $('.gift_list').empty().html(res.detail);
+                }else{
+                    if (typeof (res.data) !== 'undefined') {
+                        var giftList = res.data.giftList;
+                        if(giftList.length > 0){
+                            currentPage = res.data.currentPage + 1;
+                            pageSize = res.data.pageSize;
+                            var html = '';
+                            for (var i = 0; i < giftList.length; i++){
+                                html +=
+                                    '<div>'+giftList[i].app_name+'</div>'+
+                                    '<div>'+giftList[i].gift_code+'</div>'+
+                                    '<div>'+giftList[i].gift_name+'</div>'+
+                                    '<div>'+giftList[i].original_name+'</div>'+
+                                    '<div>'+giftList[i].start_time+'</div>'+
+                                    '<div>'+giftList[i].end_time+'</div>';
+                            }
+                            $('.gift_list').append(html);
+                        }
+                    }else{
+                        $('.gift_list').empty().html(res.detail);
+                    }
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+</script>
+</body>
+</html>

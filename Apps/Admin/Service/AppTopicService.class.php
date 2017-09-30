@@ -15,6 +15,10 @@ class AppTopicService extends BaseService
     private $appTopicModel;              //zy_media_app_topic 数据表Model
     private $appContentModel;           //zy_media_app_topic_content 数据表Model
 
+    const TOPIC_TYPE_TPL = 1;           //游戏专题展示类型 1模板
+    const TOPIC_TYPE_EDITOR = 2;        //游戏专题展示类型 2编辑器
+    const TOPIC_TYPE_H5 = 3;            //游戏专题展示类型 3 H5链接
+
     public function __construct(){
 
         $this->appTopicModel = M('app_topic');
@@ -45,10 +49,14 @@ class AppTopicService extends BaseService
      * @author xy
      * @since 2017/07/07 17:03
      * @param NULL $where 查询条件
+     * @param int $currentPage 当前页
+     * @param int $pageSize 页 大小
      * @return bool|mixed
      */
     public function getTopicList($where = NULL,$currentPage,$pageSize){
         $list = $this->appTopicModel->alias('a')
+            ->field('a.*, c.content,c.content_id')
+            ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_topic_content as c ON c.topic_id = a.topic_id AND c.topic_type = a.topic_type')
             ->where($where)
             ->limit($currentPage,$pageSize)
             ->order('publish_time DESC')
@@ -56,6 +64,16 @@ class AppTopicService extends BaseService
         if($list === false){
             $this->setError('查询专题列表失败');
             return false;
+        }
+        //预览的url
+        foreach ($list as $key => $topic){
+            if(!empty($topic['content_id'])){
+                if($topic['topic_type'] == self::TOPIC_TYPE_TPL || $topic['topic_type'] == self::TOPIC_TYPE_EDITOR){
+                    $list[$key]['topic_url'] = U('Home/App/app_topic_detail', array('topic_type'=>$topic['topic_type'], 'topic_id' => $topic['topic_id']));
+                }else{
+                    $list[$key]['topic_url'] = htmlspecialchars_decode($topic['content']);
+                }
+            }
         }
         return $list;
     }

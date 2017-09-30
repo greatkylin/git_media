@@ -87,7 +87,46 @@ class AppService extends BaseService
         //获取已上架游戏的appid
         $where = array(
             'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
-            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.publish_time' => array('lt', time()), //上架时间小于当前时间
+            'alib.is_hot' => 1, //设置为热游推荐
+        );
+
+        $hotAppList = M('app_list')->alias('alist')
+            ->field(
+                'alist.app_id, list.status, IFNULL(alib.start_score, lib.start_score) as start_score, 
+                IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, 
+                IF(alist.final_hot_sort=0, 9999999, alist.final_hot_sort) as final_hot_sort, 
+                (list.app_down_num + list.cardinal) as app_down_num
+                ')
+            ->join('INNER JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_list list on list.app_id=alist.app_id')
+            ->join('INNER JOIN ' . C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') . 'app_lib lib on lib.app_id=alist.app_id')
+            ->join('LEFT JOIN ' . C('DB_NAME') . '.' . C('DB_PREFIX') . 'app_lib AS alib ON alib.`app_id` = alist.`app_id`')
+            ->where($where)
+            ->order('final_hot_sort ASC, app_down_num desc')
+            ->limit($limit)
+            ->select();
+        if($hotAppList === false){
+            return $this->setError('查询失败');
+        }
+        if(empty($hotAppList)){
+            return $this->setError('未查询到对应游戏数据');
+        }
+        return $hotAppList;
+    }
+
+    /**
+     * 获取网站热游推戏列表
+     * @author xy
+     * @since 2017/08/30 10:48
+     * @param int $limit 默认查找的游戏数量
+     * @return bool
+     */
+    public function getHotAppNameAndIcon($limit = 8){
+        //获取已上架游戏的appid
+        $where = array(
+            'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.publish_time' => array('lt', time()), //上架时间小于当前时间
         );
 
         $hotAppList = M('app_list')->alias('alist')
@@ -157,7 +196,7 @@ class AppService extends BaseService
         $where = array(
             '_string' => '(lib.start_score >= 4.5 OR alib.start_score >= 4.5)' ,//游戏评分超过4.5的为精选游戏
             'alist.is_publish' => array('IN', array(1)), //媒体站已上架的游戏
-            'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
+            'alist.publish_time' => array('lt', time()), //上架时间小于当前时间
         );
         $appList = M('app_list')->alias('alist')
             ->field('list.app_id, list.status, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.start_score, lib.start_score) as start_score, lib.update_time as zy_update_time, alib.start_score, alib.update_time')
@@ -278,20 +317,33 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 15:40
      * @param int $limit
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getHotAppRankWeek($limit = 10){
+    public function getHotAppRankWeek($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['adown.down_num'] = array('neq', 0);
+        $orderBy = 'final_sort ASC, app_down_num DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, app_down_num DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
+            ->field(
+                'alist.`app_id`, 
+                IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, 
+                IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort, 
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort
+                '
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, count(*) AS `down_num` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down WHERE YEARWEEK(date_format(FROM_UNIXTIME(down_time), \'%Y-%m-%d\')) = YEARWEEK(now())-1 GROUP BY `app_id` ) as adown on adown.app_id = alist.app_id')//关联查询上一个礼拜下载量的的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, app_down_num DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -329,20 +381,32 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 15:40
      * @param int $limit
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getHotAppRankMonth($limit = 10){
+    public function getHotAppRankMonth($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['adown.down_num'] = array('neq', 0);
+        $orderBy = 'final_sort ASC, app_down_num DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, app_down_num DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
+            ->field(
+                'alist.`app_id`, 
+                IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, 
+                IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, adown.`down_num` AS app_down_num, arank.rank_id, 
+                IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort, 
+                IF( arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, count(*) AS `down_num` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down WHERE date_format(FROM_UNIXTIME(down_time), \'%Y-%m\') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),\'%Y-%m\') GROUP BY `app_id` ) as adown on adown.app_id = alist.app_id')//关联查询上一个月下载量的的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, app_down_num DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -380,20 +444,30 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 15:48
      * @param int $limit
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getHotAppRankTotal($limit = 10){
+    public function getHotAppRankTotal($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['(list.app_down_num + list.cardinal)'] = array('neq', 0);
-
+        $orderBy = 'final_sort ASC, app_down_num DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, app_down_num DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.app_down_num + list.cardinal) as app_down_num, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, (list.app_down_num + list.cardinal) as app_down_num, arank.rank_id, 
+                IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort, 
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, app_down_num DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 0 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -456,21 +530,31 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 16:07
      * @param int $limit 查询条数
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getPopularAppRankWeek($limit = 10){
+    public function getPopularAppRankWeek($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['total_money'] = array('neq', 0);
-
+        $orderBy = 'final_sort ASC, total_money DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, total_money DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, pay.`total_money`, arank.rank_id, 
+                IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 )) as final_sort,  
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, sum(money) AS `total_money` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'sdk_order WHERE YEARWEEK(date_format(FROM_UNIXTIME(create_time), \'%Y-%m-%d\')) = YEARWEEK(now())-1  AND (`status` = 0 OR `status` = 4) GROUP BY `app_id` ) as pay on pay.app_id = alist.app_id')//关联查询上一个礼拜app充值(已完成和支付成功的)的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 1 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -508,21 +592,31 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 16:07
      * @param int $limit 查询条数
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getPopularAppRankMonth($limit = 10){
+    public function getPopularAppRankMonth($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['total_money'] = array('neq', 0);
-
+        $orderBy = 'final_sort ASC, total_money DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, total_money DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, pay.`total_money`, arank.rank_id, IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, pay.`total_money`, arank.rank_id, 
+                IF( arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort,  
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱游戏列表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
             ->join('LEFT JOIN ( SELECT `app_id`, sum(money) AS `total_money` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'sdk_order WHERE date_format(FROM_UNIXTIME(create_time), \'%Y-%m\') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),\'%Y-%m\') AND (`status` = 0 OR `status` = 4) GROUP BY `app_id` ) as pay on pay.app_id = alist.app_id')//关联查询上一个月app充值(已完成和支付成功的)的子查询
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 2 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -560,20 +654,30 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 16:07
      * @param int $limit 查询条数
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getPopularAppRankTotal($limit = 10){
+    public function getPopularAppRankTotal($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
         $where['(list.pay_total_money)'] = array('neq', 0);
-
+        $orderBy = 'final_sort ASC, total_money DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, total_money DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, (list.pay_total_money ) as total_money, arank.rank_id, 
+                IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort,  
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, total_money DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 1 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -628,18 +732,29 @@ class AppService extends BaseService
      * @author xy
      * @since 2017/08/30 16:19
      * @param int $limit
+     * @param bool $isPreview 是否预览
      * @return bool
      */
-    public function getNewAppRankTotal($limit = 10){
+    public function getNewAppRankTotal($limit = 10, $isPreview = false){
         //获取媒体站已上架的游戏的礼包
         $where['alist.is_publish'] = array('IN', array(1));
+        $orderBy = 'final_sort ASC, publish_time DESC';
+        if($isPreview){
+            $orderBy = 'pre_sort ASC, publish_time DESC';
+        }
         $result = M('app_list')->alias('alist')
-            ->field('alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, list.`status`, list.`sj_time`, arank.`rank_id`, IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, alist.publish_time, 
+                IFNULL(alib.icon, lib.icon) as icon, IFNULL(alib.app_type, lib.app_type) as app_type, 
+                list.`status`, list.`sj_time`, arank.`rank_id`, 
+                IF(arank.final_sort=0, 9999999, IFNULL( arank.final_sort, 9999999 ) ) as final_sort,  
+                IF(arank.pre_sort=0, 9999999, IFNULL( arank.pre_sort, 9999999 )) as pre_sort'
+            )
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
-            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 2 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
-            ->order('final_sort ASC, sj_time DESC')
+            ->join('LEFT JOIN ( SELECT id as rank_id, app_id, final_sort, pre_sort FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_ranking WHERE ranking_type = 2 AND data_source = 3 ) AS arank ON arank.app_id = alist.app_id')//关联排行榜表
+            ->order($orderBy)
             ->where($where)
             ->limit($limit)
             ->select();
@@ -1077,7 +1192,7 @@ class AppService extends BaseService
         }
         $where['vlib.video_id'] = $videoId;
         $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'video_lib', C('DB_ZHIYU.DB_PREFIX'))->alias('vlib')
-            ->field('vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id')
+            ->field('vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id, vlib.iqiyi_index')
             ->where($where)
             ->find();
 
@@ -1086,10 +1201,10 @@ class AppService extends BaseService
         }
         //通过视频的file_id从爱奇艺获取托管视频url以及视频相关信息
         if (!empty($result['file_id'])) {
-            $result['video_url'] = $this->getIqiyiVideoUrl($result['file_id'], 2);
+            $result['video_url'] = $this->getIqiyiVideoUrl($result['file_id'], 2, $result['iqiyi_index']);
 
             if ($result['video_url']) {
-                $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id']);
+                $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id'], $app['iqiyi_index']);
                 $result['video_size'] = $iqiyiVideoInfo['fileSize'];
                 $result['video_duration'] = $iqiyiVideoInfo['duration'];
                 return $result;

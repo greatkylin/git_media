@@ -28,10 +28,10 @@ class AppTopicController extends AdminBaseController
      * @since 2017/07/07 16:19
      */
     public function app_topic_list(){
-        $where = '';
+        $where = array();
         $title = trim(I('title'));
         if(!empty($title)){
-            $where['topic_name'] = array('like',array('%'.$title.'%'));
+            $where['topic_name'] = array('like', '%'.$title.'%');
         }
         $service = new AppTopicService();
         $totalCount = $service->getTopicListCount($where);//统计一共有多少条数据
@@ -51,6 +51,7 @@ class AppTopicController extends AdminBaseController
         $this->assign('pages',    $totalPages);
         $this->assign('pagesize', $pageSize);
         $topicList = $service->getTopicList($where,$currentPage,$pageSize);
+
         if($topicList === false){
             $this->error($service->getFirstError());
             exit;

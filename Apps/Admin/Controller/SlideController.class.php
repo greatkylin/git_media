@@ -22,7 +22,7 @@ class SlideController extends AdminBaseController
         //幻灯片分类
         $slideCid = intval(I('slide_cid'));
         $where = array();
-        if(!empty($slideTitle)) {
+        if(!empty($slideName)) {
             $where['s.slide_name']    = array('like', "%$slideName%");
         }
         $nowTime = time();

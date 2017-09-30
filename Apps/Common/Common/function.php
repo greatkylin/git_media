@@ -1097,6 +1097,22 @@ function thumb_image($file_info, $file_conf) {
 }
 
 /**
+ * 读取缓存配置文件
+ * @return mixed
+ */
+function get_config_info()
+{
+    //读取缓存配置文件如果没有读取数据库
+    $config = F("Config");
+    if (!$config) {
+        $config = M(C('DB_ZHIYU.DB_NAME') . '.' . 'config', C('DB_ZHIYU.DB_PREFIX'))->getField("varname,value");
+        F("Config", $config);
+    }
+
+    return $config;
+}
+
+/**
  * 递归获取id数组
  * @author xy
  * @since 2017/07/28 15:44
@@ -1270,6 +1286,69 @@ function replace_content_img($content){
 }
 
 /**
+ * 获取并保存远程图片到本地
+ * @author xy
+ * @since 2017/09/26 17:01
+ * @param $url
+ * @param string $filename
+ * @return bool|string
+ */
+function grab_image($url, $filename = "") {
+    if ($url == ""){
+        return false;
+    }
+    $imageExtArr = array(
+        '.jpg', '.jpeg', '.png', '.bmp', '.gif'
+    );
+
+    //如果$url地址为空，直接退出
+    if ($filename == "") {
+        //如果没有指定新的文件名
+        $ext = strrchr($url, ".");
+        //得到$url的图片格式
+        if (!in_array($ext, $imageExtArr)){
+            return false;
+        }
+
+        //如果图片格式不为.gif或者.jpg，直接退出
+        $filename = date("YmdHis") . $ext;
+        //用天月面时分秒来命名新的文件名
+    }else{
+        $ext = strrchr($filename, ".");
+        if(empty($ext)){
+            //如果没有指定文件格式
+            $ext = strrchr($url, ".");
+            //得到$url的图片格式
+            if (!in_array($ext, $imageExtArr)){
+                return false;
+            }
+            $filename = $filename . $ext;
+        }
+    }
+    $savePath = ROOT_PATH.C('QRCODE_LOGO_PATH');
+
+    mk_dir_ext($savePath);
+
+    $filename = $savePath.'/'.$filename;
+    if(file_exists($filename)){
+        return $filename;
+    }
+
+    ob_start();//打开输出
+    readfile($url);//输出图片文件
+    $img = ob_get_contents();//得到浏览器输出
+    ob_end_clean();//清除输出并关闭
+    if(!$img){
+        return false;
+    }
+    $size = strlen($img);//得到图片大小
+    $fp2 = @fopen($filename, "a");
+    fwrite($fp2, $img);//向当前目录写入图片文件，并重新命名
+    fclose($fp2);
+
+    return $filename;//返回新的文件名
+}
+/**
  * 生成指定链接的游戏二维码
  * @author xy
  * @since 2017/09/21 13:52
@@ -1283,7 +1362,7 @@ function generate_logo_qr_code($url = NULL, $appId, $logo = NULL){
         return false;
     }
     $returnPath = C('QRCODE_SAVE_PATH').'/'.'qrcode_'.$appId.'.png';
-    $savePath = __DIR__.'/../../../'.C('QRCODE_SAVE_PATH');
+    $savePath = ROOT_PATH.C('QRCODE_SAVE_PATH');
     mk_dir_ext($savePath);
     $qrCodeName = $savePath.'/'.'qrcode_'.$appId.'.png';
     if(file_exists($qrCodeName)){
@@ -1294,14 +1373,13 @@ function generate_logo_qr_code($url = NULL, $appId, $logo = NULL){
     $qrCode->setSize(170);
     $qrCode->setPadding(5);
     //设置二维码上的logo
-    $logo = 'http://www.media.local/Uploads/Images/applib/icon2017-08-30/59a675fd8cfe8.png';
     if(!empty($logo)){
         if(file_exists($logo)){
             $qrCode->setLogoSize(48);
             $qrCode->setLogo($logo);
         }
     }
-    header('Content-Type: '.$qrCode->getContentType());
-    $qrCode->save($qrCodeName);
+    //header('Content-Type: '.$qrCode->getContentType());
+    $result = $qrCode->save($qrCodeName);
     return $returnPath;
 }

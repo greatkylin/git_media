@@ -349,27 +349,6 @@ class AdminBaseController extends Controller {
     }
 
     /**
-     * 以json格式返回结果
-     * @author xy
-     * @since 2017/07/04 10:30
-     * @param bool $error 是否有错误
-     * @param string $code 代码
-     * @param string $detail 提现信息
-     * @param null $data 数据
-     */
-    public function outputJSON($error = true, $code, $detail, $data = null)
-    {
-        $JsonData = array();
-        $JsonData['error'] = $error;
-        $JsonData['code'] = $code;
-        $JsonData['detail'] = $detail;
-        if($data || $data=='0'){
-            $JsonData['data'] = $data;
-        }
-        $this->ajaxReturn($JsonData, 'JSON');
-    }
-
-    /**
      * ajax方式验证跳转链接是否符合要求
      * @author xy
      * @since 2017/07/24 18:16

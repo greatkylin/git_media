@@ -112,6 +112,19 @@ class ArticleService extends BaseService
         if($articleList === false){
             return $this->setError('查询失败');
         }
+        //生成详情页链接
+        foreach ($articleList as &$art){
+            $art['top_parent_id'] = $this->getTopCateIdByChildCateId($art['catid']);
+            if($art['top_parent_id'] == self::ARTICLE_STRATEGY){
+                $art['url'] = U('Home/Article/strategy_detail', array('id' => $art['id']));
+            }else if($art['top_parent_id'] == self::ARTICLE_NEWS){
+                $art['url'] = U('Home/Article/news_detail', array('id' => $art['id']));
+            }else if($art['top_parent_id'] == self::ARTICLE_EVALUATION){
+                $art['url'] = U('Home/Article/evaluate_detail', array('id' => $art['id']));
+            }else if($art['top_parent_id'] == self::ARTICLE_QUESTION){
+                $art['url'] = U('Home/Article/ques_detail', array('id' => $art['id']));
+            }
+        }
         return $articleList;
     }
 
@@ -807,7 +820,7 @@ class ArticleService extends BaseService
             ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
             ->where($where)
             ->limit($currentPage, $pageSize)
-            ->order('new_attr ASC, a.release_time DESC')
+            ->order('new_attr ASC, a.catid DESC')
             ->select();
         if($articleList === false){
             return $this->setError('查询失败');
@@ -850,6 +863,62 @@ class ArticleService extends BaseService
             return $this->setError('查询失败');
         }
         return $artNum;
+    }
+
+    /**
+     * 根据子栏目id获取顶级栏目id
+     * @author xy
+     * @since 2017/09/25 15:43
+     * @param int $cateId 栏目id
+     * @return mixed
+     */
+    public function getTopCateIdByChildCateId($cateId){
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        $topParentId = null;
+        foreach ($cateList as $value){
+            if($cateId == $value['catid']){
+                if($value['parent_id'] == 0){
+                    $topParentId = $value['catid'];
+                    break;
+                }else{
+                    $topParentId = $this->getTopCateIdByChildCateId($value['parent_id']);
+                }
+            }
+        }
+        return $topParentId;
+    }
+
+    /**
+     * 记录文章的访问量
+     * @author xy
+     * @since 2017/09/26 11:56
+     * @param $artId
+     * @param bool $isPreview 是否为预览，是则不增加访问量
+     * @return bool
+     */
+    public function updateArticleClickNum($artId, $isPreview = false){
+        $artId = intval($artId);
+        if(empty($artId)){
+            $this->setError('必填参数缺失');
+        }
+        if(!$isPreview){
+            $article = $this->getArticleDetailByPk($artId);
+            if(!$article){
+                return false;
+            }
+            $result = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))
+                ->where(array('id' => $artId))
+                ->setInc('click_num');
+            if($result === false){
+                return $this->setError('记录文章访问量失败');
+            }
+        }
+        return true;
     }
 
     /**

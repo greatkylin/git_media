@@ -749,7 +749,7 @@ class AppService extends BaseService
             $where = "alib.app_name like '%".$appName."%'";
         }
         $result = M('app_list')->alias('alist')
-            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, alist.is_publish, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.introduct, lib.introduct) as introduct, alib.video_id, vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id, lib.app_file_url')
+            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, alist.is_publish, IFNULL(alib.app_name, lib.app_name) as app_name, IFNULL(alib.introduct, lib.introduct) as introduct, alib.video_id, vlib.video_id, vlib.video_name, vlib.video_url, vlib.video_img, vlib.file_id, vlib.iqiyi_index, lib.app_file_url')
             ->join('INNER JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')//关联媒体库游戏库表
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id=alist.app_id')//关联游戏库表
             ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'video_lib vlib on vlib.video_id=alib.video_id')
@@ -761,10 +761,10 @@ class AppService extends BaseService
         foreach ($result as $key=>$app){
             //通过视频的file_id从爱奇艺获取托管视频url以及视频相关信息
             if(!empty($app['file_id'])){
-                $result[$key]['video_url'] = $this->getIqiyiVideoUrl($app['file_id'], 2);
+                $result[$key]['video_url'] = $this->getIqiyiVideoUrl($app['file_id'], 2, $app['iqiyi_index']);
 
                 if ($result[$key]['video_url']) {
-                    $iqiyiVideoInfo = $this->getIqiyiVideoInfo($app['file_id']);
+                    $iqiyiVideoInfo = $this->getIqiyiVideoInfo($app['file_id'], $app['iqiyi_index']);
                     $result[$key]['video_info'] = [
                         'video_name' => $app['video_name'],
                         'video_url' => $app['video_url'],
@@ -796,7 +796,7 @@ class AppService extends BaseService
         }
         //媒体站有游戏详情的优先读取详情数据，没有的话则读取库的数据
         $result = M('app_list')->alias('alist')
-            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, IFNULL(alib.introduct, lib.introduct) as introduct, IFNULL(alib.app_name, lib.app_name) as app_name, vlib.video_id, vlib.video_name, vlib.video_url, IFNULL(vlib.video_img, alib.cover_img) as video_img, vlib.file_id, lib.app_file_url')
+            ->field('alist.app_id, IFNULL(alib.app_name, lib.app_name) as value, IFNULL(alib.introduct, lib.introduct) as introduct, IFNULL(alib.app_name, lib.app_name) as app_name, vlib.video_id, vlib.video_name, vlib.video_url, IFNULL(vlib.video_img, alib.cover_img) as video_img, vlib.file_id, vlib.iqiyi_index, lib.app_file_url')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id=alist.app_id')
             ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id=alist.app_id')//关联游戏库表
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id=alist.app_id')//关联媒体库游戏库表
@@ -810,10 +810,10 @@ class AppService extends BaseService
         foreach ($result as $key=>$app){
             //通过视频的file_id从爱奇艺获取托管视频url以及视频相关信息
             if(!empty($app['file_id'])){
-                $result[$key]['video_url'] = $this->getIqiyiVideoUrl($app['file_id'], 2);
+                $result[$key]['video_url'] = $this->getIqiyiVideoUrl($app['file_id'], 2, $app['iqiyi_index']);
 
                 if ($result[$key]['video_url']) {
-                    $iqiyiVideoInfo = $this->getIqiyiVideoInfo($app['file_id']);
+                    $iqiyiVideoInfo = $this->getIqiyiVideoInfo($app['file_id'], $app['iqiyi_index']);
                     $result[$key]['video_info'] = [
                         'video_name' => $app['video_name'],
                         'video_url' => $result[$key]['video_url'],

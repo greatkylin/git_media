@@ -286,6 +286,10 @@ class AppLibController extends AdminBaseController
             $data['game_picture_value'] = !empty(trim(I('game_picture_value'))) ? trim(I('game_picture_value')) : 0;
             $data['game_gandu_value'] = !empty(trim(I('game_gandu_value'))) ? trim(I('game_gandu_value')) : 0;
             $data['game_diff_value'] = !empty(trim(I('game_diff_value'))) ? trim(I('game_diff_value')) : 0;
+
+            //游戏属性，热游推荐，精选游戏
+            $data['is_hot'] = !empty(intval(I('is_hot'))) ? intval(I('is_hot')) : 0;
+            $data['is_choice'] = !empty(intval(I('is_choice'))) ? intval(I('is_choice')) : 0;
             //游戏icon
             $icon =  trim(I('img_url_icon'));
             if(!empty($icon)){

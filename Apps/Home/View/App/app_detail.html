@@ -28,7 +28,7 @@
 <div class="game-store-subnav">
     <div class="subnav-box">
         <a class="active" href="{:U('Home/App/index')}">游戏库</a>
-        <a href="{:U('Home/App/app_rank')}">热游排行榜</a>
+        <a href="{:U('Home/Rank/app_rank')}">热游排行榜</a>
         <a href="{:U('Home/Gift/index')}">礼包中心</a>
     </div>
 </div>
@@ -223,19 +223,19 @@
                         <a class="get-gift-bag download" href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}">下载</a>
                         <div class="dload-hover-container">
                             <div class="for-border">
-                                <div class="erm"><img src="__PUBLIC__/Home/static/img/zwt-ewm.png" alt=""></div>
+                                <div class="erm"><img src="{$appInfo.qr_code|format_url}" alt=""></div>
                                 <div class="alert">扫一扫，下载到手机<br><span>点击图标下载到电脑</span></div>
                                 <div class="click-dload">
                                     <if condition="$appInfo['is_my_sdk'] eq 1">
-                                        <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" class="active" data-url="__PUBLIC__/Home/static/img/zwt-ewm.png"><img src="__PUBLIC__/Home/static/img/zy.png" alt=""></a>
+                                        <a href="{:U('Home/App/down',array('app_id' => $appInfo['app_file_url']))}" class="active" data-url="{$appInfo.qr_code|format_url}"><img src="{$appInfo.qr_code|format_url}" alt=""></a>
                                     </if>
                                     <if condition="$appInfo['platform'] eq 1">
-                                    <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url="http://ossweb-img.qq.com/images/lol/web201310/skin/big266001.jpg"><img src="__PUBLIC__/Home/static/img/az.png" alt=""></a>
+                                    <a href="{:U('Home/App/down',array('app_id' => $appInfo['app_id']))}" data-url="{$appInfo.qr_code|format_url}"><img src="__PUBLIC__/Home/static/img/az.png" alt=""></a>
                                     </if>
                                     <if condition="$appInfo['platform'] eq 2">
-                                        <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url=""><img src="__PUBLIC__/Home/static/img/pg.png" alt=""></a>
+                                        <a href="{:U('Home/App/down',array('app_id' => $appInfo['app_id']))}" data-url="{$appInfo.qr_code|format_url}"><img src="__PUBLIC__/Home/static/img/pg.png" alt=""></a>
                                     </if>
-                                    <a href="{:U('Home/App/down/',array('app_id' => $appInfo['app_file_url']))}" data-url=""><img src="__PUBLIC__/Home/static/img/yx.png" alt=""></a>
+                                    <a href="{:U('Home/App/down',array('app_id' => $appInfo['app_id']))}" data-url="{$appInfo.qr_code|format_url}"><img src="__PUBLIC__/Home/static/img/yx.png" alt=""></a>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
                 <div class="game-news">
                     <if condition="count($newsList) gt 0">
                         <volist name="newsList" id="new">
-                            <a href="">{$new.title}</a>
+                            <a href="{:U('Home/Article/news_detail', array('id' => $new['id']))}">{$new.title}</a>
                         </volist>
                         <else />
                         <a href="javascript:;">暂无内容</a>
@@ -278,7 +278,7 @@
                 <div class="game-check" style="display: none;">
                     <if condition="count($testList) gt 0">
                         <volist name="testList" id="test">
-                            <a href="">{$test.title}</a>
+                            <a  href="{:U('Home/Article/evaluate_detail', array('id' => $test['id']))}">{$test.title}</a>
                         </volist>
                         <else />
                         <a href="javascript:;">暂无内容</a>
@@ -299,10 +299,12 @@
             </div>
             <div class="game-sugust">
                 <volist name="recommendApp" id="rapp">
+                    <a href="{:U('Home/App/app_detail', array('app_id' => $rapp['app_id']))}" style="color: #666">
                     <div class="gs-tag">
                         <div class="img-box"><img src="{$rapp.icon|format_url}" alt=""></div>
                         <div>{$rapp.app_name}</div>
                     </div>
+                    </a>
                 </volist>
             </div>
             </if>
@@ -344,7 +346,7 @@
                 <div class="key-news">
                     <if condition="count($appGuideLowerList) gt 0">
                         <volist name="appGuideLowerList" id="lower">
-                            <a class="news-tag" data-time="{$lower.create_time|date='Y-m-d', ###}" data-type="xs">
+                            <a href="{:U('Home/Article/strategy_detail', array('id' => $lower['id']))}" class="news-tag" data-time="{$lower.create_time|date='Y-m-d', ###}" data-type="xs">
                                 <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
                                 <div class="desp">{$lower.title}</div>
                             </a>
@@ -352,7 +354,7 @@
                     </if>
                     <if condition="count($appGuideMiddleList) gt 0">
                         <volist name="appGuideMiddleList" id="middle">
-                            <a class="news-tag" data-time="{$middle.create_time|date='Y-m-d', ###}" data-type="jj">
+                            <a href="{:U('Home/Article/strategy_detail', array('id' => $middle['id']))}" class="news-tag" data-time="{$middle.create_time|date='Y-m-d', ###}" data-type="jj">
                                 <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
                                 <div class="desp">{$middle.title}</div>
                             </a>
@@ -360,7 +362,7 @@
                     </if>
                     <if condition="count($appGuideHighList) gt 0">
                         <volist name="appGuideHighList" id="high">
-                            <a class="news-tag" data-time="{$high.create_time|date='Y-m-d', ###}" data-type="gj">
+                            <a href="{:U('Home/Article/strategy_detail', array('id' => $high['id']))}" class="news-tag" data-time="{$high.create_time|date='Y-m-d', ###}" data-type="gj">
                                 <div class="icon"><img src="__PUBLIC__/Home/static/img/news-icon.png" alt=""></div>
                                 <div class="desp">{$high.title}</div>
                             </a>
@@ -378,11 +380,11 @@
 <!--底部导航开始-->
 <include file='Common:footer'/>
 <!--底部导航结束-->
-<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script src="__PUBLIC__/Home/static/js/page.js"></script>
 <script>
     $(function () {
         //如果是横屏的话
+        <if condition='$appInfo[is_landscape] eq 0'>
         if($(".hengping").css("display")!=="none"){
             //根据右下角有几个缩略图写UL标签的长度
             var imgNum=$(".right-tag-container").children().length;
@@ -400,6 +402,7 @@
                 $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
             })
         }
+        <else />
         //如果是竖屏的话
         if($(".shuping").css("display")!=="none"){
             $(".left-sub-container").css("background","url(__PUBLIC__/Home/static/img/left-back.png)");
@@ -420,6 +423,7 @@
                 $(this).addClass("whiteBorder").siblings().removeClass("whiteBorder");
             })
         }
+        </if>
 // 游戏详情的游戏总评分，保留一位小数
         var newtext=parseFloat($(".star-score").attr("data-score")).toFixed(1);
         $(".star-score").text(newtext);

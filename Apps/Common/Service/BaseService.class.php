@@ -147,13 +147,27 @@ class BaseService
     }
 
     /**
-     * 获取用户信息
+     * 获取后台用户信息
+     * @author xy
+     * @since 2017/07/25 17:05
+     * @return bool|mixed
+     */
+    protected static function getAdminUserInfo(){
+        $userInfo = session('user_info');
+        if(!$userInfo){
+            return false;
+        }
+        return $userInfo;
+    }
+
+    /**
+     * 获取后台用户信息
      * @author xy
      * @since 2017/07/25 17:05
      * @return bool|mixed
      */
     protected static function getUserInfo(){
-        $userInfo = session('user_info');
+        $userInfo = session('media_web_user');
         if(!$userInfo){
             return false;
         }
@@ -164,27 +178,38 @@ class BaseService
      * 获取爱奇艺授权
      * @return array
      */
-    public function iqiyiAuthorize () {
-        $params = [
-            'client_id' => C('iqiyi.appKey'),
-            'client_secret' => C('iqiyi.appSecret')
-        ];
-
-        $result = http('https://openapi.iqiyi.com/api/iqiyi/authorize', $params, 'GET');
-        $res = json_decode($result);
-        if ($res->code == 'A00000') {
-            $return_res = [
-                'code' => 1,
-                'access_token' => $res->data->access_token,
-                'msg' => '授权成功'
+    public function iqiyiAuthorize ($type = 0) {
+        $redis = myclass('RedisExt', 'Redis');
+        $access_token = $redis->get('iqiyi_access_token' . $type);
+        if (!$access_token) {
+            $params = [
+                'client_id' => C('iqiyi.appKey')[$type],
+                'client_secret' => C('iqiyi.appSecret')[$type]
             ];
+            $result = http('https://openapi.iqiyi.com/api/iqiyi/authorize', $params, 'GET');
+            $res = json_decode($result);
+            if ($res->code == 'A00000') {
+                $redis->set('iqiyi_access_token' . $type, $res->data->access_token, $res->data->expires_in);//保存用户信息
+                $return_res = [
+                    'code' => 1,
+                    'access_token' => $res->data->access_token,
+                    'msg' => '授权成功'
+                ];
+            } else {
+                $return_res = [
+                    'code' => 0,
+                    'access_token' => '',
+                    'msg' => '授权失败',
+                ];
+            }
         } else {
             $return_res = [
-                'code' => 0,
-                'access_token' => '',
-                'msg' => '授权失败',
+                'code' => 1,
+                'access_token' => $access_token,
+                'msg' => '授权成功'
             ];
         }
+
         return $return_res;
     }
 
@@ -245,21 +270,37 @@ class BaseService
      * @param int $type
      * @return string
      */
-    public function getIqiyiVideoUrl ($file_id, $type=2) {
-        $auth = $this->iqiyiAuthorize();
-
+    public function getIqiyiVideoUrl ($file_id, $type=2, $iqiyi_index = 0) {
+        $auth = $this->iqiyiAuthorize($iqiyi_index);
         if ($auth['code'] == 1) {
-            $result = $this->iqiyiUrlList($auth['access_token'], $file_id);
+            $status_res = $this->iqiyiFullStatus($auth['access_token'], $file_id);
+            //状态：0发布中 1发布成功  2：审核失败 3上传失败
+            if ($status_res->code == 'A00000') {//A00000	视频处理完成
+                $status = 1;
+            } elseif ($status_res->code == 'A00001') {//A00001	视频发布中
+                $status = 0;
+            } elseif ($status_res->code == 'A00002') {//A00002	视频审核失败
+                $status = 2;
+            } else {
+                $status = 2;
+            }
 
-            if ($result->code == 'A00000') {
-                if ($result->data->mp4->$type) {
-                    return $result->data->mp4->$type;
-                } else {
-                    return $result->data->m3u8->$type;
+            if ($status == 1) {
+                $result = $this->iqiyiUrlList($auth['access_token'], $file_id);
+                if ($result->code == 'A00000') {
+                    if ($result->data->mp4->$type) {
+                        return $result->data->mp4->$type;
+                    } else {
+                        $type=1;
+                        return $result->data->mp4->$type;
+                    }
                 }
+            } else {
+                M(C('DB_ZHIYU.DB_NAME') . '.' . 'video_lib', C('DB_ZHIYU.DB_PREFIX'))->where(['file_id' => $file_id])->save(['status' => $status]);
             }
         }
         return '';
+
     }
 
     /**
@@ -267,23 +308,33 @@ class BaseService
      * @param $file_id
      * @return array
      */
-    public function getIqiyiVideoInfo ($file_id) {
-        $auth = $this->iqiyiAuthorize();
+    public function getIqiyiVideoInfo ($file_id, $iqiyi_index = 0) {
+        $auth = $this->iqiyiAuthorize($iqiyi_index);
         if ($auth['code'] == 1) {
+            /*$result = $this->iqiyiFullStatus($auth['access_token'], $file_id);
+            //状态：0发布中 1发布成功  2：审核失败 3上传失败
+            if ($result->code == 'A00000') {//A00000	视频处理完成
+                $status = 1;
+            } elseif ($result->code == 'A00001') {//A00001	视频发布中
+                $status = 0;
+            } elseif ($result->code == 'A00002') {//A00002	视频审核失败
+                $status = 2;
+            } else {
+                $status = 2;
+            }*/
+            //if ($status == 1) {
             $status_res = http('http://openapi.iqiyi.com/api/file/videoListForExternal',
                 [
                     'access_token' => $auth['access_token'],
                     'file_ids' => $file_id
                 ], 'GET');
-
             $status_res = json_decode($status_res, true);
-            //return $status_res;
-
-
-            //$result = $this->iqiyi_urllist($auth['access_token'], $file_id);
             if ($status_res['code'] == 'A00000') {
                 return $status_res['data'][0];
             }
+            //} else {
+            //    M(C('DB_ZHIYU.DB_NAME') . '.' . 'video_lib', C('DB_ZHIYU.DB_PREFIX'))->where(['file_id' => $file_id])->save(['status' => $status]);
+            //}
         }
         return [];
     }

@@ -76,7 +76,7 @@
                     <volist name="carefulChoiceApp" id="careAppArr" key="i">
                         <div  data-sort="{$i}" class="letter <if condition='$i eq 1'>active</if>"><span>{$key}</span></div>
                     </volist>
-                    <div><span class="check-all">查看全部</span></div>
+                    <div><span class="check-all"><a href="{:U('Home/App/index')}" style="color: #666">查看全部</a></span></div>
                 </div>
                 <volist name="carefulChoiceApp" id="careAppArr" key="j">
                     <div class="alphabet-game-box" data-sort="{$j}" <if condition="$j neq 1">style="display:none"</if>>
@@ -141,7 +141,7 @@
                     <div class="left-border"></div>
                     <div style="margin-left:15px;">游戏礼包</div>
                 </div>
-                <div>查看更多+</div>
+                <div><a href="{:U('Home/Gift/index')}" style="color: #999;">查看更多+</a></div>
             </div>
             <div class="gameNews-gift-container">
                 <div class="for-hidden">
@@ -169,12 +169,17 @@
                     <div class="left-border"></div>
                     <div style="margin-left:15px;">游戏攻略</div>
                 </div>
-                <div style="font-size:12px;">查看更多+</div>
+                <div style="font-size:12px;"><a href="{:U('Home/Article/strategy_list')}" style="color: #999">查看更多+</a></div>
             </div>
             <div class="game-strategy-detail-box">
                 <div class="game-strategy-img-box">
                     <volist name="hotAppGuide" id="appGuide" key="o">
-                    <div class="<if condition='$o eq 1'>active</if>" id="gsib-box{$o}" data-type="{$o}"><img alt="" src="{$appGuide.image_path}"><div class="gsib-mask">{$appGuide.title}</div></div>
+                        <div class="<if condition='$o eq 1'>active</if>" id="gsib-box{$o}" data-type="{$o}">
+                            <a href="{$appGuide.href_link}">
+                            <img alt="" src="{$appGuide.image_path}">
+                            <div class="gsib-mask">{$appGuide.title}</div>
+                            </a>
+                        </div>
                     </volist>
                 </div>
                 <div style="width:66%;">
@@ -182,7 +187,7 @@
                     <div class="game-strategy-news-box" data-type="{$o2}" id="gsnb-box{$o2}" <if condition='$o2 neq 1'>style="display:none;"</if>>
                         <ul>
                             <volist name="appGuide2[article]" id="guideArt">
-                            <li><a><img alt="" src="__PUBLIC__/Home/static/img/news-icon.png"><span>{$guideArt.title}</span></a></li>
+                            <li><a href="{$guideArt.url}" style="color: #666"><img alt="" src="__PUBLIC__/Home/static/img/news-icon.png"><span>{$guideArt.title}</span></a></li>
                             </volist>
                         </ul>
                     </div>
@@ -225,59 +230,67 @@
         <div class="daily-l">
             <div class="name">
                 <div><span></span>每日一题</div>
-                <div>查看更多+</div>
+                <div><a href="{:U('Home/Article/ques_collect')}" style="color: #999">查看更多+</a></div>
             </div>
             <div class="desp">
                 <if condition="count($everyDayQuesImg) gt 0">
-                    <div class="imgbox"><img src="{$everyDayQuesImg[0][image_path]}" alt=""></div>
+                    <div class="imgbox"><a href="{$everyDayQuesImg[0][href_link]}"><img src="{$everyDayQuesImg[0][image_path]}" alt=""></a></div>
                 </if>
                 <div class="news">
                     <if condition="count($questionList) gt 0">
                         <volist name="questionList" id="ques">
-                            <a><div><img src="__PUBLIC__/Home/static/img/yesorno.png" alt="">{$ques.title}</div></a>
+                            <a href="{:U('Home/Article/ques_detail', array('id'=>$ques['id']))}"><div><img src="__PUBLIC__/Home/static/img/yesorno.png" alt="">{$ques.title}</div></a>
                         </volist>
                     </if>
                 </div>
             </div>
             <div class="imgbox">
                 <div class="imgbox-l">
-                        <img src="{$everyDayQuesImg[1][image_path]}" alt="">
+                    <a href="{$everyDayQuesImg[1][href_link]}"><img src="{$everyDayQuesImg[1][image_path]}" alt=""></a>
                 </div>
                 <div class="imgbox-r">
                     <div class="imgbox-rtop">
                         <div class="img1">
                             <div class="imgzzx"></div>
                             <div>
-                                <div>{$everyDayQuesImg[1][title]}</div>
+                                <div><a href="{$everyDayQuesImg[1][href_link]}" style="color: #fff">{$everyDayQuesImg[1][title]}</a></div>
                                 <div>每日一题合集</div>
                             </div>
                         </div>
-                        <div class="img2"><img src="{$everyDayQuesImg[3][image_path]}" alt=""></div>
+                        <div class="img2">
+                            <a href="{$everyDayQuesImg[3][href_link]}">
+                                <img src="{$everyDayQuesImg[3][image_path]}" alt="">
+                            </a>
+                        </div>
                         <div class="img3">
                             <div class="imgzzx"></div>
                             <div>
-                                <div>{$everyDayQuesImg[3][title]}</div>
+                                <div><a href="{$everyDayQuesImg[3][href_link]}"  style="color: #fff">{$everyDayQuesImg[3][title]}</a></div>
                                 <div>每日一题合集</div>
                             </div>
                         </div>
                         <div class="img4">
                             <div class="imgzzx"></div>
                             <div>
-                                <div>{$everyDayQuesImg[4][title]}</div>
+                                <div><a href="{$everyDayQuesImg[4][href_link]}"  style="color: #fff">{$everyDayQuesImg[4][title]}</a></div>
                                 <div>每日一题合集</div>
                             </div>
                         </div>
                     </div>
                     <div class="imgbox-rbottom">
-                        <div class="img1"><img src="{$everyDayQuesImg[2][image_path]}" alt=""></div>
+                        <div class="img1">
+                            <a href="{$everyDayQuesImg[2][href_link]}">
+                                <img src="{$everyDayQuesImg[2][image_path]}" alt="">
+                            </a>
+                        </div>
                         <div class="img2">
                             <div class="imgzzx"></div>
                             <div>
-                                <div>{$everyDayQuesImg[2][title]}</div>
+                                <div><a href="{$everyDayQuesImg[2][href_link]}"  style="color: #fff">{$everyDayQuesImg[2][title]}</a></div>
                                 <div>每日一题合集</div>
                             </div>
                         </div>
-                        <div class="img3"><img src="{$everyDayQuesImg[4][image_path]}" alt=""></div>
+                        <div class="img3"><a href="{$everyDayQuesImg[4][href_link]}"><img src="{$everyDayQuesImg[4][image_path]}" alt=""></a></div>
                     </div>
                 </div>
             </div>
@@ -288,7 +301,7 @@
                     <div class="left-border"></div>
                     <div style="margin-left:15px;">新游预告</div>
                 </div>
-                <div>查看更多+</div>
+                <div><a href="{:U('Home/Index/app_notice')}" style="color: #999">查看更多+</a></div>
             </div>
             <div class="kckf-box">
                 <div id="kace-box">
@@ -317,14 +330,16 @@
     <section class="wonderful-top">
         <div class="name">
             <div><span></span>精彩专题</div>
-            <div>查看更多+</div>
+            <div><a href="{:U('Home/App/app_topic_list')}" style="color: #999">查看更多+</a></div>
         </div>
         <div class="img-desp-box">
             <if condition="count($greatTopic) gt 0">
                 <volist name="greatTopic" id="topic" key="t">
                     <div>
-                        <div class="idp-for-hover"><img src="{$topic.image_path}" alt=""><div class="idp-mask"></div></div>
-                        <div>{$topic.title}</div>
+                        <div class="idp-for-hover">
+                            <a href="{$topic.href_link}"><img src="{$topic.image_path}" alt=""><div class="idp-mask"></div></a>
+                        </div>
+                        <div><a href="{$topic.href_link}" style="color: #666">{$topic.title}</a></div>
                         <div>{$topic.activity_start_time}-{$topic.activity_end_time}</div>
                     </div>
                 </volist>
@@ -341,24 +356,34 @@
         <div class="img-box">
             <if condition="count(hotActivity) gt 0">
                 <div class="img-boxl">
-                    <div class="forbacg"><img src="{$hotActivity[0][image_path]}" alt=""></div>
-                    <div class="mask">
-                        <div class="mask-innerbox">
-                            <div>{$hotActivity[0][title]}</div>
-                            <!--<div>这里有一行字</div>-->
-                            <!--<div>这里有一行字</div>-->
-                            <div class="ac-time">活动时间：{$hotActivity[0][activity_start_time]}-{$hotActivity[0][activity_end_time]}</div>
+                    <a href="{$hotActivity[0][href_link]}">
+                        <div class="forbacg"><img src="{$hotActivity[0][image_path]}" alt=""></div>
+                        <div class="mask">
+                            <div class="mask-innerbox">
+                                <div>{$hotActivity[0][title]}</div>
+                                <!--<div>这里有一行字</div>-->
+                                <!--<div>这里有一行字</div>-->
+                                <div class="ac-time">活动时间：{$hotActivity[0][activity_start_time]}-{$hotActivity[0][activity_end_time]}</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="img-boxr">
                     <div class="img-boxr-top">
-                        <div class="img1"><img src="{$hotActivity[1][image_path]}" alt=""><div class="mask">{$hotActivity[1][title]}</div></div>
-                        <div class="img2"><img src="{$hotActivity[2][image_path]}" alt=""><div class="mask">{$hotActivity[2][title]}</div></div>
+                        <div class="img1">
+                            <a href="{$hotActivity[1][href_link]}"><img src="{$hotActivity[1][image_path]}" alt=""><div class="mask">{$hotActivity[1][title]}</div></a>
+                        </div>
+                        <div class="img2">
+                            <a href="{$hotActivity[2][href_link]}"><img src="{$hotActivity[2][image_path]}" alt=""><div class="mask">{$hotActivity[2][title]}</div></a>
+                        </div>
                     </div>
                     <div class="img-boxr-bottom">
-                        <div class="img1"><img src="{$hotActivity[3][image_path]}" alt=""><div class="mask">{$hotActivity[3][title]}</div></div>
-                        <div class="img2"><img src="{$hotActivity[4][image_path]}" alt=""><div class="mask">{$hotActivity[4][title]}</div></div>
+                        <div class="img1">
+                            <a href="{$hotActivity[3][href_link]}"><img src="{$hotActivity[3][image_path]}" alt=""><div class="mask">{$hotActivity[3][title]}</div></a>
+                        </div>
+                        <div class="img2">
+                            <a href="{$hotActivity[4][href_link]}"><img src="{$hotActivity[4][image_path]}" alt=""><div class="mask">{$hotActivity[4][title]}</div></a>
+                        </div>
                     </div>
                 </div>
             </if>
@@ -369,7 +394,7 @@
     <section class="game-rank">
         <div class="name">
             <div><span></span>游戏排行榜</div>
-            <div>查看更多+</div>
+            <div><a href="{:U('Home/Rank/app_rank')}" style="color: #999">查看更多+</a></div>
         </div>
         <div class="gr-desp-box">
             <!--热游榜-->
@@ -534,7 +559,6 @@
 <script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
 <script src="__PUBLIC__/Home/static/js/less.min.js"></script>
 <script src="__PUBLIC__/Home/static/js/underscore-min.js"></script>
-<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script>
     $(function () {
         //初始化新游测评水柱高
@@ -844,56 +868,7 @@
         })
 
 
-        //注册
-        $("#input-account,#input-pwd,#input-pwd2").change(function(){
-            $(this).attr("data-num",1);
-            $("#input-account").blur(function(){
-                if($(this).attr("data-num")==1){
-                    var valuer=$(this).val();
-                    var vlength=valuer.length;
-                    var reg=/^[a-zA-Z0-9_\.]{3,20}$/;
-                    var flag=reg.test(valuer);
-                    if(vlength==0){
-                        $(this).parent().find(".no").hide();
-                    }else if(flag){
-                        $(this).parent().find(".no").hide();
-                    }else{
-                        $(this).parent().find(".no").show();
-                    }
-                }
-            });
-            $("#input-pwd").blur(function(){
-                if($(this).attr("data-num")==1){
-                    var valuer=$(this).val();
-                    var vlength=valuer.length;
-                    if(vlength<6&&vlength>0||vlength>16){
-                        $(this).parent().find(".no").show();
-                    }else{
-                        $(this).parent().find(".no").hide();
-                    }
-                }
-            })
-            $("#input-pwd2").blur(function(){
-                if($(this).attr("data-num")==1){
-                    var pwd=$("#input-pwd").val();
-                    var pwd2=$("#input-pwd2").val();
-                    if(pwd2.length==0){
-                        $(this).parent().find(".no").hide();
-                    }else if(pwd!=pwd2){
-                        console.log(222)
-                        $("#input-pwd2").parent().find(".no").show();
-                    }else{
-                        $("#input-pwd2").parent().find(".no").hide();
-                        $("#input-pwd2").parent().find(".yes").show();
-                    }
-                }
-            })
-        });
 
-
-        $("#input-account,#input-pwd,#input-pwd2").focus(function(){
-            $(this).parent().find(".no,.yes").hide();
-        });
 
 
         //ABCD的应该在加载的时候就调用

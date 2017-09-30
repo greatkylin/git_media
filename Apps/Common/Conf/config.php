@@ -77,8 +77,7 @@ return array(
                 redirect('http://' . $_SERVER['HTTP_HOST'] . '/yxk/' .C('DEFAULT_APP'));
             },
     ),
-    //游戏下载的二维码保存路径
-    'QRCODE_SAVE_PATH' => 'Uploads/QrCode',
+
     //加载配置文件
     'LOAD_EXT_CONFIG' => 'connect',
     //开启页面跟踪信息展示，正式上线需关闭

@@ -268,7 +268,7 @@ html;
             });
 
             uploader_1.on('fileQueued', function (file) {
-                file_id = file.id;
+                var file_id = file.id;
                 var li = $(
                     '<div id="' + file.id + '" class="file-item thumbnail">' +
                     '<img>' +
@@ -277,7 +277,7 @@ html;
                 ),
                 img = li.find('img');
 
-                imageList = $("#{$this->imageContainer}");
+                var imageList = $("#{$this->imageContainer}");
                 imageList.html(li);
 
                 uploader_1.makeThumb(file, function (error, src) {

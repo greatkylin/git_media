@@ -53,32 +53,30 @@
         <div class="title"><span></span>热门礼包</div>
         <div class="gift-box">
             <volist name="hotGiftList" id="hotGift">
-                <a href="{:U('Home/Gift/gift_page', array('app_id' => $hotGift['app_id']))}">
-                    <div class="gift-tag">
-                        <div class="icon-and-name">
-                            <div class="icon"><img alt="" src="{$hotGift.icon|format_url}"></div>
-                            <div class="name">
-                                <div class="self">{$hotGift.app_name}</div>
-                                <div class="get">立即领取</div>
-                            </div>
-                        </div>
-                        <div class="desp-and-icon">
-                            <div>{$hotGift.latest_gift}</div>
-                            <if condition="$hotGift['platform'] eq 1">
-                                <div><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"></div>
-                            </if>
-                            <if condition="$hotGift['platform'] eq 2">
-                                <div><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></div>
-                            </if>
-                        </div>
-                        <div class="percent">
-                            <div class="yu">剩余礼包：
-                                <div class="outer"><span class="inner"></span></div>
-                            </div>
-                            <div class="yu-num">{$hotGift.residue_rate}%</div>
+                <div class="gift-tag">
+                    <div class="icon-and-name">
+                        <div class="icon"><a href="{:U('Home/Gift/gift_page', array('app_id' => $hotGift['app_id']))}"><img alt="" src="{$hotGift.icon|format_url}"></a></div>
+                        <div class="name">
+                            <div class="self">{$hotGift.app_name}</div>
+                            <div class="get">立即领取</div>
                         </div>
                     </div>
-                </a>
+                    <div class="desp-and-icon">
+                        <div>{$hotGift.short_gift_name}</div>
+                        <if condition="$hotGift['platform'] eq 1">
+                            <div><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"></div>
+                        </if>
+                        <if condition="$hotGift['platform'] eq 2">
+                            <div><img alt="" src="__PUBLIC__/Home/static/img/apple-icon.png"></div>
+                        </if>
+                    </div>
+                    <div class="percent">
+                        <div class="yu">剩余礼包：
+                            <div class="outer"><span class="inner"></span></div>
+                        </div>
+                        <div class="yu-num">{$hotGift.residue_rate}%</div>
+                    </div>
+                </div>
             </volist>
         </div>
     </if>
@@ -86,17 +84,16 @@
         <div class="title"><span></span>新游礼包</div>
         <div class="gift-box">
             <volist name="newGiftList" id="newGift">
-                <a href="{:U('Home/Gift/gift_page', array('app_id' => $newGift['app_id']))}">
                     <div class="gift-tag">
                         <div class="icon-and-name">
-                            <div class="icon"><img alt="" src="{$newGift.icon|format_url}"></div>
+                            <div class="icon"><a href="{:U('Home/Gift/gift_page', array('app_id' => $newGift['app_id']))}"><img alt="" src="{$newGift.icon|format_url}"></a></div>
                             <div class="name">
                                 <div class="self">{$newGift.app_name}</div>
                                 <div class="get">立即领取</div>
                             </div>
                         </div>
                         <div class="desp-and-icon">
-                            <div>{$newGift.latest_gift}</div>
+                            <div>{$newGift.short_gift_name}</div>
                             <if condition="$newGift['platform'] eq 1">
                                 <div><img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png"></div>
                             </if>
@@ -111,7 +108,7 @@
                             <div class="yu-num">{$newGift.residue_rate}%</div>
                         </div>
                     </div>
-                </a>
+
             </volist>
         </div>
     </if>
@@ -128,7 +125,6 @@
 <!--底部导航开始-->
 <include file='Common:footer'/>
 <!--底部导航结束-->
-<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
 <script>
 

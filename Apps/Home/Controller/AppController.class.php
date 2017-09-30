@@ -44,7 +44,7 @@ class AppController extends HomeBaseController {
         # 下载量加一
         M(C('DB_ZHIYU.DB_NAME') . '.' . 'app_list', C('DB_ZHIYU.DB_PREFIX'))->where(array('app_id' => $appId))->setInc('app_down_num');
         /*
-         //添加游戏下载的记录
+         //TODO 添加游戏下载的记录
          $data = array(
             'app_id' => $appId,
             'uid' => 0,
@@ -83,6 +83,12 @@ class AppController extends HomeBaseController {
         $appInfo = $appService->getAppDetailInfoByAppId($appId);
         if(!$appInfo){
             $this->error($appService->getFirstError());
+        }
+        //获取二维码
+        if(!empty($appInfo)){
+            $downUrl = C('BASE_URL').U('Home/App/down', array('app_id' => $appInfo['app_id']));
+            $logoPath = grab_image(format_url($appInfo['icon']), 'logo'.$appInfo['app_id']);
+            $appInfo['qr_code'] = generate_logo_qr_code($downUrl, $appInfo['app_id'], $logoPath);
         }
         //3.根据游戏id获取精选攻略
         $guideList = $appService->getAppDetailGuideByAppId($appId);
@@ -229,43 +235,6 @@ class AppController extends HomeBaseController {
         $this->display($tplName);
     }
 
-    /**
-     * 游戏库排行榜列表
-     * @author xy
-     * @since 2017/09/12 13:58
-     */
-    public function app_rank(){
-        $appService = new AppService();
-        //1.获取游戏的热游榜 周榜，月榜，总榜
-        $hotAppListWeek = $appService->getHotAppRankWeek(16);
-        $hotAppListMonth = $appService->getHotAppRankMonth(16);
-        $hotAppListTotal = $appService->getHotAppRankTotal(16);
-        if($hotAppListWeek === false || $hotAppListMonth === false || $hotAppListTotal === false){
-            $this->error($appService->getFirstError());
-        }
-        //2.获取游戏畅游榜 周榜，月榜，总榜
-        $popularAppListWeek = $appService->getPopularAppRankWeek(16);
-        $popularAppListMonth = $appService->getPopularAppRankMonth(16);
-        $popularAppListTotal = $appService->getPopularAppRankTotal(16);
-        if($popularAppListWeek === false || $popularAppListMonth === false || $popularAppListTotal === false){
-            $this->error($appService->getFirstError());
-        }
-        //3.获取游戏新游榜总榜
-        $newAppListTotal = $appService->getNewAppRankTotal(16);
-        if($newAppListTotal === false){
-            $this->error($appService->getFirstError());
-        }
-
-        $this->assign('hotAppListWeek', $hotAppListWeek);
-        $this->assign('hotAppListMonth', $hotAppListMonth);
-        $this->assign('hotAppListTotal', $hotAppListTotal);
-        $this->assign('popularAppListWeek', $popularAppListWeek);
-        $this->assign('popularAppListMonth', $popularAppListMonth);
-        $this->assign('popularAppListTotal', $popularAppListTotal);
-        $this->assign('newAppListTotal', $newAppListTotal);
-
-        $this->display();
-    }
 
     /**
      * ajax方式获取指定游戏的游戏攻略列表

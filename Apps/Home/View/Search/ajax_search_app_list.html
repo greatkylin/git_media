@@ -1,0 +1,96 @@
+<div class="for-type">
+    <div class="app-box">
+        <if condition="count($appList) gt 0">
+            <volist name="appList" id="app">
+                <a href="{:U('Home/App/app_detail', array('app_id' => $app['app_id']))}" target="_blank" class="app-tag">
+                    <div class="icon"><img alt="" src="{$app.icon|format_url}"></div>
+                    <div class="desp">
+                        <div class="name-and-star">
+                            <div class="name">{$app.app_name}</div>
+                            <div class="star-and-score">
+                                <div class="star-container ysh-star">
+                                    <div class="down">
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                    </div>
+                                    <div class="cover">
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                        <span><i class="iconfont icon-xingxing"></i></span>
+                                    </div>
+                                </div>
+                                <div class="yys-score" data-score="{$app.start_score}"></div>
+                            </div>
+                        </div>
+                        <div class="type">游戏类型：{$app.app_type_name_str}</div>
+                        <div class="version">更新时间：{$app.publish_time|date='Y-m-d', ###}|{$app.app_size}M <span>版本：{$app.version_name}</span></div>
+                        <div class="intr">简介：{$app.introduct}</div>
+                    </div>
+                </a>
+            </volist>
+            <else/>
+            暂无内容
+        </if>
+    </div>
+</div>
+<div class="page-box">
+{$show}
+</div>
+<script>
+    $(".page-box div").on('click',function(){
+        var pageObj = this;
+        var url = $(pageObj).attr('data-href');
+        $.ajax({
+            type:'POST',
+            url:url,
+            data: {keyword: '{$keyword}'},
+            success:function(res){
+                $('#search-result-box').empty().html(res);
+            },
+            error : function() {
+            }
+        });
+        return false;
+    });
+    $(function(){
+        //星星评分函数
+        function starScore(dom,father,colorer){
+            var num=$(dom).attr("data-score");
+            var n=Math.floor(num);
+            var wid=$(father).find(".cover").find("span").width();
+            //console.log(111111111111,wid)
+            var newWid=wid*(num-n);
+            var $cover=$(father).find(".cover");
+            if(n==0){
+                $cover.find("span:first-child").css({"width":newWid+"px","opacity":1});
+                $cover.find("i").css("color",colorer)
+            }else{
+                $cover.find("i").css("color",colorer);
+                $cover.find("span").each(function(i,self){
+                    if(i<n){
+                        $(self).css("opacity",1);
+                    }else if(i==n){
+                        $(self).css({"width":newWid+"px","opacity":1});
+                    }else if(i>n){
+                        $(self).css("opacity",0);
+                    }
+                })
+            }
+        }
+        //保留一位小数
+        function tofixed(dom){
+            var old=parseFloat($(dom).attr("data-score"));
+            var newer=old.toFixed(1);
+            $(dom).text(newer);
+        }
+        $('.yys-score').each(function () {
+            tofixed($(this));
+            starScore($(this),".ysh-star","#f4dd1f");
+        });
+    });
+</script>

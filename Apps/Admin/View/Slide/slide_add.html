@@ -7,7 +7,7 @@
 </head>
 <body>
 <article class="page-container">
-    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/AppTopic/list_image_edit')}">
+    <form class="form form-horizontal" id="form-add" novalidate="novalidate" action="{:U('Admin/Slide/slide_add')}">
         <input type="hidden" id="slide_cid" name="slide_cid" value="{$slideCid}">
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>名称：</label>
@@ -68,7 +68,7 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>上架时间：</label>
             <div class="formControls col-xs-8 col-sm-4">
-                <input onfocus="selectTime(1)" type="text" class="input-text Wdate" value="{$start_time|date='Y-m-d H:i:s', ###}" placeholder="" id="astart_time" name="start_time" style="width: 200px">-
+                <input onfocus="selectTime(1)" type="text" class="input-text Wdate" value="{$start_time|date='Y-m-d H:i:s', ###}" placeholder="" id="start_time" name="start_time" style="width: 200px">-
                 <input onfocus="selectTime(2)" type="text" class="input-text Wdate" value="{$end_time|date='Y-m-d H:i:s', ###}" placeholder="" id="end_time" name="end_time" style="width: 200px">
             </div>
         </div>

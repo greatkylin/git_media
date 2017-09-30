@@ -28,7 +28,7 @@ abstract class Controller {
      */      
     protected $config   =   array();
 
-   /**
+    /**
      * 架构函数 取得模板对象实例
      * @access public
      */
@@ -294,13 +294,34 @@ abstract class Controller {
         }
     }
 
-   /**
+    /**
      * 析构方法
      * @access public
      */
     public function __destruct() {
         // 执行后续操作
         Hook::listen('action_end');
+    }
+
+    /**
+     * 以json格式返回结果
+     * @author xy
+     * @since 2017/07/04 10:30
+     * @param bool $error 是否有错误
+     * @param string $code 代码
+     * @param string $detail 提现信息
+     * @param null $data 数据
+     */
+    public function outputJSON($error = true, $code, $detail, $data = null)
+    {
+        $JsonData = array();
+        $JsonData['error'] = $error;
+        $JsonData['code'] = $code;
+        $JsonData['detail'] = $detail;
+        if($data || $data=='0'){
+            $JsonData['data'] = $data;
+        }
+        $this->ajaxReturn($JsonData, 'JSON');
     }
 }
 // 设置控制器别名 便于升级

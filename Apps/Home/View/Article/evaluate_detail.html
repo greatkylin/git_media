@@ -44,7 +44,7 @@
                     <div><img src="__PUBLIC__/Home/static/img/zhiy-logo.png" alt="">指娱游戏</div>
                     <div>
                         <img id="zy-logo" src="__PUBLIC__/Home/static/img/ewm-small.png" alt="">
-                        <div class="zy-ewm-show"><img src="__PUBLIC__/Home/static/img/zwt-ewm.png" alt=""></div>
+                        <div class="zy-ewm-show"><img src="{$appInfo.qr_code|format_url}" alt=""></div>
                     </div>
                 </div>
             </div>
@@ -143,7 +143,6 @@
 <!--底部导航开始-->
 <include file='Common:footer'/>
 <!--底部导航结束-->
-<script src="__PUBLIC__/Home/static/js/jquery-2.1.4.min.js"></script>
 <script>
     $(function () {
         //二维码显或隐

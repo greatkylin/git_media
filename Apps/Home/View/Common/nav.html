@@ -2,21 +2,26 @@
     <div><img alt="logo" src="__PUBLIC__/Home/static/img/logo.png"></div>
     <div class="nav-nav">
         <a <if condition="CONTROLLER_NAME eq 'Index' ">class="active"</if> href="/">首页</a>
-        <a <if condition="CONTROLLER_NAME eq 'App' ">class="active"</if> href="{:U('Home/App/index')}">游戏库</a>
+        <a <if condition="(CONTROLLER_NAME eq 'App') OR (CONTROLLER_NAME eq 'Rank') OR (CONTROLLER_NAME eq 'Gift') OR (CONTROLLER_NAME eq 'Search')">class="active"</if> href="{:U('Home/App/index')}">游戏库</a>
         <a <if condition="CONTROLLER_NAME eq 'Article' ">class="active"</if> href="{:U('Home/Article/index')}">资讯中心</a>
         <a style="opacity: 0">模拟器</a>
     </div>
     <div class="nav-search">
-        <div class="nav-search-input">
-            <img alt="" src="__PUBLIC__/Home/static/img/search.png" class="search-img">
-            <input type="text" class="nav-search-input1">
-            <input type="button" value="搜索" class="nav-search-input2">
-        </div>
+        <form action="{:U('Home/Search/index')}" method="post">
+            <div class="nav-search-input">
+                <img alt="" src="__PUBLIC__/Home/static/img/search.png" class="search-img">
+                <input name="controller" type="hidden" value="{$Think.CONTROLLER_NAME}" />
+                <input name="keyword" type="text" class="nav-search-input1">
+                <input type="submit" value="搜索" class="nav-search-input2">
+            </div>
+        </form>
         <div class="nav-advice">
-            <a>王者荣誉</a>
-            <a>我有上将</a>
-            <a>王者荣誉</a>
-            <a>我有上将</a>
+            <if condition="count($hotKeywordList) gt 0">
+                <volist name="hotKeywordList" id="hot_keyword">
+                    <a href="{:U('Home/Search/index', array('keyword' => $hot_keyword['keyword']))}">{$hot_keyword.keyword}</a>
+                </volist>
+
+            </if>
         </div>
     </div>
 </div>

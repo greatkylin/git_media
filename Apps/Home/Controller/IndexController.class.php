@@ -165,7 +165,7 @@ class IndexController extends HomeBaseController {
         $indexService = new IndexService();
         $thisWeekTopic = $indexService->getThisWeekTopicByKeyword();
         //3.获取热门游戏
-        $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
+        $hotAppList = $appService->getHotAppNameAndIcon(5);
 
         $this->assign('giftWeekList', $giftWeekList);
         $this->assign('giftMonthList', $giftMonthList);
@@ -195,7 +195,7 @@ class IndexController extends HomeBaseController {
         $indexService = new IndexService();
         $thisWeekTopic = $indexService->getThisWeekTopicByKeyword();
         //3.获取热门游戏
-        $hotAppList = $appService->getIndexHotRecommendAppNameAndIcon(5);
+        $hotAppList = $appService->getHotAppNameAndIcon(5);
 
         $this->assign('giftWeekList', $giftWeekList);
         $this->assign('giftMonthList', $giftMonthList);

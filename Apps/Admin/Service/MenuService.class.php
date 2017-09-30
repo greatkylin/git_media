@@ -74,7 +74,7 @@ class MenuService extends BaseService
                 $newCategory[$key]['has_child'] = '0';
                 $newCategory[$key]['menu_child'] = array();
             }
-            //游戏每日一题也广告设置
+            //游戏每日一题页广告设置
             $quesAdMenu = array(
                 'name' => U('Admin/Gift/gift_slide_list', array('show_position' => 2)),
                 'title' => '每日一题页礼包广告',
@@ -86,7 +86,21 @@ class MenuService extends BaseService
                 "has_child" => 0,
                 "menu_child" => array(),
             );
+            //活动详情设置
+            $activityMenu = array(
+                'name' => U('Admin/Activity/activity_list'),
+                'title' => '热门活动',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(
+                ),
+            );
             $newCategory[] = $quesAdMenu;
+            $newCategory[] = $activityMenu;
             return $newCategory;
         }
         return $category;
@@ -501,29 +515,6 @@ class MenuService extends BaseService
                     )
                 ),
             ),
-            array(
-                'name' => 'Admin/Activity/activity_list/',
-                'title' => '热门活动',
-                'menu_type' => 4,
-                'css' => 'Hui-iconfont-home',
-                'sort' => 1,
-                "isshow" => 1,
-                "level" => 1,
-                "has_child" => 1,
-                "menu_child" => array(
-                    array(
-                        'name' => 'Admin/Activity/activity_list/',
-                        'title' => '活动列表',
-                        'menu_type' => 4,
-                        'css' => 'Hui-iconfont-home',
-                        'sort' => 1,
-                        "isshow" => 1,
-                        "level" => 2,
-                        "has_child" => 0,
-                        "menu_child" => array(),
-                    )
-                ),
-            )
         );
     }
 
@@ -670,6 +661,20 @@ class MenuService extends BaseService
             array(
                 'name' => U('Admin/Slide/slide_list'),
                 'title' => '幻灯片管理',
+                'menu_type' => 4,
+                'css' => 'Hui-iconfont-home',
+                'sort' => 1,
+                "isshow" => 1,
+                "level" => 1,
+                "has_child" => 0,
+                "menu_child" => array(
+                    array(
+                    ),
+                ),
+            ),
+            array(
+                'name' => U('Admin/Search/hot_keyword_list'),
+                'title' => '搜索热词管理',
                 'menu_type' => 4,
                 'css' => 'Hui-iconfont-home',
                 'sort' => 1,

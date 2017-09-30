@@ -3,6 +3,9 @@
 <link rel="stylesheet" href="__PUBLIC__/H-ui/lib/vue/index.css">
 <title>游戏详情页编辑</title>
 <style>
+    .legend{
+        width:100px;
+    }
     /*评论维度 input的宽度*/
     .game-param {
         width: 120px;
@@ -93,7 +96,8 @@
 </nav>
 <article class="page-container">
     <form class="form form-horizontal" id="form-admin-add">
-        <h3>基本信息</h3>
+        <fieldset>
+            <legend class="legend">基本信息</legend>
         <input id="app_id" type="hidden" name="app_id" value="{$app_id}" />
         <input id="short_name" type="hidden" name="short_name" value="{$app_info.short_name}" />
         <input id="platform" type="hidden" name="platform" value="{$app_info.platform}" />
@@ -228,7 +232,22 @@
                 </div>
             </div>
         </div>
-        <h3>游戏图片</h3>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">游戏属性：</label>
+            <div class="skin-minimal">
+                <div class="check-box">
+                    <input type="checkbox" value="1" placeholder="" id="is_hot" name="is_hot" <if condition="$app_info['is_hot'] eq 1">checked</if>>
+                    <label for="is_hot">热游推荐</label>
+                </div>
+                <!--<div class="check-box">-->
+                    <!--<input type="checkbox" value="1" placeholder="" id="is_choice" name="is_choice" <if condition="$app_info['is_choice'] eq 1">checked</if>>-->
+                    <!--<label for="is_choice">精选游戏</label>-->
+                <!--</div>-->
+            </div>
+        </div>
+        </fieldset>
+        <fieldset>
+            <legend class="legend">游戏图片</legend>
         <!--游戏icon图标-->
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">游戏icon：</label>
@@ -274,7 +293,7 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>弹窗链接：</label>
             <div class="formControls col-xs-8 col-sm-4">
-                <input type="text" class="input-text" value="{$app_info.video_link}" placeholder="" id="video_link" name="video_link">
+                <input type="text" class="input-text" value="{$app_info.video_link}" placeholder="" id="video_link" name="video_link"><span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
             </div>
         </div>
         <!--游戏截图类型-->
@@ -331,7 +350,12 @@
                 </div>
             </div>
         </div>
-        <h3>图文攻略</h3>
+        </fieldset>
+        <fieldset>
+            <legend class="legend">
+                图文攻略
+            </legend>
+
         <!--图文攻略上传-->
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">图文攻略图片：</label>
@@ -444,70 +468,84 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span>图文攻略标题链接：</label>
             <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接1</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[1]['guide_link']}" placeholder=""  name="guide_link[0]">
-            </div>
-            <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题1</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[1]['guide_title']}" placeholder=""  name="guide_title[0]">
+            </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接1</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[1]['guide_link']}" placeholder=""  name="guide_link[0]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接2</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[2]['guide_link']}" placeholder=""  name="guide_link[1]">
-            </div>
             <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题2</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[2]['guide_title']}" placeholder=""  name="guide_title[1]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接2</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[2]['guide_link']}" placeholder=""  name="guide_link[1]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接3</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[3]['guide_link']}" placeholder=""  name="guide_link[2]">
-            </div>
             <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题3</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[3]['guide_title']}" placeholder=""  name="guide_title[2]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接3</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[3]['guide_link']}" placeholder=""  name="guide_link[2]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接4</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[4]['guide_link']}" placeholder=""  name="guide_link[3]">
-            </div>
             <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题4</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[4]['guide_title']}" placeholder=""  name="guide_title[3]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接4</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[4]['guide_link']}" placeholder=""  name="guide_link[3]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
-            <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接5</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[5]['guide_link']}" placeholder=""  name="guide_link[4]">
-            </div>
             <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题5</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[5]['guide_title']}" placeholder=""  name="guide_title[4]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接5</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[5]['guide_link']}" placeholder=""  name="guide_link[4]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
+            </div>
         </div>
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red"></span></label>
             <div class="formControls col-xs-4 col-sm-4">
-                <span class="c-green">链接6</span>
-                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[6]['guide_link']}" placeholder=""  name="guide_link[5]">
-            </div>
-            <div class="formControls col-xs-4 col-sm-4">
                 <span class="c-green">标题6</span>
                 <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[6]['guide_title']}" placeholder=""  name="guide_title[5]">
             </div>
+            <div class="formControls col-xs-4 col-sm-4">
+                <span class="c-green">链接6</span>
+                <input style="width: 80%" type="text" class="input-text" value="{$app_guide_list[6]['guide_link']}" placeholder=""  name="guide_link[5]">
+                <br />
+                <span class="c-green">链接格式请以http://或https://开头，如http://www.baidu.com</span>
+            </div>
         </div>
-        <h3>精美图片</h3>
+        </fieldset>
+        <fieldset>
+            <legend class="legend">精美图片</legend>
         <!--游戏截图上传-->
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">精美图片：</label>
@@ -543,7 +581,10 @@
                 </div>
             </div>
         </div>
-        <h3>游戏礼包</h3>
+        </fieldset>
+        <fieldset>
+            <legend class="legend">游戏礼包</legend>
+
         <div id="gift_box">
             <if condition="!empty($gift_list)">
                 <volist name="gift_list" i="key" id="gift">
@@ -591,6 +632,7 @@
                 暂无礼包
             </if>
         </div>
+        </fieldset>
         <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
@@ -901,8 +943,7 @@
                     '<div class="formControls col-xs-8 col-sm-8">'+
                         '<span class="c-green">详情:</span>'+
                         '<div class="skin-minimal">'+
-                            //'<textarea id="editor-'+giftDate.gift_id+'" name="gift_detail['+giftDate.gift_id+']" cols="" rows="" class="textarea" placeholder="说点什么..." datatype="*10-100">'+giftDate.gift_desc+'</textarea>'+
-            '<script id="neditor-'+giftDate.gift_id+'" name="gift_detail['+giftDate.gift_id+']" type="text/plain">'+giftDate.gift_desc+'<'+'/script>'+
+                        '<script id="neditor-'+giftDate.gift_id+'" name="gift_detail['+giftDate.gift_id+']" type="text/plain">'+giftDate.gift_desc+'<'+'/script>'+
                         '</div>'+
                     '</div>'+
                 '</div>'+
@@ -928,23 +969,6 @@
     var is_icon_success = false;  // icon图片上传是否成功
     var no_upload_icon = true;    // 是否有上传icon文件
     var is_update_icon = false;   // 是否有更新上传icon文件
-
-    var img_url_video = [];        // video图片地址
-    var is_video_success = false;  // video图片上传是否成功
-    var no_upload_video = true;    // 是否有上传video文件
-    var is_update_video = false;   // 是否有更新上传video文件
-
-    var pic_url = [];             // 截图图片数组
-    var is_pic_success  = true;   // 截图上传是否成功
-    var pic_url_del = [];         // 替换删除的图片
-    var is_update_pic  = false;   // 是否有更新上传截图文件
-    var no_upload_pic  = true;    // 是否有上传截图文件
-
-    var beauty_img_url = [];             // 精美图片数组
-    var is_beauty_img_success  = true;   // 精美图片上传是否成功
-    var beauty_img_del = [];             // 替换删除的精美图片
-    var is_update_beauty_img  = false;      // 是否有更新上传精美图片
-    var no_upload_beauty_img  = true;       // 是否有上传精美图片
 
     /************游戏icon图片上传****************/
     var thumbnailWidth = 100;       //缩略图宽度
@@ -1075,7 +1099,13 @@
     uploaderIcon.on( 'uploadComplete', function( file ) {
         $( '#'+file.id ).find('.progress').remove();
     });
+</script>
+<script>
 
+    var img_url_video = [];        // video图片地址
+    var is_video_success = false;  // video图片上传是否成功
+    var no_upload_video = true;    // 是否有上传video文件
+    var is_update_video = false;   // 是否有更新上传video文件
     /************游戏video图片上传****************/
     var videoThumbnailWidth = 100;       //缩略图宽度
     var videoThumbnailHeight = 100;      //缩略图高度
@@ -1205,7 +1235,13 @@
     uploaderVideo.on( 'uploadComplete', function( file ) {
         $( '#'+file.id ).find('.progress').remove();
     });
-
+</script>
+<script>
+    var pic_url = [];             // 截图图片数组
+    var is_pic_success  = true;   // 截图上传是否成功
+    var pic_url_del = [];         // 替换删除的图片
+    var is_update_pic  = false;   // 是否有更新上传截图文件
+    var no_upload_pic  = true;    // 是否有上传截图文件
     /**************************游戏截图上传****************************/
     var img_num = {$pic_num}; //记录当前有几张截图
     $('.sub-load-box').click(function () {
@@ -2205,6 +2241,12 @@
 </script>
 <script>
     /**************************精美图片上传****************************/
+    var beauty_img_url = [];             // 精美图片数组
+    var is_beauty_img_success  = true;   // 精美图片上传是否成功
+    var beauty_img_del = [];             // 替换删除的精美图片
+    var is_update_beauty_img  = false;      // 是否有更新上传精美图片
+    var no_upload_beauty_img  = true;       // 是否有上传精美图片
+
     var beauty_img_num = {$beauty_image_num}; //记录当前有几张截图
     $('.sub-load-beauty-box').click(function () {
         if($(this).hasClass('on')) {
@@ -2504,6 +2546,26 @@ var uploaderBeauty = WebUploader.create({
                 number:true,
                 max:100,
                 min:0
+            },
+            video_link: {
+                remote: {
+                    url: "{:U('Admin/AppLib/ajax_check_url')}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        url: function () {
+                            return $("#video_link").val();　　　　//这个是取要验证的密码
+                        }
+                    },
+                    dataFilter: function (data) {　　　　//判断控制器返回的内容
+                        data = $.parseJSON(data);
+                        if (data.error) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
             }
         },
         onkeyup:false,

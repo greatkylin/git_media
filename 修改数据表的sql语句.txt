@@ -111,3 +111,8 @@ CREATE TABLE `zy_media_search_log` (
   PRIMARY KEY (`log_id`),
   KEY `key` (`keyword`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='搜索关键词记录表';
+/*20170926*/
+ALTER TABLE `zy_media_app_lib`
+ADD COLUMN `is_hot`  tinyint(1) NULL DEFAULT 0 COMMENT '热游推荐 1是，0否' AFTER `beauty_image`,
+ADD COLUMN `is_choice`  tinyint(1) NULL DEFAULT 0 COMMENT '精选游戏 1是 0否' AFTER `is_hot`;
+

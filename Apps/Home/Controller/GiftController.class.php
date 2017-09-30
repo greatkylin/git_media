@@ -20,6 +20,11 @@ class GiftController extends HomeBaseController
      * @since 2017/09/12 14:29
      */
     public function index(){
+        //是否预览
+        $isPreview = false;
+        if(!empty(intval(I('preview')))){
+            $isPreview = true;
+        }
         $giftService = new GiftService();
         // 1.获取轮播图片
         $slideList = $giftService->getGiftIndexSlide(3);
@@ -32,7 +37,7 @@ class GiftController extends HomeBaseController
             $this->error($giftService->getFirstError());
         }
         //3.获取热门礼包数8款
-        $hotGiftList = $giftService->getHotGiftList(8);
+        $hotGiftList = $giftService->getHotGiftList(8, $isPreview);
         if($hotGiftList === false){
             $this->error($giftService->getFirstError());
         }
@@ -41,7 +46,7 @@ class GiftController extends HomeBaseController
             $appIdArr[] = $gift['app_id'];
         }
         //4.获取新游礼包
-        $newGiftList = $giftService->getNewGiftList(8);
+        $newGiftList = $giftService->getNewGiftList(8, $isPreview);
         if($newGiftList === false){
             $this->error($giftService->getFirstError());
         }
@@ -82,9 +87,7 @@ class GiftController extends HomeBaseController
             $this->error($giftService->getFirstError());
         }
         //3.该游戏下的所有礼包 ajax分类
-        if(IS_AJAX){
-            $this->ajaxGetGiftBelongAppList();
-        }
+
         $this->assign('appId', $appId);
         $this->assign('banner', $banner);
         $this->assign('appInfo', $appInfo);
@@ -100,7 +103,7 @@ class GiftController extends HomeBaseController
     public function all_gift(){
         //1.获取热门礼包 8款
         $giftService = new GiftService();
-        $hotGiftList = $giftService->getHotGiftList(8);
+        $hotGiftList = $giftService->getHotGiftAppList(8);
         if($hotGiftList === false){
             $this->error($giftService->getFirstError());
         }
@@ -133,7 +136,7 @@ class GiftController extends HomeBaseController
         if($totalNum === false){
             $this->error($giftService->getFirstError());
         }
-        $page = new NewPage($totalNum, 1);
+        $page = new NewPage($totalNum, 8);
         // 分页显示输出
         $show = $page->show();
         //计算媒体站有礼包的游戏列表
@@ -214,7 +217,7 @@ class GiftController extends HomeBaseController
         }
         $giftService = new GiftService();
         //计算媒体站有礼包的游戏总量
-        $totalNum = $giftService->countAppGiftTotalNum($where);
+        $totalNum = $giftService->countGiftAppTotalNum($where);
         if($totalNum === false){
             $this->error($giftService->getFirstError());
         }

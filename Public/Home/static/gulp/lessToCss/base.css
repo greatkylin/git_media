@@ -2051,7 +2051,7 @@ footer .copyright {
   margin-left: 3px;
   text-decoration: underline;
 }
-.register-login-module .form-box input[type=button] {
+.register-login-module .form-box input[type=button], .register-login-module .form-box input[type=submit]{
   background: #04e4cb;
   font-size: 16px;
   color: #fff;
@@ -2059,7 +2059,7 @@ footer .copyright {
   padding-left: 0;
   cursor: pointer;
 }
-.register-login-module .form-box input[type=button]:focus {
+.register-login-module .form-box input[type=button]:focus, .register-login-module .form-box input[type=submit]:focus {
   outline: none;
 }
 .game-store-subnav {

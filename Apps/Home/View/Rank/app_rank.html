@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
+    <!--2017-7-6！！！！！！！！！！！！！！！！！-->
+    <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+</head>
+<style>
+    .tag .desp .name{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 90px;
+    }
+    .tag .desp .type {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 110px;
+    }
+</style>
+<body id="hotgameRank">
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:nav'/>
+<!--菜单栏end-->
+<!--子导航栏开始-->
+<div class="game-store-subnav">
+    <div class="subnav-box">
+        <a href="{:U('Home/App/index')}">游戏库</a>
+        <a class="active" href="{:U('Home/Rank/app_rank')}">热游排行榜</a>
+        <a href="{:U('Home/Gift/index')}">礼包中心</a>
+    </div>
+</div>
+<!--子导航栏结束-->
+<!--主体内容开始-->
+<main class="hotgame-rank">
+    <div class="bread-tag">
+        <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/App/index')}">游戏库</a><span>></span>热游排行榜
+    </div>
+    <div class="rank-container">
+        <div class="reyou">
+            <div class="title" style="padding-left:0;">
+                <div class="l"><span></span><span>热游榜</span></div>
+                <div class="r"><span class="active reyou-week">周榜</span><span class="reyou-month">月榜</span><span class="reyou-all all-all">总榜</span></div>
+            </div>
+            <div class="rank-box">
+                <div class="week">
+                    <if condition="count($hotAppListWeek) gt 0">
+                        <volist name="hotAppListWeek" id="happw" key="iw">
+                            <if condition='$iw elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $happw['app_id']))}">
+                                    <div class="num">{$iw}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$happw.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$happw.app_name}</div>
+                                            <div class="type">类型：{$happw.type_name_str}</div>
+                                        </div>
+                                        <div class="download"><if condition="!empty($happw['app_down_num'])">{$happw.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" href="{:U('Home/App/app_detail', array('app_id' => $happw['app_id']))}">
+                                    <div class="num">{$iw}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$happw.icon|format_url}"></div>
+                                        <div class="name">{$happw.app_name}<div class="name-first">类型：{$happw.type_name_str}</div></div>
+                                        <div class="type">{$happw.type_name_str}</div>
+                                        <div class="download"><if condition="!empty($happw['app_down_num'])">{$happw.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+                <div class="month" style="display: none;">
+                    <if condition="count($hotAppListMonth) gt 0">
+                        <volist name="hotAppListMonth" id="happm" key="im">
+                            <if condition='$im elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $happm['app_id']))}">
+                                    <div class="num">{$im}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$happm.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$happm.app_name}</div>
+                                            <div class="type">类型：{$happm.type_name_str}</div>
+                                        </div>
+                                        <div class="download"><if condition="!empty($happm['app_down_num'])">{$happm.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder">
+                                    <div class="num">{$im}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$happm.icon|format_url}"></div>
+                                        <div class="name">{$happm.app_name}<div class="name-first">类型：{$happm.type_name_str}</div></div>
+                                        <div class="type">{$happm.type_name_str}</div>
+                                        <div class="download"><if condition="!empty($happm['app_down_num'])">{$happm.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+                <div class="all" style="display:none;">
+                    <if condition="count($hotAppListTotal) gt 0">
+                        <volist name="hotAppListTotal" id="happt" key="it">
+                            <if condition='$it elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $happt['app_id']))}">
+                                    <div class="num">{$it}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$happt.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$happt.app_name}</div>
+                                            <div class="type">类型：{$happt.type_name_str}</div>
+                                        </div>
+                                        <div class="download"><if condition="!empty($happt['app_down_num'])">{$happt.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" href="{:U('Home/App/app_detail', array('app_id' => $happt['app_id']))}">
+                                    <div class="num">{$it}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$happt.icon|format_url}"></div>
+                                        <div class="name">{$happt.app_name}<div class="name-first">类型：{$happt.type_name_str}</div></div>
+                                        <div class="type">{$happt.type_name_str}</div>
+                                        <div class="download"><if condition="!empty($happt['app_down_num'])">{$happt.app_down_num}<else />0</if>人下载</div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+            </div>
+        </div>
+        <!--畅销榜里每个tag都要有自己的独一无二的像game1这样的类名，下面进行调用，才能显示几个火苗-->
+        <div class="changxiao">
+            <div class="title">
+                <div class="l"><span></span><span>畅销榜</span></div>
+                <div class="r"><span class="active changxiao-week">周榜</span><span class="changxiao-month">月榜</span><span class="changxiao-all all-all">总榜</span></div>
+            </div>
+            <div class="rank-box">
+                <div class="week">
+                    <if condition="count($popularAppListWeek) gt 0">
+                        <volist name="popularAppListWeek" id="pappw" key="pw">
+                            <if condition='$pw elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $pappw['app_id']))}">
+                                    <div class="num">{$pw}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$pappw.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$pappw.app_name}</div>
+                                            <div class="type">类型：{$pappw.type_name_str}</div>
+                                        </div>
+                                        <div class="download pw-game{$pw}" data-score="{$pappw.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" data-imgurl="{$pappw.icon|format_url}" href="{:U('Home/App/app_detail', array('app_id' => $pappw['app_id']))}">
+                                    <div class="num">{$pw}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$pappw.icon|format_url}"></div>
+                                        <div class="name">{$pappw.app_name}<div class="name-first">类型：{$pappw.type_name_str}</div></div>
+                                        <div class="type">{$pappw.type_name_str}</div>
+                                        <div class="download pw-game{$pw}" data-score="{$pappw.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+                <div class="month" style="display: none;">
+                    <if condition="count($popularAppListMonth) gt 0">
+                        <volist name="popularAppListMonth" id="pappm" key="pm">
+                            <if condition='$pm elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $pappm['app_id']))}">
+                                    <div class="num">{$pm}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$pappm.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$pappm.app_name}</div>
+                                            <div class="type">类型：{$pappm.type_name_str}</div>
+                                        </div>
+                                        <div class="download pm-game{$pm}" data-score="{$pappm.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" data-imgurl="{$pappm.icon|format_url}" href="{:U('Home/App/app_detail', array('app_id' => $pappm['app_id']))}">
+                                    <div class="num">{$pm}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$pappm.icon|format_url}"></div>
+                                        <div class="name">{$pappm.app_name}<div class="name-first">类型：{$pappm.type_name_str}</div></div>
+                                        <div class="type">{$pappm.type_name_str}</div>
+                                        <div class="download pm-game{$pm}" data-score="{$pappm.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+                <div class="all" style="display:none;">
+                    <if condition="count($popularAppListTotal) gt 0">
+                        <volist name="popularAppListTotal" id="pappt" key="pt">
+                            <if condition='$pt elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $pappt['app_id']))}">
+                                    <div class="num">{$pt}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$pappt.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$pappt.app_name}</div>
+                                            <div class="type">类型：{$pappt.type_name_str}</div>
+                                        </div>
+                                        <div class="download pt-game{$pt}" data-score="{$pappt.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" data-imgurl="{$pappt.icon|format_url}" href="{:U('Home/App/app_detail', array('app_id' => $pappt['app_id']))}">
+                                    <div class="num">{$pt}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$pappt.icon|format_url}"></div>
+                                        <div class="name">{$pappt.app_name}<div class="name-first">类型：{$pappt.type_name_str}</div></div>
+                                        <div class="type">{$pappt.type_name_str}</div>
+                                        <div class="download pt-game{$pt}" data-score="{$pappt.start_score}">
+                                            <div class="down">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                            <div class="cover">
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                                <span><i class="iconfont icon-huomiao"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+            </div>
+        </div>
+        <div class="xinyou">
+            <div class="title">
+                <div class="l"><span></span><span>热游榜</span></div>
+                <div class="r" style="padding-right:6px;">上线时间</div>
+            </div>
+            <div class="rank-box">
+                <!--并不存在周，但为了套热游的偌代码写了个周-->
+                <div class="week">
+                    <if condition="count($newAppListTotal) gt 0">
+                        <volist name="newAppListTotal" id="nappt" key="nt">
+                            <if condition='$nt elt 3'>
+                                <a class="tag" href="{:U('Home/App/app_detail', array('app_id' => $nappt['app_id']))}">
+                                    <div class="num">{$nt}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img src="{$nappt.icon|format_url}" alt=""></div>
+                                        <div class="name-and-type">
+                                            <div class="name">{$nappt.app_name}</div>
+                                            <div class="type">类型：{$nappt.type_name_str}</div>
+                                        </div>
+                                        <div class="download">{$nappt.publish_time|date="Y-m-d", ###}</div>
+                                    </div>
+                                </a>
+                                <else />
+                                <a class="tag first forhover noborder" href="{:U('Home/App/app_detail', array('app_id' => $nappt['app_id']))}">
+                                    <div class="num">{$nt}</div>
+                                    <div class="desp">
+                                        <div class="icon"><img alt="" src="{$nappt.icon|format_url}"></div>
+                                        <div class="name">{$nappt.app_name}<div class="name-first">类型：{$nappt.type_name_str}</div></div>
+                                        <div class="type">{$nappt.type_name_str}</div>
+                                        <div class="download">{$nappt.publish_time|date="Y-m-d", ###}</div>
+                                    </div>
+                                </a>
+                            </if>
+                        </volist>
+                        <else />
+                        暂无数据
+                    </if>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
+    $(function () {
+        //自动填充序号
+        function listNum(dom){
+            $(dom).each(function (i,self) {
+                var n=i+1;
+                $(self).find(".num").text(n);
+            })
+        };
+        //热游序号
+        listNum(".reyou .week>.tag");
+        listNum(".reyou .month>.tag");
+        listNum(".reyou .all>.tag");
+        //畅销序号
+        listNum(".changxiao .week>.tag");
+        listNum(".changxiao .month>.tag");
+        listNum(".changxiao .all>.tag");
+
+        listNum(".xinyou .week>.tag");
+        listNum(".xinyou .month>.tag");
+        listNum(".xinyou .all>.tag");
+
+        //自动写前三个tag的字体颜色
+        function listCSS(dom){
+            $(dom).children(".tag:eq(0)").find(".num").css({"font-size":"24px","color":"#ff553b"});
+            $(dom).children(".tag:eq(1)").find(".num").css({"font-size":"24px","color":"#ffab58"});
+            $(dom).children(".tag:eq(2)").find(".num").css({"font-size":"24px","color":"#f4dd1f"});
+        };
+        listCSS(".reyou .week");
+        listCSS(".reyou .month");
+        listCSS(".reyou .all");
+
+
+        listCSS(".changxiao .week");
+        listCSS(".changxiao .month");
+        listCSS(".changxiao .all");
+
+        listCSS(".xinyou .week");
+        listCSS(".xinyou .month");
+        listCSS(".xinyou .all");
+
+        $(".r span").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        function reyouShow(className,showdom,parent){
+            $(className).parents(parent).find(".rank-box").find(showdom).show().siblings().hide();
+        }
+//        热游点击周、月、总榜
+        $(".reyou-week").click(function(){
+            reyouShow(this,".week",".reyou");
+        });
+        $(".reyou-month").click(function(){
+            reyouShow(this,".month",".reyou");
+        });
+        $(".reyou-all").click(function(){
+            reyouShow(this,".all",".reyou");
+        });
+//        畅销点击周、月、总榜
+        $(".changxiao-week").click(function(){
+            reyouShow(this,".week",".changxiao");
+        });
+        $(".changxiao-month").click(function(){
+            reyouShow(this,".month",".changxiao");
+        });
+        $(".changxiao-all").click(function(){
+            reyouShow(this,".all",".changxiao");
+        });
+
+
+        //星星评分函数
+        function starScore(dom,father,colorer){
+            var num=$(dom).attr("data-score");
+            var n=Math.floor(num);
+            var wid=$(father).find(".cover").find("span").width();
+            var newWid=wid*(num-n);
+            var $cover=$(father).find(".cover");
+            if(n==0){
+                $cover.find("span:first-child").css({"width":newWid+"px","opacity":1});
+                $cover.find("i").css("color",colorer)
+            }else{
+                $cover.find("i").css("color",colorer);
+                $cover.find("span").each(function(i,self){
+                    if(i<n){
+                        $(self).css("opacity",1);
+                    }else if(i==n){
+                        $(self).css({"width":newWid+"px","opacity":1});
+                    }else if(i>n){
+                        $(self).css("opacity",0);
+                    }
+                })
+            }
+        }
+
+        function hideMoreTag(dom,n){
+            $(dom).each(function(i,self){
+                if(i>n-1){
+                    $(self).remove();
+                }
+            })
+        }
+        hideMoreTag(".reyou .week a",16);
+        hideMoreTag(".reyou .month a",16);
+        hideMoreTag(".reyou .all a",16);
+        hideMoreTag(".changxiao .week a",16);
+        hideMoreTag(".changxiao  .month a",16);
+        hideMoreTag(".changxiao  .all a",16);
+        hideMoreTag(".xinyou .week a",16);
+
+        <if condition="count($popularAppListWeek) gt 0">
+            <volist name="popularAppListWeek" id="jspwapp" key="jspw" >
+                starScore(".pw-game{$jspw}",".pw-game{$jspw}","#ff6a28");
+
+            </volist>
+        </if>
+        <if condition="count($popularAppListMonth) gt 0">
+            <volist name="popularAppListMonth"  id="jspmapp" key="jspm" >
+                starScore(".pm-game{$jspm}",".pm-game{$jspm}","#ff6a28");
+
+            </volist>
+        </if>
+        <if condition="count($popularAppListTotal) gt 0">
+            <volist name="popularAppListTotal" id="jsptapp" key="jspt" >
+                starScore(".pt-game{$jspt}",".pt-game{$jspt}","#ff6a28");
+
+        </volist>
+        </if>
+    })
+</script>
+</body>
+</html>
