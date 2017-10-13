@@ -1081,7 +1081,7 @@ class GiftService extends BaseService
             ->where($where)
             ->order('glc.status ASC, glc.receive_time DESC')
             ->count();
-        if($giftNum ===false){
+        if($giftNum === false){
             return $this->setError('计算用户领取的礼包数失败');
         }
         return $giftNum;
@@ -1105,10 +1105,12 @@ class GiftService extends BaseService
         $giftList =  M(C('DB_ZHIYU.DB_NAME') . '.' . 'gift_lib_code', C('DB_ZHIYU.DB_PREFIX'))->alias('glc')
             ->field(
                 'glc.code_id, glc.gift_code, glc.status, glc.use_status, gl.start_time, gl.end_time, 
-                gl.gift_icon, al.app_name,gl.gift_name,gl.original_name'
+                gl.gift_icon, al.app_name,gl.gift_name,gl.original_name, gl.gift_desc, 
+                IFNULL(alib.icon, al.icon) as icon'
             )
             ->join( C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') .  'gift_lib gl ON gl.gift_id = glc.gift_id', 'LEFT')
             ->join( C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') .  'app_lib al ON al.app_id = gl.app_id', 'LEFT')
+            ->join( C('DB_NAME') . '.' . C('DB_PREFIX') .  'app_lib alib ON al.app_id = alib.app_id', 'LEFT')
             ->where($where)
             ->page($currentPage, $pageSize)
             ->order('glc.status ASC, glc.receive_time DESC')
@@ -1119,6 +1121,10 @@ class GiftService extends BaseService
         if(!empty($giftList)){
             foreach($giftList AS &$value) {
                 $value['gift_icon'] = format_url($value['gift_icon']);
+                $value['icon'] = format_url($value['icon']);
+                if(empty($value['gift_icon'])){
+                    $value['gift_icon'] = $value['icon'];
+                }
                 if ($value['status'] !=3 && $value['end_time'] < time()) {
                     $value['status'] = 3;
                     // 更新过期状态

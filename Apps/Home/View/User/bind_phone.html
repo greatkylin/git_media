@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">指娱游戏</a><span>></span>个人中心
+        </div>
+        <div class="pc-container">
+            <!--左侧菜单开始-->
+            <include file='left_menu'/>
+            <!--左侧菜单结束-->
+            <!--右侧内容开始-->
+            <div class="pc-content">
+                <!--用户信息开始-->
+                <include file='user_info_panel'/>
+                <!--用户信息结束-->
+                <!--其他信息容器开始-->
+                <div>
+                    <div class="pc-setphone">
+                        <form action="" id="setphoneform" class="formid4">
+                            <label>请输入手机号:</label>
+                            <input type="text" id="phone" name="phone" value=""><br>
+                            <label>请输入验证码:</label>
+                            <input type="text" id="captcha" name="captcha" value=""><input id="send_code_btn" type="text" <if condition="empty($remainTime)">value="获取验证码" style="background-color: #00E3CB"<else />value="剩余{$remainTime}秒" style="background-color: #CBCBCB"</if> readonly ><br>
+                            <button id="bind_phone_btn" class="pc-setphonebtn">绑定手机号</button>
+                        </form>
+                    </div>
+                </div>
+                <!--其他信息容器结束-->
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--签到日历开始-->
+<include file='sign_calendar'/>
+<!--签到日历结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+
+<script>
+    var remainTime = '{$remainTime}'; //发送验证码后还剩几秒后才可以发
+    var timeCount;
+    $(function() {
+        $("#setphoneform").submit(function(e) {
+            e.preventDefault();
+        });
+
+        if(parseInt(remainTime) > 0){
+            $('#send_code_btn').css('background-color', '#CBCBCB');
+            setCountDown(remainTime);
+        }
+
+        //提交手机号和验证码
+        $("#bind_phone_btn").click(function() {
+            var phone = $.trim($('#phone').val());
+            var captcha = $.trim($('#captcha').val());
+            if(typeof (phone) === 'undefined' || phone === ''){
+                dialogInfo('请填写手机号');
+                return false;
+            }
+            var pattern = /^1[34578]\d{9}$/;
+            if(!pattern.test(phone)){
+                dialogInfo('请手机号码格式不正确');
+                return false;
+            }
+            if(typeof (captcha) === 'undefined' || captcha === ''){
+                dialogInfo('请填写验证码');
+                return false;
+            }
+            var url = "{:U('Home/User/bind_phone')}";
+            $.ajax({
+                type: 'POST',
+                url: url ,
+                dataType:'json',
+                data:{phone: phone, captcha: captcha},
+                async : false, //默认为true 异步
+                success:function(res) {
+                    if(res.error){
+                        dialogInfo(res.detail);
+                    }else{
+                        dialogInfo(res.detail,'', 1, true);
+                    }
+                },
+                error : function() {
+                    dialogInfo('未知错误','', 1, true);
+                }
+            });
+        });
+
+        //发送验证码，并倒计时
+        $('#send_code_btn').click(function () {
+            if(timeCount>0){
+                return false;
+            }
+            var sendBtnObj = $(this);
+            var sendCodeUrl = '{:U("Home/User/ajax_send_sms_captcha")}';
+            var phone = $.trim($('#phone').val());
+            if(typeof (phone) === 'undefined' || phone === ''){
+                dialogInfo('请输入手机号码');
+                return false;
+            }
+            var pattern = /^1[34578]\d{9}$/;
+            if(!pattern.test(phone)){
+                dialogInfo('请手机号码格式不正确');
+                return false;
+            }
+            $.ajax({
+                type: 'POST',
+                url: sendCodeUrl ,
+                dataType:'json',
+                data:{phone: phone, send_type: 6},
+                async : false, //默认为true 异步
+                success:function(res) {
+                    if(res.error){
+                        dialogInfo(res.detail);
+                    }else{
+                        sendBtnObj.css('background-color', '#CBCBCB');
+                        setCountDown(60);
+                    }
+                },
+                error : function() {
+                    dialogInfo('未知错误','', 1, true);
+                }
+            });
+        });
+    });
+
+    //按钮的倒计时
+    var setTime;
+    function setCountDown(time) {
+        time = parseInt(time);
+        timeCount = time;
+        setTime = setInterval(function(){
+            if(time<=0){
+                clearInterval(setTime);
+                $("#send_code_btn").css('background-color', '#00E3CB');
+                $("#send_code_btn").val('获取验证码');
+                return;
+            }
+            time--;
+            var text = '剩余'+time+'秒';
+            $("#send_code_btn").val(text);
+        },1000);
+    }
+</script>
+</body>
+</html>

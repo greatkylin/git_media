@@ -9,6 +9,8 @@
 namespace Home\Service;
 use Common\Service\BaseService;
 use Org\Util\PinYin;
+use Think\Model;
+use Think\Think;
 
 class AppService extends BaseService
 {
@@ -1204,7 +1206,7 @@ class AppService extends BaseService
             $result['video_url'] = $this->getIqiyiVideoUrl($result['file_id'], 2, $result['iqiyi_index']);
 
             if ($result['video_url']) {
-                $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id'], $app['iqiyi_index']);
+                $iqiyiVideoInfo = $this->getIqiyiVideoInfo($result['file_id'], $result['iqiyi_index']);
                 $result['video_size'] = $iqiyiVideoInfo['fileSize'];
                 $result['video_duration'] = $iqiyiVideoInfo['duration'];
                 return $result;
@@ -1534,5 +1536,219 @@ class AppService extends BaseService
             }
         }
         return $topicContent;
+    }
+
+    /**
+     * 计算用户下载过的游戏数量
+     * @author xy
+     * @since 2017/10/10 14:32
+     * @param $userId
+     * @return bool|int
+     */
+    public function countUserDownAppNum($userId){
+        $where = array(
+            'ad.uid' => $userId,
+            'alist.is_publish' => array('IN', array(1))
+        );
+        $totalNum = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down `ad` on list.app_id = ad.app_id')
+            ->group('alist.app_id')
+            ->where($where)
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询失败');
+        }
+        return $totalNum;
+    }
+
+    /**
+     * 分页获取用户下载过的游戏
+     * @author xy
+     * @since 2017/10/10 14:52
+     * @param int $userId 用户id
+     * @param int $currentPage 当前页
+     * @param int $pageSize 每页大小
+     * @return bool|array
+     */
+    public function getUserDownAppListByPage($userId, $currentPage, $pageSize){
+        $where = array(
+            'ad.uid' => $userId,
+            'alist.is_publish' => array('IN', array(1))
+        );
+        $appList = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down `ad` on list.app_id = ad.app_id')
+            ->group('alist.app_id')
+            ->where($where)
+            ->order('ad.down_time DESC')
+            ->limit($currentPage, $pageSize)
+            ->select();
+        if($appList === false){
+            return $this->setError('查询失败');
+        }
+        return $appList;
+    }
+
+    /**
+     * 计算用户收藏的游戏数量
+     * @author xy
+     * @since 2017/10/10 14:51
+     * @param int $userId 用户id
+     * @return bool
+     */
+    public function countUserCollectionAppNum($userId){
+        //媒体站已上架，用户未取消收藏的
+        $where = array(
+            'mc.uid' => $userId,
+            'mc.status' => 1,
+            'alist.is_publish' => array('IN', array(1)),
+        );
+        $totalNum = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_collection `mc` on list.app_id = mc.app_id')
+            ->where($where)
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询失败');
+        }
+        return $totalNum;
+    }
+
+    /**
+     * 分页获取用户收藏的游戏
+     * @author xy
+     * @since 2017/10/10 15:21
+     * @param int $userId 用户id
+     * @param int $currentPage 当前页
+     * @param int $pageSize 每页大小
+     * @return bool|array
+     */
+    public function getUserCollectionAppListByPage($userId, $currentPage, $pageSize){
+        $where = array(
+            'mc.uid' => $userId,
+            'mc.status' => 1,
+            'alist.is_publish' => array('IN', array(1)),
+        );
+        $appList = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_collection `mc` on list.app_id = mc.app_id')
+            ->where($where)
+            ->order('mc.create_time DESC')
+            ->limit($currentPage, $pageSize)
+            ->select();
+        if($appList === false){
+            return $this->setError('查询失败');
+        }
+        return $appList;
+    }
+
+    /**
+     * 计算用户预约的游戏数量
+     * @author xy
+     * @since 2017/10/10 15:06
+     * @param int $userId 用户id
+     * @return bool|int
+     */
+    public function countUserSubscribeAppNum($userId){
+        $where = array(
+            'ms.uid' => $userId,
+            'ms.status' => 1,
+            'alist.is_publish' => array('IN', array(1)),
+        );
+        $totalNum = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_subscribe `ms` on list.app_id = ms.app_id')
+            ->where($where)
+            ->count();
+        if($totalNum === false){
+            return $this->setError('查询失败');
+        }
+        return $totalNum;
+    }
+
+    /**
+     * 分页获取用户预约的游戏
+     * @author xy
+     * @since 2017/10/10 15:22
+     * @param int $userId 用户id
+     * @param int $currentPage 当前页
+     * @param int $pageSize 每页大小
+     * @return bool|array
+     */
+    public function getUserSubscribeAppListByPage($userId, $currentPage, $pageSize){
+        $where = array(
+            'ms.uid' => $userId,
+            'ms.status' => 1,
+            'alist.is_publish' => array('IN', array(1)),
+        );
+        $appList = M('app_list')->alias('alist')
+            ->field(
+                'alist.`app_id`, IFNULL(alib.app_name, lib.app_name) as app_name, 
+                IFNULL(alib.icon, lib.icon) as icon, lib.start_down_time'
+            )
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id')//关联指娱app_list表
+            ->join('INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id')//关联指娱游戏库表
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id')//关联媒体站游戏库表
+            ->join('LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_subscribe `ms` on list.app_id = ms.app_id')
+            ->where($where)
+            ->order('lib.start_down_time ASC')
+            ->limit($currentPage, $pageSize)
+            ->select();
+        if($appList === false){
+            return $this->setError('查询失败');
+        }
+        return $appList;
+    }
+
+    /**
+     * 用户的游戏，包含预约，下载过的，收藏的
+     * @author xy
+     * @since 2017/10/13 19:10
+     * @param int $userId 用户id
+     * @param int $currentPage 当前页
+     * @param int $pageSize 页大小
+     * @return bool|mixed
+     */
+    public function getUserAppList($userId, $currentPage, $pageSize){
+        $model = new \Think\Model();
+        $downAppSql = 'SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_app_down `ad` on list.app_id = ad.app_id WHERE ad.uid = "'.$userId.'" AND alist.is_publish IN (1) GROUP BY alist.app_id ORDER BY ad.down_time DESC';
+        $collectAppSql = 'SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_my_collection `mc` on list.app_id = mc.app_id WHERE mc.uid = "'.$userId.'" AND mc.status = 1 AND alist.is_publish IN (1) ORDER BY mc.create_time DESC';
+        $subscribeAppSql = 'SELECT alist.`app_id`,IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_my_subscribe `ms` on list.app_id = ms.app_id WHERE ms.uid = "'.$userId.'" AND ms.status = 1 AND alist.is_publish IN (1) ORDER BY lib.start_down_time ASC';
+
+        $unionSql = 'SELECT `app_id`, app_name, icon FROM (('.$downAppSql.') UNION ('.$collectAppSql.') UNION ('.$subscribeAppSql.')) AS app_list ORDER BY app_list.app_id DESC LIMIT '.$currentPage.', '.$pageSize;
+
+        $appList = $model->query($unionSql);
+        if($appList === false){
+            return $this->setError('查询失败');
+        }
+        return $appList;
     }
 }

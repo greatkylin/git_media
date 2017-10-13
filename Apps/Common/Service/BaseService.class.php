@@ -161,20 +161,6 @@ class BaseService
     }
 
     /**
-     * 获取后台用户信息
-     * @author xy
-     * @since 2017/07/25 17:05
-     * @return bool|mixed
-     */
-    protected static function getUserInfo(){
-        $userInfo = session('media_web_user');
-        if(!$userInfo){
-            return false;
-        }
-        return $userInfo;
-    }
-
-    /**
      * 获取爱奇艺授权
      * @return array
      */

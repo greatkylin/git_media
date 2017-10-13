@@ -33,7 +33,7 @@
                class="btn btn-success radius" style="text-decoration:none">
                 <i class="Hui-iconfont Hui-iconfont-edit"></i> 高级设置
             </a>
-            <a href="{:C('URL.ZHIYU_ADMIN_URL').U('Admin/Articlelib/add_article')}" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-add"></i> 添加文章</a>
+            <a href="{:C('URL.ZHIYU_URL').U('Admin/Articlelib/add_article')}" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-add"></i> 添加文章</a>
         </span>
     </div>
     <table class="table table-border table-bordered table-bg">
@@ -111,7 +111,7 @@
                         </a>
                     </if>
                     <a title="编辑文章"
-                       href="{:C('URL.ZHIYU_ADMIN_URL').U('Admin/Articlelib/edit_article/artid/'.$val[id])}"
+                       href="{:C('URL.ZHIYU_URL').U('Admin/Articlelib/edit_article/artid/'.$val[id])}"
                        class="btn btn-success radius" style="text-decoration:none">
                         <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑文章
                     </a>

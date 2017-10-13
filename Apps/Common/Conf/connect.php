@@ -5,6 +5,8 @@
  * Date: 2017/8/18
  * Time: 15:08
  */
+// 指娱APP
+$connect['APP']['KEY'] = '6e70865e4d831f4503e69f4a5b754fd6';	//md5("zhiyuappkey")
 // 云信留客（发送短信）
 $connect['sms']['userCode'] = 'xmrk';
 $connect['sms']['userPass'] = 'xmrk741';
@@ -15,6 +17,6 @@ $connect['iqiyi']['appSecret'] = ['bfbed058a29670d1d6c053113f295cee','3af0f6b694
 $connect['iqiyi']['managerUrl'] = 'http://openapi.iqiyi.com/';
 $connect['iqiyi']['uploadUrl'] = 'http://upload.iqiyi.com/';
 
-//指娱正式服域名 http://app.zhiyugame.com ，上线时需要修改此项，
-$connect['URL']['ZHIYU_ADMIN_URL'] = 'http://test.app.zhiyugame.com';
+//指娱正式服域名 http://app.zhiyugame.com/ ，上线时需要修改此项，
+$connect['URL']['ZHIYU_URL'] = 'http://app.zhiyu.local/';
 return $connect;

@@ -205,4 +205,77 @@ class IndexController extends HomeBaseController {
         $this->assign('currentTime', time());
         $this->display('activity_detail');
     }
+
+    /**
+     * 关于我们
+     * @author xy
+     * @since 2017/10/11 11:45
+     */
+    public function about_us(){
+        $keyword = 'ABOUT_US';
+        $service = new IndexService();
+        $content = $service->getIndependentContentByKeyword($keyword);
+        if($content === false){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('content', $content);
+        $this->display();
+    }
+
+    /**
+     * 联系我们
+     * @author xy
+     * @since 2017/10/11 14:32
+     */
+    public function contact_us(){
+        $keyword = 'CONTACT_US';
+        $service = new IndexService();
+        $content = $service->getIndependentContentByKeyword($keyword);
+        if($content === false){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('content', $content);
+        $this->display();
+    }
+
+    /**
+     * 招贤纳士
+     * @author xy
+     * @since 2017/10/11 14:33
+     */
+    public function join_us(){
+        $keyword = 'NEW_JOBS';
+        $service = new IndexService();
+        $content = $service->getIndependentContentByKeyword($keyword);
+        if($content === false){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('content', $content);
+        $this->display();
+    }
+
+    /**
+     * 客服反馈
+     * @author xy
+     * @since 2017/10/11 14:35
+     */
+    public function customer_service(){
+        $this->display();
+    }
+
+    /**
+     * 网站地图
+     * @author xy
+     * @since 2017/10/11 14:36
+     */
+    public function sitemap(){
+        $keyword = 'SITE_MAP';
+        $service = new IndexService();
+        $content = $service->getIndependentContentByKeyword($keyword);
+        if($content === false){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('content', $content);
+        $this->display();
+    }
 }

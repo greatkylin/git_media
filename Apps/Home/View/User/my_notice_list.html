@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">指娱游戏</a><span>></span>个人中心
+        </div>
+        <div class="pc-container">
+            <!--左侧菜单开始-->
+            <include file='left_menu'/>
+            <!--左侧菜单结束-->
+            <!--右侧内容开始-->
+            <div class="pc-content">
+                <!--用户信息开始-->
+                <include file='user_info_panel'/>
+                <!--用户信息结束-->
+                <!--其他信息容器开始-->
+                <div>
+                    <div class="pc-mynews">
+
+                    </div>
+                </div>
+                <!--其他信息容器结束-->
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--签到日历开始-->
+<include file='sign_calendar'/>
+<!--签到日历结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
+    $(function() {
+        $("form").submit(function(e) {
+            e.preventDefault();
+
+        });
+    });
+    //展开收起消息详情,同时标识为已阅
+    function explandViewNotice() {
+        $(".pc-mynewspic").click(function() {
+            var index = $(this).data('index');
+            var notice_id = $(this).data('notice_id');
+            var contentObj = $('.pc-npsw'+index);
+            if(contentObj.hasClass('pcp')){
+                contentObj.removeClass("pcp");
+                $(this).css("background-image", "url('__PUBLIC__/Home/static/gulp/img/pc-mynewspicdw.png')");
+            }else{
+                contentObj.addClass("pcp");
+                $(this).css("background-image", "url('__PUBLIC__/Home/static/gulp/img/pc-mynewspic.png')");
+            }
+            var parentObj = $(this).parents('.pc-newswid');
+            url = '{:U("Home/User/my_notice_read_by_id")}';
+            $.ajax({
+                type: 'POST',
+                url: url ,
+                dataType:'json',
+                data:{notice_id: notice_id},
+                async : false, //默认为true 异步
+                success:function(res) {
+                    if(!res.error){
+                        parentObj.addClass('pc-newsgray');
+                    }else{
+                        dialogInfo(res.detail);
+                    }
+                },
+                error : function() {
+                    dialogInfo('未知错误');
+                }
+            });
+        })
+    }
+</script>
+<script>
+    var currentPage = "{$page}";
+    var pageSize = "{$pageSize}";
+    ajaxGetNoticeResult();
+
+    $('#showList').click(function(){
+        ajaxGetNoticeResult();
+    });
+    function ajaxGetNoticeResult() {
+        var url = "{:U('Home/User/my_notice_list')}";
+        $.ajax({
+            type: 'POST',
+            url: url ,
+            dataType:'json',
+            data:{p: currentPage, page_size: pageSize},
+            async : false, //默认为true 异步
+            success:function(res) {
+                if(res.error){
+                    $('.pc-mynews').append(res.detail);
+                }else{
+                    if (typeof (res.data) !== 'undefined') {
+                        var noticeList = res.data.noticeList;
+                        if(noticeList.length > 0){
+                            currentPage = res.data.currentPage + 1;
+                            pageSize = res.data.pageSize;
+                            var html = '';
+                            for (var i = 0; i < noticeList.length; i++){
+                                if(noticeList[i].is_read > 0){
+                                    var isReadHtml = 'pc-newsgray';
+                                }else{
+                                    var isReadHtml = '';
+                                }
+                                html +=
+                                    '<div class="pc-newswid '+isReadHtml+'">'+
+                                        '<section></section>'+
+                                        '<div class="newpicshow">'+
+                                            '<div>'+
+                                                '<p>'+noticeList[i].title+'</p>'+
+                                                '<div class="pc-npsw'+i+' pcp">'+noticeList[i].content+'</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="newsright">'+
+                                            '<p>'+noticeList[i].create_time+'</p>'+
+                                            '<div class="pc-mynewspic" data-notice_id = "'+noticeList[i].notice_id+'" data-index="'+i+'"></div>'+
+                                        '</div>'+
+                                    '</div>';
+
+                            }
+                            $('.pc-mynews').append(html);
+                            explandViewNotice();
+                        }
+                    }else{
+                        $('.pc-mynews').append(res.detail);
+                    }
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

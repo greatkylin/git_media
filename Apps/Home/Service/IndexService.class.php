@@ -284,4 +284,30 @@ class IndexService extends BaseService
 
         return $dailyQuesImgList;
     }
+
+    /**
+     * 通过关键字获取关于我们，联系我们等单页内容
+     * @author xy
+     * @since 2017/10/11 14:41
+     * @param string $keyword 关键词
+     * @return bool|mixed
+     */
+    public function getIndependentContentByKeyword($keyword){
+        if(empty(trim($keyword))){
+            return $this->setError('必填参数缺失');
+        }
+        $where = array(
+            'keyword' => strtoupper($keyword),
+            'is_publish' => 1,
+            'is_delete' => 1
+        );
+        $content = M('independent_content')->where($where)->find();
+        if($content === false){
+            return $this->setError('未找到对应内容');
+        }
+        if(!empty($content)){
+            $content['content'] = htmlspecialchars_decode($content['content']);
+        }
+        return $content;
+    }
 }

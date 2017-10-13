@@ -10,6 +10,7 @@ namespace Home\Controller;
 
 
 use Common\Service\SmsService;
+use Home\Service\AppService;
 use Home\Service\GiftService;
 use Home\Service\UserService;
 
@@ -20,6 +21,13 @@ class UserController extends HomeBaseController
         parent::_initialize();
         if(!$this->userInfo){
             $this->error('请先登录', '/');
+        }
+        //判断是否已签到
+        $signTime = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("uid='".$this->userInfo['uid']."'")->getField('signtime');
+        $nowSignTime = strtotime(date('Y-m-d'));
+        if($nowSignTime - $signTime < 0){
+            $isSign = true;
+            $this->assign('isSign', $isSign);
         }
     }
 
@@ -36,6 +44,8 @@ class UserController extends HomeBaseController
         if($money === false){
              $this->error($userService->getFirstError());
         }
+        $money = round($money, 2);
+        $money = explode('.', $money);
         //2.获取优惠券数量
         $couponNumInfo = $userService->countUserCouponInfo($userId);
         if($couponNumInfo === false){
@@ -63,11 +73,12 @@ class UserController extends HomeBaseController
             $this->error('请先登录');
         }
         //当前页
-        $currentPage = intval(I('p'));
-        if(empty($currentPage)){
-            $currentPage = 1;
+        $page = intval(I('p'));
+        if(empty($page)){
+            $page = 1;
         }
         $pageSize = intval(I('page_size', 4));
+        $currentPage = $pageSize * ($page - 1);
         if(IS_AJAX){
             $service = new GiftService();
             // 查询满足要求的总记录数
@@ -84,13 +95,13 @@ class UserController extends HomeBaseController
                 $this->outputJSON(false, '', '您还没有领取礼包');
             }
             $data = array(
-                'currentPage' => $currentPage,
+                'page' => $page,
                 'pageSize' => $pageSize,
                 'giftList' => $giftList
             );
             $this->outputJSON(false,'','获取成功', $data);
         }
-        $this->assign('currentPage', $currentPage);
+        $this->assign('page', $page);
         $this->assign('pageSize', $pageSize);
         $this->display();
     }
@@ -105,11 +116,12 @@ class UserController extends HomeBaseController
         if(!$userId){
             $this->error('请先登录');
         }
-        $currentPage = intval(I('p'));
-        if(empty($currentPage)){
-            $currentPage = 1;
+        $page = intval(I('p'));
+        if(empty($page)){
+            $page = 1;
         }
         $pageSize = intval(I('page_size', 4));
+        $currentPage = $pageSize * ($page - 1);
         if(IS_AJAX){
             $service = new UserService();
             $couponList = $service->getUserAllCouponByPage($userId, $currentPage, $pageSize);
@@ -120,13 +132,13 @@ class UserController extends HomeBaseController
                 $this->outputJSON(false, '', '您还没有优惠券');
             }
             $data = array(
-                'currentPage' => $currentPage,
+                '$page' => $page,
                 'pageSize' => $pageSize,
                 'couponList' => $couponList
             );
             $this->outputJSON(false,'','获取成功', $data);
         }
-        $this->assign('currentPage', $currentPage);
+        $this->assign('page', $page);
         $this->assign('pageSize', $pageSize);
         $this->display();
 
@@ -139,12 +151,12 @@ class UserController extends HomeBaseController
      */
     public function my_notice_list(){
         $userId = $this->getUserId();
-
-        $currentPage = intval(I('p'));
-        if(empty($currentPage)){
-            $currentPage = 1;
+        $page = intval(I('p'));
+        if(empty($page)){
+            $page = 1;
         }
-        $pageSize = intval(I('page_size', 4));
+        $pageSize = intval(I('page_size', 3));
+        $currentPage = $pageSize * ($page - 1);
         if(IS_AJAX){
             $where = array();
             $where['u_n.uid'] = $userId;
@@ -161,12 +173,14 @@ class UserController extends HomeBaseController
             }
 
             $data = array(
-                'currentPage' => $currentPage,
+                '$page' => $page,
                 'pageSize' => $pageSize,
-                'couponList' => $noticeList
+                'noticeList' => $noticeList
             );
             $this->outputJSON(false,'','获取成功', $data);
         }
+        $this->assign('currentPage', $currentPage);
+        $this->assign('pageSize', $pageSize);
         $this->display();
     }
 
@@ -193,9 +207,9 @@ class UserController extends HomeBaseController
             ->save($save);
 
         if ($result !== false) {
-            $this->outputJSON(false,'','删除成功');
+            $this->outputJSON(false,'','已阅');
         } else {
-            $this->outputJSON(true,'','删除失败');
+            $this->outputJSON(true,'','失败');
         }
     }
 
@@ -228,8 +242,32 @@ class UserController extends HomeBaseController
         }
     }
 
+    /**
+     * 我的游戏，包括下载过，收藏的，与预约的游戏
+     * @author xy
+     * @since 2017/10/10 13:52
+     */
     public function my_app_list(){
+        $userId = $this->getUserId();
+        if(!$userId){
+            $this->error(true, '', '请先登录');
+        }
+        //当前页
+        $page = intval(I('p'));
+        if(empty($page)){
+            $page = 1;
+        }
+        $pageSize = intval(I('page_size', 6));
+        $currentPage = $pageSize * ($page - 1);
+        if(IS_AJAX){
+            $appService = new AppService();
+            $appList = $appService->getUserAppList($userId, $currentPage, $pageSize);
+            $this->assign('appList', $appList);
+        }
 
+        $this->assign('page', $page);
+        $this->assign('appList', $appList);
+        $this->display();
     }
 
     /**
@@ -238,6 +276,21 @@ class UserController extends HomeBaseController
      * @since 2017/09/30 15:50
      */
     public function exchange_code(){
+        if(IS_POST){
+            $url = U('Home/User/exchange_code');
+            $code = trim(I('code', null));
+            if(empty($code)){
+                $this->outputJSON(true,'','请填写激活码');
+            }
+            $service = new UserService();
+            //执行兑换激活码操作
+            if($service->exchangeCode($code)){
+                $this->outputJSON(false,'','兑换成功');
+            }else{
+                $this->outputJSON(true, '', $service->getFirstError());
+            }
+        }
+        $this->display();
 
     }
 
@@ -247,29 +300,47 @@ class UserController extends HomeBaseController
      * @since 2017/09/29 17:22
      */
     public function change_nickname(){
-        if(IS_POST){
+        if(IS_AJAX){
             $userId = $this->getUserId();
             if(!$userId){
-                $this->error('请先登录');
+                $this->outputJSON(true, 'false',  '请先登录');
             }
             $nickname = trim(I('nickname'));
             if(empty($nickname)){
-                $this->error('请输入名称');
+                $this->outputJSON(true, 'false',  '请输入名称');
             }
-            if($nickname = $this->userInfo['nickname']){
-                $this->error('新名称与旧名称一致，无需修改');
+            $originalNickname = $this->getUserNickName();
+            if($nickname == $originalNickname){
+                $this->outputJSON(true, 'false',  '新名称与旧名称一致，无需修改');
             }
-            $data = array(
-                'nickname' => $userId,
+
+            $paramArr = array(
+                'token' => $this->userInfo['token'],
+                'login_name' => session('login_name'),
+                'timestamp' => time(),
+                'nickname' => $nickname,
             );
-            $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where(array('uid' => $userId))->save($data);
-            if(!$result){
-                $this->error('修改名称失败');
+            $paramArr['sign'] = make_sign($paramArr, array('sign'));
+
+            $url = C('URL.ZHIYU_URL').U('Api/Mycenter/modify_user');
+            $result = http($url, $paramArr, 'POST');
+            $result = json_decode($result, true);
+
+            if(empty($result)){
+                $this->outputJSON(true, 'false',  '未知错误');
             }
-            //更新session中的手机信息
-            $user['nickname'] = $nickname;
-            unset($user['password']);
-            session('media_web_user', $user);
+            if(isset($result['flag']) && $result['flag'] == 'success'){
+                //更新session中的手机信息
+                $this->userInfo['nickname'] = $nickname;
+                session('media_web_user', $this->userInfo);
+                $this->outputJSON(false, 'success', '修改成功');
+            }else if(isset($result['flag']) && $result['flag'] == 'login'){
+                unset_user_login_info();
+                $this->outputJSON(true, 'false', $result['info']);
+            }else{
+                $this->outputJSON(true, 'false',  $result['info']);
+            }
+
         }
         $this->display();
     }
@@ -280,17 +351,17 @@ class UserController extends HomeBaseController
      * @since 2017/09/29 14:43
      */
     public function change_password(){
-        if(IS_POST){
+        if(IS_AJAX){
             //修改手机的方式， 1验证旧密码，2验证手机
             $type = intval(I('post.type', 0));
             $userId = $this->getUserId();
             if(empty($userId)){
-                $this->error('请先登录');
+                $this->outputJSON(true, 'false',  '请先登录');
             }
             $userService = new UserService();
             $userInfo = $userService->getUserByUserId($userId);
             if($userInfo === false){
-                $this->error($userService->getFirstError());
+                $this->outputJSON(true, 'false',  $userService->getFirstError());
             }
             if($type == 1){
                 $oldPassword = trim(I('post.old_password'));
@@ -298,7 +369,7 @@ class UserController extends HomeBaseController
                 $newPassword2 = trim(I('post.new_password2'));
                 $result = $userService->changePasswordByValidOldPass($userId, $oldPassword, $newPassword, $newPassword2);
                 if(!$result){
-                    $this->error($userService->getFirstError());
+                    $this->outputJSON(true, 'false',  $userService->getFirstError());
                 }
             }else if($type == 2){
                 $phone = trim(I('post.phone'));
@@ -306,14 +377,13 @@ class UserController extends HomeBaseController
                 $newPassword = trim(I('post.password'));
                 $result = $userService->changePasswordByValidBindPhone($userId, $phone, $captcha, $newPassword);
                 if(!$result){
-                    $this->error($userService->getFirstError());
+                    $this->outputJSON(true, 'false',  $userService->getFirstError());
                 }
             }else{
-                $this->error('请选择正确的身份验证的方式');
+                $this->outputJSON(true, 'false',  '请选择正确的身份验证的方式');
             }
-            $this->success('密码修改成功');
+            $this->outputJSON(false, 'success',  '密码修改成功');
         }
-        //TODO 模板还没有做
         $this->display();
 
     }
@@ -324,16 +394,206 @@ class UserController extends HomeBaseController
      * @since 2017/09/29 16:14
      */
     public function bind_phone(){
-        if(IS_POST){
+        if(IS_AJAX){
             $phone = trim(I('phone'));
             $captcha = trim(I('captcha'));
             $userService = new UserService();
             $result = $userService->bindUserPhone($phone, $captcha);
             if(!$result){
-                $this->error($userService->getFirstError());
+                $this->outputJSON(true, 'false', $userService->getFirstError());
             }
-            $this->success('手机绑定成功');
+            session('user_last_send_sms_time', 0);
+            $this->outputJSON(false, 'success', '手机绑定成功');
         }
+        //距离下一次可以发验证还剩余的时间
+        $remainTime = 0;
+        $lastSendTime = session('user_last_send_sms_time');
+        if($lastSendTime){
+            $remainTime = 60 - (time() - $lastSendTime);
+            if($remainTime<0){
+                $remainTime = 0;
+            }
+        }
+        $this->assign('remainTime', $remainTime);
+        $this->display();
+    }
+
+    /**
+     * 每日签到
+     * @author xy
+     * @since 2017/10/09 16:17
+     */
+    public function ajax_daily_sign(){
+        if(!$this->userInfo){
+            $this->outputJSON(true, 'login', '请先登录');
+        }
+        $paramArr = array(
+            'token' => $this->userInfo['token'],
+            'login_name' => session('login_name'),
+            'timestamp' => time(),
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        $url = C('URL.ZHIYU_URL').U('Api/Mycenter/everyday_sign');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
+
+        if(empty($result)){
+            $this->outputJSON(true, 'false',  '未知错误');
+        }
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            //记录用户的签到的时间,并获取当月已签到时间以及签到天数
+            $service = new UserService();
+            $signInfoArr = $service->userDailySignLog();
+            //var_dump($signInfoArr);die;
+            $this->outputJSON(false, 'success', $result['info'], $signInfoArr);
+        }else if(isset($result['flag']) && $result['flag'] == 'login'){
+            unset_user_login_info();
+            $this->outputJSON(true, 'false', $result['info']);
+        }else{
+            $this->outputJSON(true, 'false',  $result['info']);
+        }
+    }
+
+    /**
+     * 用户领取礼包
+     * @author xy
+     * @since 2017/10/10 10:59
+     */
+    public function receive_gift(){
+        if(!$this->userInfo){
+            $this->outputJSON(true, 'login', '请先登录');
+        }
+        //礼包id
+        $giftId = intval(I('gift_id'));
+        if(empty($giftId)){
+            $this->outputJSON(true, 'false', '必填参数缺失');
+        }
+        $paramArr = array(
+            'token' => $this->userInfo['token'],
+            'login_name' => session('login_name'),
+            'timestamp' => time(),
+            'gift_id' => $giftId,
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        $url = C('URL.ZHIYU_URL').U('Api/Gift/get_gift_media');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
+        if(empty($result)){
+            $this->outputJSON(true, 'false',  '未知错误');
+        }
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            $this->outputJSON(false, 'success', $result['data']['obj']['info']);
+        }else if(isset($result['flag']) && $result['flag'] == 'login'){
+            unset_user_login_info();
+            $this->outputJSON(true, 'false', $result['info']);
+        }else{
+            $this->outputJSON(true, 'false',  $result['info']);
+        }
+    }
+
+    /**
+     * 修改头像页
+     * @author xy
+     * @since 2017/10/11 09:22
+     */
+    public function modify_avatar(){
+        $this->display();
+    }
+
+    /**
+     * ajax方式调用修改头像接口
+     * @author xy
+     * @since 2017/10/11 09:23
+     */
+    public function ajax_do_modify_avatar(){
+        if(!$this->userInfo){
+            $this->outputJSON(true, 'login', '请先登录');
+        }
+
+        $avatarPath = upload_user_avatar_temp();
+        //php5.5以上推荐使用CURLFile上传文件，5.5以下可以使用
+        if (class_exists('\CURLFile')) {
+            $fileInfo =  new \CURLFile($avatarPath);
+        } else {
+            $fileInfo  = '@' . $avatarPath;
+        }
+        if(!$avatarPath){
+            $this->outputJSON(true, 'false', 上传失败);
+        }
+        $paramArr = array(
+            'token' => $loginUserInfo['token'],
+            'login_name' => session('login_name'),
+            'timestamp' => time(),
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        $paramArr['image']  = $fileInfo;
+
+        $url = C('URL.ZHIYU_URL').U('Api/Mycenter/modify_head');
+        $result = http($url, $paramArr, 'POST', array(), true);
+
+        $result = json_decode($result, true);
+        //上传到指娱后删除本地的图片
+        if(is_file($avatarPath)){
+            unlink($avatarPath);
+        }
+        if(empty($result)){
+            $this->outputJSON(true, 'false',  '未知错误');
+        }
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            $this->outputJSON(false, 'success', $result['info'], array('head_url' => $result['data']['obj']));
+        }else if(isset($result['flag']) && $result['flag'] == 'login'){
+            unset_user_login_info();
+            $this->outputJSON(true, 'false', $result['info']);
+        }else{
+            $this->outputJSON(true, 'false',  $result['info']);
+        }
+    }
+
+    /**
+     * 修改用户名
+     * @author xy
+     * @since 2017/10/11 10:51
+     */
+    public function change_username(){
+        if(IS_AJAX){
+            if(!$this->userInfo){
+                $this->outputJSON(true, 'login', '请先登录');
+            }
+            $userName = trim(I('username'));
+            $service = new UserService();
+            if(!$service->validateUserName($userName)){
+                $this->outputJSON(true, 'false', $service->getFirstError());
+            }
+            $paramArr = array(
+                'token' => $this->userInfo['token'],
+                'login_name' => session('login_name'),
+                'timestamp' => time(),
+                'username' => $userName,
+            );
+            $paramArr['sign'] = make_sign($paramArr, array('sign'));
+
+            $url = C('URL.ZHIYU_URL').U('Api/Mycenter/bind_username');
+            $result = http($url, $paramArr, 'POST');
+            $result = json_decode($result, true);
+            if(empty($result)){
+                $this->outputJSON(true, 'false',  '未知错误');
+            }
+            if(isset($result['flag']) && $result['flag'] == 'success'){
+                $this->outputJSON(false, 'success', $result['info']);
+            }else if(isset($result['flag']) && $result['flag'] == 'login'){
+                unset_user_login_info();
+                $this->outputJSON(true, 'false', $result['info']);
+            }else{
+                $this->outputJSON(true, 'false',  $result['info']);
+            }
+        }
+        //从数据库获取用户信息，用来判断修改用户名的表单是否可以修改
+        $service = new UserService();
+        $user = $service->getUserByUserId($this->userInfo['uid']);
+        if(!$user){
+            $this->error($service->getFirstError());
+        }
+        $this->assign('user', $user);
         $this->display();
     }
 }

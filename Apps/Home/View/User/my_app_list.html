@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
+</head>
+<body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">指娱游戏</a><span>></span>个人中心
+        </div>
+        <div class="pc-container">
+            <!--左侧菜单开始-->
+            <include file='left_menu'/>
+            <!--左侧菜单结束-->
+            <!--右侧内容开始-->
+            <div class="pc-content">
+                <!--用户信息开始-->
+                <include file='user_info_panel'/>
+                <!--用户信息结束-->
+                <!--其他信息容器开始-->
+                <div>
+                    <div class="pc-mygame">
+                        <p>我的游戏</p>
+                        <div>
+                            <div>
+                                <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                <p>龙之谷</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                <p>龙之谷</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="../../static//gulp/img/game-sugust.png" alt="">
+                                    <p>龙之谷</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--其他信息容器结束-->
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--签到日历开始-->
+<include file='sign_calendar'/>
+<!--签到日历结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
+    var currentPage = "{$page}";
+    var pageSize = "{$pageSize}";
+    ajaxGetCouponResult();
+    if($('.single-coupon').length > 0){
+        $('.pc-coupon').append('<hr />')
+    }
+    $('#showList').click(function(){
+        ajaxGetCouponResult();
+    });
+    function ajaxGetCouponResult() {
+        var url = "{:U('Home/User/my_coupon_list')}";
+        console.log(url);
+        $.ajax({
+            type: 'POST',
+            url: url ,
+            dataType:'json',
+            data:{p: currentPage, page_size: pageSize},
+            async : false, //默认为true 异步
+            success:function(res) {
+                if(res.error){
+                    $('.pc-couponcontent').append(res.detail);
+                }else{
+                    if (typeof (res.data) !== 'undefined') {
+                        var couponList = res.data.couponList;
+                        if(couponList.length > 0){
+                            currentPage = res.data.currentPage + 1;
+                            pageSize = res.data.pageSize;
+                            var html = '';
+                            for (var i = 0; i < couponList.length; i++){
+                                var benefitNumHtml =  '';
+                                var couponTypeHtml = '';
+                                //优惠券类型判断 0折扣 1满减 2抵用
+                                if(couponList[i].coupon_type == 0){
+                                    benefitNumHtml = '<b>'+couponList[i].discount_text[0]+'</b>.'+couponList[i].discount_text[1]+'&nbsp;折';
+                                    couponTypeHtml = '<div class="pc-couponpiczk"></div>';
+                                }else if(couponList[i].coupon_type == 1){
+                                    benefitNumHtml = '<small>￥</small><b>'+couponList[i].money+'</b>元';
+                                    couponTypeHtml = '<div class="pc-couponpicmj"></div>';
+                                }else {
+                                    benefitNumHtml = '<small>￥</small><b>'+couponList[i].money+'</b>元';
+                                    couponTypeHtml = '<div class="pc-couponpicdy"></div>';
+                                }
+                                //优惠券使用范围判断
+                                var scope_text = '';
+                                if(couponList[i].coupon_scope == 0){
+                                    scope_text = '通用';
+                                }else if(couponList[i].coupon_scope == 1){
+                                    scope_text = '指定';
+                                }else {
+                                    scope_text = '限制';
+                                }
+                                //优惠券状态 0未使用 1使用 2过期
+                                var couponStatusHtml = '';
+                                if(couponList[i].status == 0){
+                                    couponStatusHtml = '';
+                                }else if(couponList[i].coupon_scope == 1){
+                                    couponStatusHtml = '<div class="yongguoquan"></div>';
+                                }else {
+                                    couponStatusHtml = '<div class="guoqiquan"></div>';
+                                }
+                                html +=
+                                    '<div class="single-coupon">'+
+                                    '<div class="pc-couponleft">'+
+                                    benefitNumHtml +
+                                    couponStatusHtml +
+                                    '</div>'+
+                                    '<div class="pc-couponright">'+
+                                    '<p><span>'+scope_text+'</span>'+couponList[i].title+'</p>'+
+                                    '<div class="pc-couponul">'+
+                                    '<ul>'+
+                                    '<li>有效时间&nbsp;&nbsp;'+couponList[i].create_time+'-'+couponList[i].active_time+'</li>'+
+                                    '<li>'+couponList[i].zd_text+'</li>'+
+                                    '</ul>'+
+                                    '</div>'+
+                                    couponTypeHtml+
+                                    '</div>'+
+                                    '</div>';
+                            }
+                            $('.pc-couponcontent').append(html);
+                        }
+                    }else{
+                        $('.pc-couponcontent').append(res.detail);
+                    }
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+</script>
+</body>
+</html>

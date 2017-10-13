@@ -17,21 +17,8 @@ class HomeBaseController extends Controller {
         //获取推荐的热词
         $this->getRecommendSearchKeyword(5);
         //获取用户信息
-        $this->userInfo = $this->getUserInfo();
+        $this->userInfo = get_user_info();
         $this->assign('userInfo', $this->userInfo);
-    }
-
-    /**
-     * 获取已登录用户信息
-     * @author xy
-     * @since 2017/09/27 15:09
-     * @return bool|mixed
-     */
-    protected function getUserInfo(){
-        if(session('media_web_user')){
-            return session('media_web_user');
-        }
-        return false;
     }
 
     /**
@@ -44,8 +31,20 @@ class HomeBaseController extends Controller {
         return empty($this->userInfo) ? false : $this->userInfo['uid'];
     }
 
+    /**
+     * 获取用户的昵称
+     * @author xy
+     * @since 2017/10/11 11:29
+     * @return bool
+     */
     protected function getUserNickName(){
-        return empty($this->userInfo) ? false : $this->userInfo['nickname'];
+        $userId = $this->getUserId();
+        if(!$userId){
+            return false;
+        }
+        $service = new UserService();
+        $userInfo = $service->getUserByUserId($userId);
+        return empty($userInfo) ? false : $userInfo['nickname'];
     }
 
     /**
@@ -152,15 +151,61 @@ class HomeBaseController extends Controller {
         $phone = trim(I('phone'));
         $sendType = I('send_type', null);
         if(empty($phone) || !isset($sendType)){
-            $this->outputJSON(true, '', '必填参数缺失');
+            $this->outputJSON(true, 'false', '必填参数缺失');
         }
-        $userService = new UserService();
+        if(session('user_last_send_sms_time')){
+            $lastSendTime = session('user_last_send_sms_time');
+            $currentTime = time();
+            if($lastSendTime + 60 > $currentTime){
+                $this->outputJSON(true, 'false', '发送太过频繁');
+            }else{
+                session('user_last_send_sms_time', 0);
+            }
+        }
 
-        $result = $userService->sendSmsCaptcha($phone, $sendType);
-        if(!$result){
-            $this->outputJSON(true, '', $userService->getFirstError());
+        $paramArr = array(
+            'phone' => $phone,
+            'send_type' => $sendType,
+            'timestamp' => time(),
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        $url = C('URL.ZHIYU_URL').U('Api/UserCenter/send_captcha');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            session('user_last_send_sms_time', time());
+            $this->outputJSON(false, 'success', '发送成功');
+        }else{
+            $this->outputJSON(true, 'false', $result['info']);
         }
-        $this->outputJSON(false, '', '发送成功');
     }
 
+    /**
+     * ajax方式验证短信验证码是否正确
+     * @author xy
+     * @since 2017/10/09 13:53
+     */
+    public function ajax_verify_sms_captcha(){
+        $phone = trim(I('phone'));
+        $captcha = trim(I('captcha'));
+        $sendType = I('send_type', null);
+        if (!$phone || !isset($sendType) || !$captcha) {
+            $this->outputJSON(true, '', '必填参数缺失');
+        }
+        $paramArr = array(
+            'phone' => $phone,
+            'captcha' => $captcha,
+            'send_type' => $sendType,
+            'timestamp' => time(),
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        $url = C('URL.ZHIYU_URL').U('Api/UserCenter/verify_captcha');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            $this->outputJSON(false, '', $result['info']);
+        }else{
+            $this->outputJSON(true, '', $result['info']);
+        }
+    }
 }

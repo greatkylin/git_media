@@ -2,12 +2,34 @@
     <div class="header-up-game">
         <span>指娱游戏</span><span>玩好游戏</span><img alt="新浪微博二维码" src="__PUBLIC__/Home/static/img/sina.png"><img alt="微信二维码" src="__PUBLIC__/Home/static/img/wechat.png"><span>指娱游戏APP</span>
     </div>
-    <div class="header-up-login"><img alt="" src="__PUBLIC__/Home/static/img/pcenter.png">
-        <if condition="empty($userInfo)">
+    <if condition="empty($userInfo)">
+        <div class="header-up-login"><img alt="" src="__PUBLIC__/Home/static/img/pcenter.png">
             <a href="{:U('Home/Login/login')}">登录</a>
             <a href="javascript:;" id="header-sign" class="register">立即注册</a>
-            <else />
-            <a href="{:U('Home/Login/logout')}">退出</a>
-        </if>
-    </div>
+        </div>
+        <else />
+        <div class="header-up-login header-up-login-status">
+            <a href="#">客服&反馈</a>
+            <div style=" padding: 0 10px; position:relative;" class="header-up-login-div">
+                <img alt="" src="__PUBLIC__/Home/static/img/pcenter.png" style="margin-right:8px;vertical-align:middle;" class="headpcenter">
+                <a href="#" style="margin-right:8px;" class="colorsseta">用户ID:{$userInfo.uid}</a>
+                <img src="__PUBLIC__/Home/static/gulp/img/Downarrow2.png" style="margin-right:8px;"alt="" class="headdownlart">
+                <div class="headloginalert">
+                    <div class="headloginalert-up">
+                        <div class="head-pc-photo"></div>
+                        <div class="headlogintext">
+                            <p>{$userInfo.nickname}</p>
+                            <p style="color:#CBCBCB">账号：{$userInfo.username}</p>
+                            <a href="{:U('Home/Login/index')}" style="color:#00E3CA;border-right: 1px solid #00E3CA;padding-right: 12px; ">个人中心</a>
+                            <a href="{:U('Home/Login/logout')}" style="color:#00E3CA;padding-left: 12px;">退出账号</a>
+                        </div>
+                    </div>
+                    <div class="headloginalert-down">
+                        <button style="margin-right:16px;">我的礼包</button>
+                        <button>我的优惠券</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </if>
 </div>

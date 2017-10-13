@@ -328,6 +328,15 @@ function http($url, $params, $method = 'GET', $header = array(), $multi = false)
             $params = $multi ? $params : http_build_query($params);
             $opts[CURLOPT_URL] = $url;
             $opts[CURLOPT_POST] = 1;
+            if($multi){
+                if (class_exists('\CURLFile')) {
+                    $opts[CURLOPT_SAFE_UPLOAD] = true;
+                } else {
+                    if (defined('CURLOPT_SAFE_UPLOAD')) {
+                        $opts[CURLOPT_SAFE_UPLOAD] = false;
+                    }
+                }
+            }
             $opts[CURLOPT_POSTFIELDS] = $params;
             break;
         default:
@@ -1045,6 +1054,7 @@ if(! function_exists('format_detail_html')) {
 
 /**
  * 格式化参数格式化成url参数
+ * @param array $param_arr     参与加密的参数数组
  * @param array $not_sign_param     不参与加密的参数名
  * @return string                   返回拼接后的参数
  */
@@ -1064,6 +1074,7 @@ function to_url_params($param_arr, $not_sign_param = array())
 
 /**
  * 生成签名
+ * @param array $param_arr     参与加密的参数数组
  * @param array $not_sign_param     不参与加密的参数名
  * @return string                   签名，本函数不覆盖sign成员变量
  */
@@ -1382,4 +1393,20 @@ function generate_logo_qr_code($url = NULL, $appId, $logo = NULL){
     //header('Content-Type: '.$qrCode->getContentType());
     $result = $qrCode->save($qrCodeName);
     return $returnPath;
+}
+
+/**
+ * 当前月的日历数组
+ * @author xy
+ * @since 2017/10/09 18:34
+ * @return array
+ */
+function current_month_calendar_array(){
+    $monthDays = date('t');
+    $firstWeekDay = date('w',strtotime(date('Ym01')));
+    $temp = range(1, $monthDays);
+    for ($i = 0; $i < $firstWeekDay - 1; $i ++) {
+        array_unshift($temp, 0);
+    }
+    return $arr = array_chunk($temp, 7);
 }

@@ -14,7 +14,7 @@ return array(
     'FILE_CONFIG' => array(
         'APP_COVER_PIC_CONF' => array(
             'file_path'    => 'Uploads',                               // 高清图片地址
-            'save_path'    => 'images/app/cover_pic/',
+            'save_path'    => 'Images/app/cover_pic/',
             'thumb_path'   => 'thumb/',
             'thumb_pre'    => 'thumb',
             'thumb_width'  => 540,
@@ -24,7 +24,7 @@ return array(
         ),
         'APP_FINE_PIC_CONF' => array(
             'file_path'  => 'Uploads',                               // 精美图片地址
-            'save_path'  => 'images/app/fine_pic/',
+            'save_path'  => 'Images/app/fine_pic/',
             'thumb_path'   => 'thumb/',
             'thumb_pre'    => 'thumb',
             'thumb_width'  => 540,
@@ -34,7 +34,7 @@ return array(
         ),
         'COMPANY_ICON_CONF' => array(
             'file_path'  => 'Uploads',                               // 精美图片地址
-            'save_path'  => 'images/company/icon/',
+            'save_path'  => 'Images/company/icon/',
             'thumb_path'   => 'thumb/',
             'thumb_pre'    => 'thumb',
             'thumb_width'  => 540,

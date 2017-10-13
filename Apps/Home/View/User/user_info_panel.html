@@ -1,0 +1,12 @@
+<div class="pc-userInfo">
+    <div class="pc-photo" <if condition="!empty($userInfo.head)">style="background-image:url('{$userInfo.head}')"</if>></div>
+    <div class="pc-uf-name">
+        <p>{$userInfo.nickname}</p>
+        <!--<a href="#">充值</a>-->
+        <a href="{:U('Home/User/exchange_code')}">激活码兑换</a>
+    </div>
+    <div class="pc-signIn">
+        <div id="daily_sign" class="pc-qianbi" <if condition="!empty($isSign)">style="background-image: url(__PUBLIC__/Home/static/img/pc-qianbi2.png);"</if>><if condition="!empty($isSign)">已签<else/>签到</if></div>
+        <p id="add_baobi"></p>
+    </div>
+</div>

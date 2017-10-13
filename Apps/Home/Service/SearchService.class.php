@@ -23,7 +23,7 @@ class SearchService extends BaseService
     public function recordSearchLog($keyword){
         $keyword = trim($keyword);
         $clientIp = get_client_ip(0, true);
-        $userInfo = self::getUserInfo();
+        $userInfo = get_user_info();
         if($userInfo){
             $userId = $userInfo['id'];
         }else{

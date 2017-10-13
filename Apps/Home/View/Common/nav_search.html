@@ -1,0 +1,17 @@
+<div class="nav-search">
+    <form action="{:U('Home/Search/index')}" method="post">
+        <div class="nav-search-input">
+            <img alt="" src="__PUBLIC__/Home/static/img/search.png" class="search-img">
+            <input name="controller" type="hidden" value="{$Think.CONTROLLER_NAME}" />
+            <input name="keyword" type="text" class="nav-search-input1">
+            <input type="submit" value="搜索" class="nav-search-input2">
+        </div>
+    </form>
+    <div class="nav-advice">
+        <if condition="count($hotKeywordList) gt 0">
+            <volist name="hotKeywordList" id="hot_keyword">
+                <a href="{:U('Home/Search/index', array('keyword' => $hot_keyword['keyword']))}">{$hot_keyword.keyword}</a>
+            </volist>
+        </if>
+    </div>
+</div>

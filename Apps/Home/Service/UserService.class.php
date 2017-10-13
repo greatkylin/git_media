@@ -23,7 +23,7 @@ class UserService extends BaseService
      */
     public function getUser ($usernameOrPhone) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("username = '{$usernameOrPhone}' OR phone = '{$usernameOrPhone}'")->find();
-        if(empty($user)){
+        if($user === false || empty($user)){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -38,14 +38,14 @@ class UserService extends BaseService
      */
     public function getUserByUsername ($username) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("username = '{$username}'")->find();
-        if($user === false){
+        if($user === false || empty($user)){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
     }
 
     /**
-     * 通过用户名获取用户信息
+     * 通过用户手机获取用户信息
      * @author xy
      * @since 2017/09/27 09:35
      * @param string $phone 用户手机号码
@@ -53,7 +53,7 @@ class UserService extends BaseService
      */
     public function getUserByPhone ($phone) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("phone = '{$phone}'")->find();
-        if(empty($user)){
+        if($user === false || empty($user)){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -68,7 +68,7 @@ class UserService extends BaseService
      */
     public function getUserByUserId($userId){
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("uid = '{$userId}'")->find();
-        if(empty($user)){
+        if($user === false || empty($user)){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -86,9 +86,14 @@ class UserService extends BaseService
             return $this->setError('请输入用户名');
         }
         //用户名长度3-20字符，只允许英文、数字、下划线以及英文句号
-        $pattern = '/^[a-zA-Z0-9\_\.]{3,20}$/';
+        //$pattern = '/^[a-zA-Z0-9\_\.]{3,20}$/';
+        $pattern = '/^[\w_.]{3,20}$/';
         if (!preg_match($pattern, $userName)){
-            return $this->setError('用户名不符合规制');
+            return $this->setError('用户名不符合规则');
+        }
+        $pattern = '/^\\d{11}$/';
+        if (preg_match($pattern, $userName)){
+            return $this->setError('用户名不能为11位的数字');
         }
         return true;
     }
@@ -484,24 +489,43 @@ class UserService extends BaseService
              return $this->setError('请填写填写手机或者验证码');
          }
          if(!isPhone($phone)){
-             return$this->setError('手机号码格式不争正确');
+             return$this->setError('手机号码格式不正确');
          }
          // 查看手机是否被绑定
          $user = $this->getUserByPhone($phone);
          if($user) {
              return $this->setError('该手机号码已被绑定');
          }
-         // 获取验证码查看是否匹配
-         $smsService = new SmsService();
-         $result = $smsService->mobileCaptchaGet($phone, $captcha, 1, 6);
-         if ($result['status'] != 1) {
-             return $this->setError($result['msg']);
+         $loginUserInfo = get_user_info();
+         if(!$loginUserInfo){
+             return $this->setError('请先登录');
          }
-         //更新session中的手机信息
-         $user['phone'] = $phone;
-         unset($user['password']);
-         session('media_web_user', $user);
-         return true;
+         $paramArr = array(
+             'phone' => $phone,
+             'captcha' => $captcha,
+             'token' => $loginUserInfo['token'],
+             'login_name' => session('login_name'),
+             'timestamp' => time(),
+         );
+         $paramArr['sign'] = make_sign($paramArr, array('sign'));
+         $url = C('URL.ZHIYU_URL').U('Api/Mycenter/bind_phone_media');
+         $result = http($url, $paramArr, 'POST');
+         $result = json_decode($result, true);
+         if(empty($result)){
+             $this->outputJSON(true, 'false',  '未知错误');
+         }
+         if(isset($result['flag']) && $result['flag'] == 'success'){
+             //更新session中的手机信息
+             $userInfo = get_user_info();
+             $userInfo['phone'] = $phone;
+             session('media_web_user', $userInfo);
+             return true;
+         }elseif (isset($result['flag']) && $result['flag'] == 'login'){
+             unset_user_login_info();
+             return $this->setError($result['info']);
+         }else{
+             return $this->setError($result['info']);
+         }
      }
 
     /**
@@ -609,6 +633,7 @@ class UserService extends BaseService
              ->alias('u')
              ->field(
                  'c.money, c.title, c.relation_app_id, c.discount, c.full_money, c.less_money, 
+                 u.remark AS remarks, c.coupon_type,c.coupon_id, c.coupon_scope, u.create_time, 
                  u.active_time, u.status, u.id'
              )
              ->join(C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') .  'coupon c on c.coupon_id = u.coupon_id', 'left')
@@ -660,6 +685,10 @@ class UserService extends BaseService
                      $coupon_list[$k]['remarks'] = $remarks;
                  }
                  $coupon_list[$k]['coupon_type'] = empty($v['coupon_type']) ? 0 : $v['coupon_type'];
+                 if($coupon_list[$k]['coupon_type'] == 0){
+                     $coupon_list[$k]['discount_text'] = explode('.',round(($v['discount']/10), 1));
+                 }
+                 //未使用的优惠券，到期时间小于当前时间 则设置为过期
                  if($v['status'] == 0 && $v['active_time'] < strtotime(date('Y-m-d'))) {
                      $coupon_list[$k]['status'] = 2;
                  }
@@ -667,6 +696,8 @@ class UserService extends BaseService
                      $coupon_list[$k]['status'] = empty($v['status']) ? 0 : $v['status'];
                  }
                  $coupon_list[$k]['coupon_scope'] = empty($v['coupon_scope']) ? 0 : $v['coupon_scope'];
+                 $coupon_list[$k]['create_time'] = date('Y.m.d', $v['create_time']);
+                 $coupon_list[$k]['active_time'] = date('Y.m.d', $v['active_time']);
                  unset($coupon_list[$k]['relation_app_id']);
                  $sort[$k]=$coupon_list[$k]['status'];
              }
@@ -757,8 +788,134 @@ class UserService extends BaseService
                  else {
                      $noticeList[$k]['extend_param'] = (object)array();
                  }
+                 $noticeList[$k]['create_time'] = date('Y.m.d', $v['create_time']);
              }
          }
          return $noticeList;
+     }
+
+    /**
+     * 激活码兑换
+     * @author xy
+     * @since 2017/010/09 16:05
+     * @param string $code 激活码
+     * @return bool
+     */
+     public function exchangeCode($code){
+         if(empty($code)){
+             return $this->setError('请填写填写激活码');
+         }
+         $loginUserInfo = get_user_info();
+         if(!$loginUserInfo){
+             return $this->setError('请先登录');
+         }
+         $paramArr = array(
+             'code' => $code,
+             'token' => $loginUserInfo['token'],
+             'login_name' => session('login_name'),
+             'timestamp' => time(),
+         );
+         $paramArr['sign'] = make_sign($paramArr, array('sign'));
+         $url = C('URL.ZHIYU_URL').U('Api/Activationcode/exchange_code');
+         $result = http($url, $paramArr, 'POST');
+         $result = json_decode($result, true);
+         if(empty($result)){
+             $this->outputJSON(true, 'false',  '未知错误');
+         }
+         if(isset($result['flag']) && $result['flag'] == 'success'){
+             return true;
+         }elseif(isset($result['flag']) && $result['flag'] == 'login'){
+             unset_user_login_info();
+             return $this->setError($result['info']);
+         }else{
+             return $this->setError($result['info']);
+         }
+     }
+
+    /**
+     * 用户签到的记录,以及连续签到天数
+     * @author xy
+     * @since 2017/10/09 17:18
+     */
+     public function userDailySignLog(){
+         $loginUserInfo = get_user_info();
+         $currentTime = time();
+         //连续签到次数
+         $signNum = $this->getUserConstantDailySignNum();
+         $signNum = $signNum + 1;
+         $data = array(
+             'uid' =>  $loginUserInfo['uid'],
+             'sign_time' => $currentTime,
+             'num' => $signNum,
+         );
+         M('user_daily_sign')->add($data);
+         $signDayInfo = M('user_daily_sign')->where(array('uid'=>$loginUserInfo['uid']))->select();
+         $signDayArr = array();
+
+         if(!empty($signDayInfo)){
+             foreach ($signDayInfo as $key=>$value){
+                 $signDay = date('j', $value['sign_time']);
+                 $signDayArr[] = $signDay;
+             }
+         }
+         $signDayArr = array_unique($signDayArr);
+         $weekArr = array(
+             0 => '日',1 => '一',2 => '二',3 => '三',4 => '四',5 => '五',6 => '六',
+         );
+         $currentMonthCalendarArr = current_month_calendar_array();
+         $newMonthCalendarArr = array();
+         foreach ($currentMonthCalendarArr as $k_week_num => $v_week){
+             $weekIntArr = array_keys($v_week);
+             $tempWeekDateInfo = array();
+             foreach ($v_week as $week => $day){
+                 foreach ($weekArr as $k_w => $v_w){
+                     if(in_array($k_w, $weekIntArr)){
+                         $tempWeekDateInfo[$week]['day'] = $day;
+                         $tempWeekDateInfo[$week]['week'] = $weekArr[$week];
+                         if(in_array($day, $signDayArr)){
+                             $tempWeekDateInfo[$week]['is_sign'] = 1;
+                         }else{
+                             $tempWeekDateInfo[$week]['is_sign'] = 0;
+                         }
+                     }else{
+                         $tempWeekDateInfo[$k_w]['day'] = '';
+                         $tempWeekDateInfo[$k_w]['week'] = $weekArr[$k_w];
+                         $tempWeekDateInfo[$k_w]['is_sign'] = 0;
+                     }
+                 }
+             }
+             ksort($tempWeekDateInfo);
+             $newMonthCalendarArr[$k_week_num] = $tempWeekDateInfo;
+         }
+         $returnInfo = array(
+             'today' => array(
+                 'year' => date('Y'),
+                 'month' => date('m'),
+                 'day' => date('d'),
+             ),
+             'sign_num' => $signNum,
+             'sign_days' => $signDayArr,
+             'current_month' => $newMonthCalendarArr,
+         );
+         return $returnInfo;
+     }
+
+    /**
+     * 获取用的连续签到次数
+     * @author xy
+     * @since 2017/10/09 18:06
+     * @return mixed
+     */
+     public function getUserConstantDailySignNum(){
+         $beginYesterday=mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+         $endYesterday=mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+         $where = array(
+             'sign_time' => array(array('egt', $beginYesterday), array('lt', $endYesterday), 'AND'),
+         );
+         //连续签到次数
+         $signNum =  M('user_daily_sign')
+             ->where($where)
+             ->getField('num');
+         return $signNum;
      }
 }

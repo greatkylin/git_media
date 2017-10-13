@@ -25,12 +25,12 @@ class LoginController extends HomeBaseController
      */
     public function do_register(){
         if($this->userInfo){
-            $this->outputJSON(true, '', '已经登录');
+            $this->outputJSON(false, '', '已经登录');
         }
-        $userName = trim(I('post.user_name'));
-        $password = trim(I('post.password'));
-        $password2 = trim(I('post.password2'));
-        $isAgree = intval(I('post.is_agree', 0));
+        $userName = trim(I('user_name'));
+        $password = trim(I('password'));
+        $password2 = trim(I('password2'));
+        $isAgree = intval(I('is_agree', 0));
         if(empty($userName)){
             $this->outputJSON(true, '100001', '请填写用户名');
         }
@@ -40,6 +40,7 @@ class LoginController extends HomeBaseController
         if(empty($isAgree)){
             $this->outputJSON(true, '100003', '请同意注册协议');
         }
+
         $userService = new UserService();
         //验证用户名是否符合规制
         if(!$userService->validateUserName($userName)){
@@ -60,31 +61,25 @@ class LoginController extends HomeBaseController
         if(!$userService->validatePassword($password)){
             $this->outputJSON(true, '100002', $userService->getFirstError());
         }
-        //执行注册用户
-        $userData = array(
+        $paramArr = array(
             'username' => $userName,
-            'password' => multiMD5(strtoupper(md5($password))),
-            'user_type' => 1,
-            'register_ip' => get_client_ip(),
-            'status' => 0,
-            'create_time' => time(),
+            'password' => $password,
+            'timestamp' => time(),
         );
-        $userId = $userService->registerUser($userData);
-        if(empty($userId)){
-            $this->outputJSON(true, '100001', $userService->getFirstError());
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        //指娱用户媒体站登录接口
+        $url = C('URL.ZHIYU_URL').U('Api/UserCenter/user_register_media');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
+
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            $userInfo = $result['data']['obj'];
+            session('login_name', $userName);
+            session('media_web_user', $userInfo);
+            $this->outputJSON(false, '000000', '注册成功');
+        }else{
+            $this->outputJSON(true, '100000', $result['info']);
         }
-        //保存用户信息到session
-        $fullUserInfo = $userService->getUserByUserId($userId);
-        if(empty($fullUserInfo)){
-            $this->outputJSON(true, '100001', '注册失败');
-        }
-        unset($fullUserInfo['password']);
-
-        session('media_web_user', $fullUserInfo);
-
-        $userService->afterLogin($fullUserInfo,1);
-
-        $this->outputJSON(false, '000000', '注册成功');
     }
 
     /**
@@ -94,38 +89,32 @@ class LoginController extends HomeBaseController
      */
     public function do_login(){
         if($this->userInfo){
-            $this->outputJSON(true, '', '已经登录');
+            $this->outputJSON(false, 'success', '已经登录');
         }
-        $loginName = trim(I('post.login_name')); // 手机号或用户名
-        $password = trim(I('post.password'));
+        $loginName = trim(I('login_name')); // 手机号或用户名
+        $password = trim(I('password'));
 
         if (empty($loginName) || empty($password)){
-            $this->outputJSON(true, '100001', '用户名或密码不能为空');
+            $this->outputJSON(true, 'false', '用户名或密码不能为空');
         }
-        $password = strtoupper(md5(I('post.password')));
+        $paramArr = array(
+            'login_name' => $loginName,
+            'password' => $password,
+            'timestamp' => time(),
+        );
+        $paramArr['sign'] = make_sign($paramArr, array('sign'));
+        //指娱用户媒体站登录接口
+        $url = C('URL.ZHIYU_URL').U('Api/UserCenter/user_login_media');
+        $result = http($url, $paramArr, 'POST');
+        $result = json_decode($result, true);
 
-        $userService = new UserService();
-        //判断用户是否存在
-        $userInfo = $userService->getUser($loginName);
-        if (!$userInfo) {
-            $this->outputJSON(true, '100001', '用户不存在');
-        }
-
-        // 判断封停惩罚
-        if(!$userService->checkPunish ($userInfo, 0, '', 0)){
-            $this->outputJSON(true, '100001', $userService->getFirstError());
-        }
-
-        $user = $userService->login($loginName,  $password);
-
-        if ($user) {
-            unset($user['password']);
-            session('media_web_user', $user);
-
-            $userService->afterLogin($user,0);
-            $this->outputJSON(false, '000000', '登录成功');
-        } else {
-            $this->outputJSON(true, '', $userService->getFirstError());
+        if(isset($result['flag']) && $result['flag'] == 'success'){
+            $userInfo = $result['data']['obj'];
+            session('login_name', $loginName);
+            session('media_web_user', $userInfo);
+            $this->outputJSON(false, 'success', '登录成功');
+        }else{
+            $this->outputJSON(false, 'false',  $result['info']);
         }
     }
 
@@ -135,7 +124,7 @@ class LoginController extends HomeBaseController
      * @since 2017/09/27 15:13
      */
     public function login(){
-        if($this->getUserInfo()){
+        if(get_user_info()){
             $this->redirect('/');
         }else{
             $this->display();
@@ -148,9 +137,7 @@ class LoginController extends HomeBaseController
      * @since 2017/09/27 15:02
      */
     public function logout(){
-        if(session('media_web_user')){
-            session('media_web_user', null);
-        }
+        unset_user_login_info();
         $this->redirect('/');
     }
 
@@ -186,12 +173,12 @@ class LoginController extends HomeBaseController
     public function ajax_check_password(){
         $password = trim(I('password'));
         if(empty($password)){
-            $this->outputJSON(true, '', '请输入密码');
+            $this->outputJSON(true, '100002', '请输入密码');
         }
         $userService = new UserService();
         if(!$userService->validatePassword($password)){
-            $this->outputJSON(true, '', $userService->getFirstError());
+            $this->outputJSON(true, '100002', $userService->getFirstError());
         }
-        $this->outputJSON(false, '', '验证通过');
+        $this->outputJSON(false, '000000', '验证通过');
     }
 }
