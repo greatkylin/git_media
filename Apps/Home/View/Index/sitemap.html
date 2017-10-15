@@ -1,10 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
 </head>
 <body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/Index/index')}">首页</a><span>></span><a href="">网站地图</a>
+        </div>
+        <div class="pc-container">
+            <!--右侧内容开始-->
+            <div class="webcont" style="width: 100%">
+                <div class="pc-webmap">
+                    <!--<div class="pc-webmaptxt1">-->
+                        <!--<section></section>-->
+                        <!--<div>-->
+                            <!--<p>首页</p>-->
+                            <!--<a href="#" class="webmaptitle">资讯中心 </a><a href="#" class="webmaptitle">游戏库 </a> <a href="#" class="webmaptitle">热门活动</a><a href="#" class="webmaptitle">开测开服表</a><a href="#" class="webmaptitle">模拟器</a><a href="#" class="webmaptitle">个人中心</a>-->
+                            <!--<a href="#" class="webmaptitle">次导航</a><a href="#" class="webmaptitle">APP下载</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="pc-webmaptxt1">-->
+                        <!--<section></section>-->
+                        <!--<div>-->
+                            <!--<p>游戏库</p>-->
+                            <!--<a href="#" class="webmaptitle">每周游戏专题 </a><a href="#" class="webmaptitle">游戏专题专区 </a> <a href="#" class="webmaptitle">热游排行榜</a><a href="#" class="webmaptitle">礼包中心</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="pc-webmaptxt1">-->
+                        <!--<section></section>-->
+                        <!--<div>-->
+                            <!--<p>资讯中心</p>-->
+                            <!--<a href="#" class="webmaptitle">游戏资讯</a><a href="#" class="webmaptitle">游戏攻略 </a> <a href="#" class="webmaptitle">游戏测评</a><a href="#" class="webmaptitle">每日一提</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="pc-webmaptxt2">-->
+                        <!--<section></section>-->
+                        <!--<div>-->
+                            <!--<p>热门游戏</p>-->
+                            <!--<div>-->
+                                <!--<div><b>A :&nbsp;&nbsp;</b></div>-->
+                                <!--<div class="pc-webmapa">-->
+                                    <!--<a herf="#">小冰冰传奇</a>-->
+                                    <!--<a herf="#">保卫萝卜3</a>-->
+                                    <!--<a herf="#">雷霆战机</a>-->
+                                    <!--<a herf="#">神魔之塔</a>-->
+                                    <!--<a herf="#">天天飞车</a>-->
+                                    <!--<a herf="#">天天酷跑</a>-->
+                                    <!--<a herf="#">热血传奇</a>-->
+                                    <!--<a herf="#">嘿嘿三国</a>-->
+                                    <!--<a herf="#">全民奇迹</a>-->
+                                    <!--<a herf="#">率土之滨</a>-->
+                                    <!--<a herf="#">去吧皮卡丘</a>-->
+                                    <!--<a herf="#">纪念碑谷</a>-->
+                                    <!--<a herf="#">剑魂之刃</a>-->
+                                    <!--<a herf="#">魔力宝贝</a>-->
+                                    <!--<a herf="#">逆苍天</a>-->
+                                    <!--<a herf="#">山口山战记</a>-->
+                                    <!--<a href="#">梦幻仙境</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
 
+                            <!--<div>-->
+                                <!--<div><b>B :&nbsp;&nbsp;</b></div>-->
+                                <!--<div class="pc-webmapa">-->
+                                    <!--<a herf="#">小冰冰传奇</a>-->
+                                    <!--<a herf="#">保卫萝卜3</a>-->
+                                    <!--<a herf="#">雷霆战机</a>-->
+                                    <!--<a herf="#">神魔之塔</a>-->
+                                    <!--<a herf="#">天天飞车</a>-->
+                                    <!--<a herf="#">天天酷跑</a>-->
+                                    <!--<a herf="#">热血传奇</a>-->
+                                    <!--<a herf="#">嘿嘿三国</a>-->
+                                    <!--<a herf="#">全民奇迹</a>-->
+                                    <!--<a herf="#">率土之滨</a>-->
+                                    <!--<a herf="#">去吧皮卡丘</a>-->
+                                    <!--<a herf="#">纪念碑谷</a>-->
+                                    <!--<a herf="#">剑魂之刃</a>-->
+                                    <!--<a herf="#">魔力宝贝</a>-->
+                                    <!--<a herf="#">逆苍天</a>-->
+                                    <!--<a herf="#">山口山战记</a>-->
+                                    <!--<a href="#">梦幻仙境</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="pc-webmaptxt2">-->
+                        <!--<section></section>-->
+                        <!--<div>-->
+                            <!--<p>最新游戏</p>-->
+                            <!--<div>-->
+                                <!--<div><b>A :&nbsp;&nbsp;</b></div>-->
+                                <!--<div class="pc-webmapa">-->
+                                    <!--<a herf="#">小冰冰传奇</a>-->
+                                    <!--<a herf="#">保卫萝卜3</a>-->
+                                    <!--<a herf="#">雷霆战机</a>-->
+                                    <!--<a herf="#">神魔之塔</a>-->
+                                    <!--<a herf="#">天天飞车</a>-->
+                                    <!--<a herf="#">天天酷跑</a>-->
+                                    <!--<a herf="#">热血传奇</a>-->
+                                    <!--<a herf="#">嘿嘿三国</a>-->
+                                    <!--<a herf="#">全民奇迹</a>-->
+                                    <!--<a herf="#">率土之滨</a>-->
+                                    <!--<a herf="#">去吧皮卡丘</a>-->
+                                    <!--<a herf="#">纪念碑谷</a>-->
+                                    <!--<a herf="#">剑魂之刃</a>-->
+                                    <!--<a herf="#">魔力宝贝</a>-->
+                                    <!--<a herf="#">逆苍天</a>-->
+                                    <!--<a herf="#">山口山战记</a>-->
+                                    <!--<a href="#">梦幻仙境</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                            <!--<div>-->
+                                <!--<div><b>B :&nbsp;&nbsp;</b></div>-->
+                                <!--<div class="pc-webmapa">-->
+                                    <!--<a herf="#">小冰冰传奇</a>-->
+                                    <!--<a herf="#">保卫萝卜3</a>-->
+                                    <!--<a herf="#">雷霆战机</a>-->
+                                    <!--<a herf="#">神魔之塔</a>-->
+                                    <!--<a herf="#">天天飞车</a>-->
+                                    <!--<a herf="#">天天酷跑</a>-->
+                                    <!--<a herf="#">热血传奇</a>-->
+                                    <!--<a herf="#">嘿嘿三国</a>-->
+                                    <!--<a herf="#">全民奇迹</a>-->
+                                    <!--<a herf="#">率土之滨</a>-->
+                                    <!--<a herf="#">去吧皮卡丘</a>-->
+                                    <!--<a herf="#">纪念碑谷</a>-->
+                                    <!--<a herf="#">剑魂之刃</a>-->
+                                    <!--<a herf="#">魔力宝贝</a>-->
+                                    <!--<a herf="#">逆苍天</a>-->
+                                    <!--<a herf="#">山口山战记</a>-->
+                                    <!--<a href="#">梦幻仙境</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    {$content.content}
+                </div>
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
+
+</script>
 </body>
 </html>

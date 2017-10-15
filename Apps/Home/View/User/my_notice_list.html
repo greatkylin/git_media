@@ -28,7 +28,7 @@
                 <!--用户信息结束-->
                 <!--其他信息容器开始-->
                 <div>
-                    <div class="pc-mynews">
+                    <div class="pc-mynews" style="overflow-y: scroll;">
 
                     </div>
                 </div>
@@ -101,6 +101,14 @@
     $('#showList').click(function(){
         ajaxGetNoticeResult();
     });
+    
+    $('.pc-mynews').scroll(function () {
+        var c_height = $(this).height();
+        var scrollTop = $(this).scrollTop();
+        if(c_height - scrollTop < 10){
+            ajaxGetNoticeResult();
+        }
+    });
     function ajaxGetNoticeResult() {
         var url = "{:U('Home/User/my_notice_list')}";
         $.ajax({
@@ -116,7 +124,7 @@
                     if (typeof (res.data) !== 'undefined') {
                         var noticeList = res.data.noticeList;
                         if(noticeList.length > 0){
-                            currentPage = res.data.currentPage + 1;
+                            currentPage = res.data.page + 1;
                             pageSize = res.data.pageSize;
                             var html = '';
                             for (var i = 0; i < noticeList.length; i++){
@@ -145,7 +153,7 @@
                             explandViewNotice();
                         }
                     }else{
-                        $('.pc-mynews').append(res.detail);
+                        //$('.pc-mynews').append(res.detail);
                     }
                 }
             },

@@ -397,17 +397,14 @@ class UserService extends BaseService
      * @param string $newPassword 新密码
      * @return bool
      */
-    public function changePasswordByValidBindPhone($userId, $phone, $captcha, $newPassword){
-        if(empty($userId)){
-            return $this->setError('请先登录');
-        }
+    public function changePasswordByValidBindPhone($phone, $captcha, $newPassword){
         if(empty($phone) || empty($captcha) || empty($newPassword)){
             return $this->setError('请填写手机验证码或新密码');
         }
         if(!isPhone($phone)){
             return $this->setError('手机号码格式不正确');
         }
-        $userInfo = $this->getUserByUserId($userId);
+        $userInfo = $this->getUser($phone);
         if(empty($userInfo)){
             return $this->setError('用户不存在');
         }
@@ -428,7 +425,7 @@ class UserService extends BaseService
             'password' => multiMD5(strtoupper(md5($newPassword))),
         );
         $result = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))
-            ->where(array('uid' => $userId))
+            ->where(array('phone' => $phone))
             ->save($data);
         if(!$result){
             return $this->setError('密码重置失败');

@@ -44,21 +44,17 @@
                             </div>
                         </div>
                         <div>
+                            <if condition="!empty($appList)">
                             <p>我的游戏</p>
                             <div class="pc-acccontent">
-                                <div class="pc-actpic">
-                                    <img src="../../static/gulp/img/game-sugust.png" alt="">
-                                    <p>龙之谷</p>
-                                </div>
-                                <div class="pc-actpic">
-                                    <img src="../../static/gulp/img/game-sugust.png" alt="">
-                                    <p>龙之谷</p>
-                                </div>
-                                <div class="pc-actpic">
-                                    <img src="../../static/gulp/img/game-sugust.png" alt="">
-                                    <p>龙之谷</p>
-                                </div>
+                                <volist name="appList" id="app">
+                                    <div class="pc-actpic">
+                                        <img src="{$app.icon}" alt="{$app.app_name}">
+                                        <p>{$app.app_name}</p>
+                                    </div>
+                                </volist>
                             </div>
+                            </if>
                         </div>
                     </div>
                 </div>

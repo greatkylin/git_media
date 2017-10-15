@@ -13,7 +13,7 @@
                             <span class="yu-num">{$gift.residue_rate}%</span>
                         </div>
                     </div>
-                    <div class="r">
+                    <div class="r" data-giftId="{$gift.gift_id}">
                         <div>
                             <div class="get"><img alt="" src="__PUBLIC__/Home/static/img/gift-icon-little.png"></div>
                             <div>领取礼包</div>
@@ -63,19 +63,38 @@
             //点击弹出mask
             $(".r").click(function () {
                 var type = $(this).parents(".gift-bag").attr("data-type");
+                var gift_id = $(this).data('giftId');
                 if (type == "get-gift") {
-                    $(".get-gift-mask").show();
-                    $(".taohao-mask").hide();
-                    $(".close").click(function () {
-                        $(".get-gift-mask").hide();
-                    })
-                } else {
-                    $(".get-gift-mask").hide();
-                    $(".taohao-mask").show();
-                    $(".close").click(function () {
-                        $(".taohao-mask").hide();
-                    })
+                    var url = '{:U("Home/User/receive_gift")}';
+                    $.ajax({
+                        type:'POST',
+                        url:url,
+                        data: {gift_id:gift_id},
+                        dataType: 'json',
+                        async : false, //默认为true 异步
+                        success:function(res){
+                            if(res.error){
+                                dialogInfo(res.detail);
+                            }else{
+                                $(".get-gift-mask").show();
+                                $(".taohao-mask").hide();
+                                $(".close").click(function () {
+                                    $(".get-gift-mask").hide();
+                                })
+
+                            }
+                        },
+                        error : function() {
+                        }
+                    });
                 }
+//                else {
+//                    $(".get-gift-mask").hide();
+//                    $(".taohao-mask").show();
+//                    $(".close").click(function () {
+//                        $(".taohao-mask").hide();
+//                    })
+//                }
             })
 
             // 复制相关

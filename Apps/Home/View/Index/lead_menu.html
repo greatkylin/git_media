@@ -1,0 +1,11 @@
+<section>
+    <div>
+        <div class="pc-menu">
+            <a href="{:U('Home/Index/about_us')}" class="pc-menua  <if condition='strtolower(ACTION_NAME) eq about_us'>pc-active</if>" data-show="pc-aboutus">关于我们</a>
+            <a href="{:U('Home/Index/contact_us')}" class="pc-menua <if condition='strtolower(ACTION_NAME) eq contact_us'>pc-active</if>" data-show="pc-contactus">联系我们</a>
+            <a href="{:U('Home/Index/join_us')}" class="pc-menua <if condition='strtolower(ACTION_NAME) eq join_us'>pc-active</if>" data-show="pc-recruit">招贤纳士</a>
+            <a href="{:U('Home/Index/customer_service')}" class="pc-menua <if condition='strtolower(ACTION_NAME) eq customer_service'>pc-active</if>" data-show="pc-feedback">客服&反馈</a>
+            <a href="{:U('Home/Index/sitemap')}" target="_self" data-show="pc-webmap" class="pc-menua <if condition='strtolower(ACTION_NAME) eq sitemap'>pc-active</if>">网站地图</a>
+        </div>
+    </div>
+</section>

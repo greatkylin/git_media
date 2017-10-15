@@ -55,7 +55,12 @@ class UserController extends HomeBaseController
         $giftService = new GiftService();
         $giftNum = $giftService->countUserGiftNum($userId);
         //4.我的游戏
-
+        $appService = new AppService();
+        $appList = $appService->getUserAppList($userId, 0, 6);
+        if($appList === false){
+            $this->error('获取我的游戏失败');
+        }
+        $this->assign('appList', $appList);
         $this->assign('money', $money);
         $this->assign('couponNumInfo', $couponNumInfo);
         $this->assign('giftNum', $giftNum);
@@ -132,7 +137,7 @@ class UserController extends HomeBaseController
                 $this->outputJSON(false, '', '您还没有优惠券');
             }
             $data = array(
-                '$page' => $page,
+                'page' => $page,
                 'pageSize' => $pageSize,
                 'couponList' => $couponList
             );
@@ -173,13 +178,13 @@ class UserController extends HomeBaseController
             }
 
             $data = array(
-                '$page' => $page,
+                'page' => $page,
                 'pageSize' => $pageSize,
                 'noticeList' => $noticeList
             );
             $this->outputJSON(false,'','获取成功', $data);
         }
-        $this->assign('currentPage', $currentPage);
+        $this->assign('page', $page);
         $this->assign('pageSize', $pageSize);
         $this->display();
     }
@@ -262,10 +267,15 @@ class UserController extends HomeBaseController
         if(IS_AJAX){
             $appService = new AppService();
             $appList = $appService->getUserAppList($userId, $currentPage, $pageSize);
-            $this->assign('appList', $appList);
+            if($appList === false){
+                $this->outputJSON(true, 'false', '查询失败');
+            }
+            $data = array('app_list' => $appList);
+            $this->outputJSON(false, 'success', '查询成功', $data);
         }
 
         $this->assign('page', $page);
+        $this->assign('pageSize', $pageSize);
         $this->assign('appList', $appList);
         $this->display();
     }
@@ -352,8 +362,6 @@ class UserController extends HomeBaseController
      */
     public function change_password(){
         if(IS_AJAX){
-            //修改手机的方式， 1验证旧密码，2验证手机
-            $type = intval(I('post.type', 0));
             $userId = $this->getUserId();
             if(empty($userId)){
                 $this->outputJSON(true, 'false',  '请先登录');
@@ -363,29 +371,16 @@ class UserController extends HomeBaseController
             if($userInfo === false){
                 $this->outputJSON(true, 'false',  $userService->getFirstError());
             }
-            if($type == 1){
-                $oldPassword = trim(I('post.old_password'));
-                $newPassword = trim(I('post.new_password'));
-                $newPassword2 = trim(I('post.new_password2'));
-                $result = $userService->changePasswordByValidOldPass($userId, $oldPassword, $newPassword, $newPassword2);
-                if(!$result){
-                    $this->outputJSON(true, 'false',  $userService->getFirstError());
-                }
-            }else if($type == 2){
-                $phone = trim(I('post.phone'));
-                $captcha = intval(I('post.captcha'));
-                $newPassword = trim(I('post.password'));
-                $result = $userService->changePasswordByValidBindPhone($userId, $phone, $captcha, $newPassword);
-                if(!$result){
-                    $this->outputJSON(true, 'false',  $userService->getFirstError());
-                }
-            }else{
-                $this->outputJSON(true, 'false',  '请选择正确的身份验证的方式');
+            $oldPassword = trim(I('post.old_password'));
+            $newPassword = trim(I('post.new_password'));
+            $newPassword2 = trim(I('post.new_password2'));
+            $result = $userService->changePasswordByValidOldPass($userId, $oldPassword, $newPassword, $newPassword2);
+            if (!$result) {
+                $this->outputJSON(true, 'false', $userService->getFirstError());
             }
             $this->outputJSON(false, 'success',  '密码修改成功');
         }
         $this->display();
-
     }
 
     /**

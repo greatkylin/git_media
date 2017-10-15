@@ -54,8 +54,12 @@
     var currentPage = "{$page}";
     var pageSize = "{$pageSize}";
     ajaxGetGiftResult();
-    $('#showList').click(function(){
-        ajaxGetGiftResult();
+    $('.pc-giftbag').scroll(function(){
+        var c_height = $(this).height();
+        var scrollTop = $(this).scrollTop();
+        if(c_height - scrollTop < 10){
+            ajaxGetGiftResult();
+        }
     });
     function ajaxGetGiftResult() {
         var url = "{:U('Home/User/my_gift_list')}";

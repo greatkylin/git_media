@@ -60,8 +60,12 @@
     if($('.single-coupon').length > 0){
         $('.pc-coupon').append('<hr />')
     }
-    $('#showList').click(function(){
-        ajaxGetCouponResult();
+    $('.pc-couponcontent').scroll(function(){
+        var c_height = $(this).height();
+        var scrollTop = $(this).scrollTop();
+        if(c_height - scrollTop < 10){
+            ajaxGetCouponResult();
+        }
     });
     function ajaxGetCouponResult() {
         var url = "{:U('Home/User/my_coupon_list')}";

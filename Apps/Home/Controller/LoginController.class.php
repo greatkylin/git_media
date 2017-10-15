@@ -114,7 +114,26 @@ class LoginController extends HomeBaseController
             session('media_web_user', $userInfo);
             $this->outputJSON(false, 'success', '登录成功');
         }else{
-            $this->outputJSON(false, 'false',  $result['info']);
+            $this->outputJSON(true, 'false',  $result['info']);
+        }
+    }
+
+    /**
+     * 通过手机验证码重置密码
+     * @author xy
+     * @since 2017/10/15 14:32
+     */
+    public function reset_password(){
+        if(IS_AJAX){
+            $userService = new UserService();
+            $phone = trim(I('post.phone'));
+            $captcha = intval(I('post.captcha'));
+            $newPassword = trim(I('post.password'));
+            $result = $userService->changePasswordByValidBindPhone($userId, $phone, $captcha, $newPassword);
+            if (!$result) {
+                $this->outputJSON(true, 'false', $userService->getFirstError());
+            }
+            $this->outputJSON(false, 'success',  '密码修改成功');
         }
     }
 
@@ -178,6 +197,19 @@ class LoginController extends HomeBaseController
         $userService = new UserService();
         if(!$userService->validatePassword($password)){
             $this->outputJSON(true, '100002', $userService->getFirstError());
+        }
+        $this->outputJSON(false, '000000', '验证通过');
+    }
+
+    /**
+     * 验证登录名是否为空
+     * @author xy
+     * @since 2017/10/14 17:09
+     */
+    public function ajax_check_login_name(){
+        $loginName = trim(I('login_name'));
+        if(empty($loginName)){
+            $this->outputJSON(true, '100001', '请输入用户名');
         }
         $this->outputJSON(false, '000000', '验证通过');
     }

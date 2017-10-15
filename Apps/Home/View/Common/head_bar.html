@@ -4,7 +4,7 @@
     </div>
     <if condition="empty($userInfo)">
         <div class="header-up-login"><img alt="" src="__PUBLIC__/Home/static/img/pcenter.png">
-            <a href="{:U('Home/Login/login')}">登录</a>
+            <a href="javascript:;" id="header-login">登录</a>
             <a href="javascript:;" id="header-sign" class="register">立即注册</a>
         </div>
         <else />
@@ -20,7 +20,7 @@
                         <div class="headlogintext">
                             <p>{$userInfo.nickname}</p>
                             <p style="color:#CBCBCB">账号：{$userInfo.username}</p>
-                            <a href="{:U('Home/Login/index')}" style="color:#00E3CA;border-right: 1px solid #00E3CA;padding-right: 12px; ">个人中心</a>
+                            <a href="{:U('Home/User/index')}" style="color:#00E3CA;border-right: 1px solid #00E3CA;padding-right: 12px; ">个人中心</a>
                             <a href="{:U('Home/Login/logout')}" style="color:#00E3CA;padding-left: 12px;">退出账号</a>
                         </div>
                     </div>

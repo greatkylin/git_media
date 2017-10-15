@@ -58,3 +58,58 @@ function upload_user_avatar_temp(){
     }
     return false;
 }
+
+/**
+ * 处理图片为圆形
+ * @desc 用以下公式计算
+ * (x-a)*(x-a)+(y-b)*(y-b)<r*r
+ * 公式成立说明当前x,y点在圆内
+ * x,y为当前的坐标
+ * a,b为圆的圆心位置
+ * r为半径
+ * 先创建一张透明的图片，
+ * 然后一行一行的扫描原图如图像素点在圆内就画出这个像素不在的就保持透明色
+ * @param string $imgpath 图片路径
+ * @param $r 圆的半径
+ * @param $dotX 圆心坐标
+ * @param $dotY 圆心坐标
+ * @return resource
+ */
+function circle_img($imgpath = './tx.jpg', $r, $dotX, $dotY) {
+    $ext = pathinfo($imgpath);
+    $src_img = null;
+    switch ($ext['extension']) {
+        case 'jpg':
+            $src_img = imagecreatefromjpeg($imgpath);
+            break;
+        case 'png':
+            $src_img = imagecreatefrompng($imgpath);
+            break;
+        case 'gif':
+            $src_img = imagecreatefromgif($imgpath);
+            break;
+    }
+    $wh = getimagesize($imgpath);
+    $w = $wh[0];
+    $h = $wh[1];
+//    $w = min($w, $h);
+//    $h = $w;
+    $img = imagecreatetruecolor($w, $h);
+    //这一句一定要有
+    imagesavealpha($img, true);
+    //拾取一个完全透明的颜色,最后一个参数127为全透明
+    $bg = imagecolorallocatealpha($img, 255, 255, 255, 127);
+    imagefill($img, 0, 0, $bg);
+//    $r = $w / 2; //圆半径
+    $y_x = $r; //圆心X坐标
+    $y_y = $r; //圆心Y坐标
+    for ($x = 0; $x < $w; $x++) {
+        for ($y = 0; $y < $h; $y++) {
+            $rgbColor = imagecolorat($src_img, $x, $y);
+            if (((($x - $y_x) * ($x - $y_x) + ($y - $y_y) * ($y - $y_y)) < ($r * $r))) {
+                imagesetpixel($img, $x, $y, $rgbColor);
+            }
+        }
+    }
+    return $img;
+}

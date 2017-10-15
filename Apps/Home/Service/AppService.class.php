@@ -1746,8 +1746,14 @@ class AppService extends BaseService
         $unionSql = 'SELECT `app_id`, app_name, icon FROM (('.$downAppSql.') UNION ('.$collectAppSql.') UNION ('.$subscribeAppSql.')) AS app_list ORDER BY app_list.app_id DESC LIMIT '.$currentPage.', '.$pageSize;
 
         $appList = $model->query($unionSql);
+
         if($appList === false){
             return $this->setError('查询失败');
+        }
+        if(!empty($appList)){
+            foreach ($appList as $key=>&$app){
+                $app['icon'] = format_url($app['icon']);
+            }
         }
         return $appList;
     }

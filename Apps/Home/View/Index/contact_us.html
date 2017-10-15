@@ -1,10 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
 </head>
 <body>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="{:U('Home/Index/index')}">首页</a><span>></span><a href="">联系我们</a>
+        </div>
+        <div class="pc-container">
+            <!--左侧菜单开始-->
+            <include file='lead_menu'/>
+            <!--左侧菜单结束-->
+            <!--右侧内容开始-->
+            <div class="pc-contactus" style="display: block">
+                <!--<div class="pc-cotustext">-->
+                    <!--<div>-->
+                        <!--<section></section>-->
+                        <!--<h3>我们的通讯地址</h3>-->
+                        <!--<p>电话：0592-5026632 </p>-->
+                        <!--<p>地址：厦门市思明区软件园二期望海路43号6楼 </p>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="pc-cotustext">-->
+                    <!--<div>-->
+                        <!--<section></section>-->
+                        <!--<h3>商务合作</h3>-->
+                        <!--<p>QQ：932025599 </p>-->
+                        <!--<p>Mail：chenglong@gamezs.cn </p>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="pc-cotustext">-->
+                    <!--<div>-->
+                        <!--<section></section>-->
+                        <!--<h3>市场合作</h3>-->
+                        <!--<p>QQ：251633156</p>-->
+                        <!--<p>Mail：caoxi@gamez.cn</p>-->
+                    <!--</div>-->
+                <!--</div>-->
+                {$content.content}
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
 
+</script>
 </body>
 </html>
