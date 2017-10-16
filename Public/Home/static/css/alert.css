@@ -57,6 +57,10 @@ input:-ms-input-placeholder {
     z-index: 1;
 }
 
+.alt-post {
+    position: relative;
+}
+
 .alt-close {
     width: 16px;
     height: 16px;
@@ -91,7 +95,8 @@ input:-ms-input-placeholder {
     border: none;
     background-color: #00E3CB;
     color: white;
-    margin: 199px 40px;
+    /*margin: 199px 40px;*/
+    margin: 20px 0;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -108,14 +113,26 @@ input:-ms-input-placeholder {
     top: 20%;
     background-image: url("/Public/Home/static/img/phonebind.png");
 }
-
+.alt-button5 {
+    width: 300px;
+    height: 40px;
+    border: none;
+    background-color: #00E3CB;
+    color: white;
+    margin: 0 25px 0 25px;
+    /* margin-top: 20px; */
+    border-radius: 5px;
+    font-size: 16px;
+}
 .altb-button {
     width: 300px;
     height: 40px;
     border: none;
     background-color: #00E3CB;
     color: white;
-    margin: 236px 40px 20px 40px;
+    /*margin: 236px 40px 20px 40px;*/
+    margin: 20px 0;
+
     border-radius: 5px;
     font-size: 16px;
 }
@@ -128,7 +145,7 @@ input:-ms-input-placeholder {
     color: white;
     border-radius: 5px;
     font-size: 16px;
-    margin: 0 40px;
+    /*margin: 0 40px;*/
 }
 
 .alt-form {
@@ -137,7 +154,7 @@ input:-ms-input-placeholder {
 
 .alt-form>.alt-div1 {
     /* padding: 1px; */
-    /* margin-bottom: 20px; */
+     margin-bottom: 20px;
 }
 
 .alt-form>.alt-div1>input {
@@ -176,9 +193,9 @@ input:-ms-input-placeholder {
     width: 16px;
     height: 16px;
     background-image: url("/Public/Home/static/img/gth.png");
-    position: relative;
-    top: -30px;
-    right: -274px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
     /* display: none; */
 }
 
@@ -200,9 +217,9 @@ input:-ms-input-placeholder {
     width: 16px;
     height: 16px;
     background-image: url("/Public/Home/static/img/check-right.png");
-    position: relative;
-    top: -30px;
-    right: -274px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
 }
 
 .alt-icon4 {
@@ -250,7 +267,8 @@ input:-ms-input-placeholder {
     border: none;
     background-color: #00E3CB;
     color: white;
-    margin: 296px 40px 0px 40px;
+    /*margin: 296px 40px 0px 40px;*/
+    margin: 20px 0;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -276,7 +294,8 @@ input:-ms-input-placeholder {
     border: none;
     background-color: #00E3CB;
     color: white;
-    margin: 266px 40px 20px 40px;
+    /*margin: 266px 40px 20px 40px;*/
+    margin: 20px 0;
     border-radius: 5px;
     font-size: 16px;
     z-index: 999999999;

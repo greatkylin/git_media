@@ -1,13 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <include file='Common:header'/>
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/pc.css">
 </head>
 <body>
-<form action="ajax_do_modify_avatar" method="post" enctype="multipart/form-data">
-    <input type="file" name="test_file" />
-    <input type="submit">
-</form>
+<!--头部注册栏开始-->
+<include file='Common:head_bar'/>
+<!--头部注册栏结束-->
+<!--菜单栏开始-->
+<include file='Common:ucenter_nav'/>
+<!--菜单栏end-->
+<!--主体内容更开始-->
+<main class="pc-index">
+    <div class="pc-bodys">
+        <div class="pc-b bread-tag">
+            <img src="__PUBLIC__/Home/static/img/dengpao.png" alt="">您现在的位置是：<a href="">指娱游戏</a><span>></span>个人中心
+        </div>
+        <div class="pc-container">
+            <!--左侧菜单开始-->
+            <include file='left_menu'/>
+            <!--左侧菜单结束-->
+            <!--右侧内容开始-->
+            <div class="pc-content">
+                <!--用户信息开始-->
+                <include file='user_info_panel'/>
+                <!--用户信息结束-->
+                <!--其他信息容器开始-->
+                <div>
+                    <div class="pc-photoset">
+                        <form id="modify-avatar-form"  method="post" enctype="multipart/form-data">
+                        <div class="pc-photosetdiv">
+                            <a href="javascript:;" class="file">选择文件
+                                <input type="file" name="avatar" value="" class="filepath">
+                            </a>
+                            <input type="hidden" name="circle_r_scale"  id="circle_r_scale" value="">
+                            <span>支持JPG、PNG格式&#x3000;不超过500k </br></span>
+                            <span id="avatar-tips-message" style="margin-left: 250px"></span>
+                        </div>
+                        <div class="pc-photosetbottom">
+                            <div>
+                                <div class="pc-setphoto">
+                                    选择一张图片
+                                </div>
+                                <div class="pc-setphotoshow">
+                                    <div class="square">
+                                        <div class="s-top"></div>
+                                        <div class="s-middle"></div>
+                                        <div class="s-bottom"></div>
+                                        <div class="s-circle">
+                                            <div class="c1">
+                                                <div class="c3">
+                                                    <span class="c2"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="s-background"></div>
+                                    </div>
+                                </div>
+                                <button type="buttor" class="pc-spbtn1" id="spbtn1">保存</button>
+                                <button type="button" class="pc-spbtn2" id="spbtn2" onclick="window.location.reload()">取消</button>
+                            </div>
+                            <div>
+                                头像预览
+                                <div class="pc-sppreview">
+                                    <section>
+                                        <p>大尺寸头像100*100</p>
+                                        <div class="pc-sppreviewpic" id="sppreviewpic1">
+                                            <div id="pc-pic1"></div>
+                                        </div>
+                                    </section>
+                                    <section>
+                                        <p>小尺寸头像80*80</p>
+                                        <div class="pc-sppreviewpic" id="sppreviewpic2">
+                                            <div id="pc-pic2"></div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+                <!--其他信息容器结束-->
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</main>
+<!--遮罩层开始-->
+<div class="alert"></div>
+<!--遮罩层结束-->
+<!--签到日历开始-->
+<include file='sign_calendar'/>
+<!--签到日历结束-->
+<!--主体内容结束-->
+<!--友情链接开始-->
+<include file='Common:friend_link'/>
+<!--友情链接结束-->
+<!--底部导航开始-->
+<include file='Common:footer'/>
+<!--底部导航结束-->
+<script>
+    $(function() {
+        //圆形的半径默认比例
+        var circle_r_scale = 0;
+        var squarew = $(".square").css("width");
+        var squareh = $(".square").css("height");
+        var squarewf = parseFloat(squarew) / 2;
+        var squarehf = parseFloat(squareh) / 2;
+        circle_r_scale = parseFloat((40 / 2) / squarehf );
+        circle_r_scale = circle_r_scale.toFixed(2);
+        $("form").submit(function(e) {
+            //e.preventDefault();
+        })
+        var i = 0;
+        $(".c3").click(function() {
+            i++;
+            if (i % 2) {
+                // console.log("奇数");
+                $(".c3").css("cursor", "nw-resize");
+                // console.log(w)
+                // -----------------------------------------
+                var top = $(".c2").offset().top;
+                var left = $(".c2").offset().left;
+                var w = parseFloat($(".s-circle").css("width"));
+                $(".c3").mousemove(function(e) {
+                    if (e.pageX > 675 || e.pageY > 505) {
+                        if (e.pageX > left || e.pageY > top) {
+                            var num = e.pageX - left;
+                            var num2 = num * 2.8;
+                            var clenum = w + num2;
+                            var clenumf = clenum / 2;
+                            var numw2 = squarewf - clenumf;
+                            var numh2 = squarehf - clenumf;
+                            var num3 = (780 - clenum) / 2;
+                            // console.log(clenumf)
+                            if (clenum < 240) {
+                                $(".s-circle").css("width", clenum);
+                                $(".s-circle").css("height", clenum);
+                                $(".s-circle").css("top", numh2);
+                                $(".s-circle").css("right", numw2);
+                                $(".s-background").css("border-width", num3)
+                            }
+                        } else {
+                            var num = left - e.pageX;
+                            var num2 = num * 2.8;
+                            var clenum = w - num2;
+                            var clenumf = clenum / 2;
+                            var numw2 = squarewf - clenumf;
+                            var numh2 = squarehf - clenumf;
+                            var num3 = (780 - clenum) / 2;
+                            if (clenum > 80) {
+                                $(".s-circle").css("width", clenum);
+                                $(".s-circle").css("height", clenum);
+                                $(".s-circle").css("top", numh2);
+                                $(".s-circle").css("right", numw2);
+                                $(".s-background").css("border-width", num3)
+                            }
+                        }
+
+                    }
+                    // console.log(clenum);
+                    circle_r_scale = parseFloat((clenum / 2) / squarehf );
+                    circle_r_scale = circle_r_scale.toFixed(2);
+                    if(circle_r_scale > 1){
+                        circle_r_scale = 1;
+                    }
+                    $('#circle_r_scale').val(circle_r_scale);
+                    var picshow = 24000 / clenum;
+                    $(".pic2").css("background-size", picshow + "%");
+                    $(".pic1").css("background-size", picshow + "%");
+                })
+                //-----------------------------------------
+            } else {
+                // console.log("偶数");
+                $(".c3").unbind("mousemove");
+                $(".c3").css("cursor");
+            }
+        })
+
+        $(".filepath").on("change", function() {
+            var srcs = getObjectURL(this.files[0]); //获取路径
+            $(".pc-setphoto").hide();
+            $(".pc-setphotoshow").show();
+            $(".square").css("background-image", "url(" + srcs + ")");
+//            $(this).val(''); //必须制空
+            $("#spbtn1").removeClass("pc-spbtn1").addClass("pc-spbtns1");
+            $("#spbtn2").removeClass("pc-spbtn2").addClass("pc-spbtns2");
+            $("#sppreviewpic1").removeClass("pc-sppreviewpic").addClass("pc-sppreviewpic1");
+            $("#sppreviewpic2").removeClass("pc-sppreviewpic").addClass("pc-sppreviewpic2");
+            $("#pc-pic1").addClass("pic1");
+            $("#pc-pic2").addClass("pic2");
+            $(".pic1").css("background-image", "url(" + srcs + ")");
+            $(".pic2").css("background-image", "url(" + srcs + ")");
+        })
+    })
+
+    function getObjectURL(file) {
+        var url = null;
+        if (window.createObjectURL != undefined) {
+            url = window.createObjectURL(file)
+        } else if (window.URL != undefined) {
+            url = window.URL.createObjectURL(file)
+        } else if (window.webkitURL != undefined) {
+            url = window.webkitURL.createObjectURL(file)
+        }
+        return url
+    };
+</script>
+<script>
+    $('#spbtn1').click(function(){
+        var file = $(".filepath")[0].files[0];
+        if(file == 'undefined'){
+            $('#avatar-tips-message').empty().html('请先选择图片');
+            return false;
+        }
+        if(file.size > 0.5*1024*1024){
+            $('#avatar-tips-message').empty().html('图片大小超过500K');
+            return false;
+        }
+        var typeArr = ['image/png', 'image/jpeg', 'image/jpg'];
+        if($.inArray(file.type, typeArr) < 0){
+            $('#avatar-tips-message').empty().html('图片格式不正确');
+            return false;
+        }
+        $("#modify-avatar-form").ajaxSubmit({
+            type: 'POST',
+            url: "/Home/User/ajax_do_modify_avatar" ,
+            data: {} ,
+            dataType:'json',
+            async : false, //默认为true 异步
+            success:function(res) {
+                if(res.error){
+                    return false;
+                    $(".filepath").val('');
+                    $('#avatar-tips-message').empty().html('上传失败');
+
+                }else{
+                    window.location.reload();
+                }
+            },
+            error : function() {
+                return false;
+            }
+        });
+    });
+</script>
 </body>
 </html>

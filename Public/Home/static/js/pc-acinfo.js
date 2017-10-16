@@ -15,7 +15,14 @@ $(function() {
             $(".headloginalert").hide();
             $(".headpcenter").attr("src", "/Public/Home/static/img/pcenter.png");
         }
-
+    });
+    $(".pc-headbtnwallet").click(function() {
+        var href = $(this).data('href');
+        window.location.href = href
+    })
+    $(".pc-headbtncoupon").click(function() {
+        var href = $(this).data('href');
+        window.location.href = href
     })
 
     /*$(".pc-qianbi").click(function() {
@@ -160,8 +167,9 @@ $(function() {
 
     });
 
+    //领取礼包
     function receive_gift(gift_id) {
-        var url = '/Home/User/receive_gift"';
+        var url = '/Home/User/receive_gift';
         $.ajax({
             type:'POST',
             url:url,
@@ -173,7 +181,7 @@ $(function() {
                     $('get-gift-mask').remove();
                 }
                 if(res.error){
-                    dialogInfo(res.detail);
+
                 }else{
                     var html = '<div class="system-alert get-gift-mask" style="display: none">' +
                         '    <div class="container">' +

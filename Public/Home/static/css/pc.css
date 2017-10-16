@@ -440,6 +440,15 @@
     right: -2px;
 }
 
+.pc-couponpicdy {
+    width: 49px;
+    height: 55px;
+    background-image: url("../../static/img/pc-couponpic10.png");
+    position: absolute;
+    top: -5px;
+    right: -2px;
+}
+
 .pc-couponpicygmj {
     width: 49px;
     height: 55px;
@@ -449,10 +458,37 @@
     right: -2px;
 }
 
+.pc-couponpicygzk {
+    width: 49px;
+    height: 55px;
+    background-image: url("../../static/img/pc-couponpic9.png");
+    position: absolute;
+    top: -5px;
+    right: -2px;
+}
+
+.pc-couponpicygdy {
+    width: 49px;
+    height: 55px;
+    background-image: url("../../static/img/pc-couponpic11.png");
+    position: absolute;
+    top: -5px;
+    right: -2px;
+}
+
 .yongguoquan {
     width: 65px;
     height: 65px;
     background-image: url("../../static/img/pc-couponpic8.png");
+    position: absolute;
+    left: 3px;
+    bottom: 2px;
+}
+
+.guoqiquan {
+    width: 65px;
+    height: 65px;
+    background-image: url("../../static/img/pc-couponpic12.png");
     position: absolute;
     left: 3px;
     bottom: 2px;
@@ -809,6 +845,7 @@
     background-color: #F7F7F7;
     border: 1px solid #CBCBCB;
     position: relative;
+    display: none;
 }
 
 .square,
@@ -823,7 +860,7 @@
     top: 0;
     left: 0;
     overflow: hidden;
-    background-image: url("../../static/img/pic.png");
+    /*background-image: url("../../static/img/pic.png");*/
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -913,9 +950,10 @@
     border-radius: 50%;
     overflow: hidden;
     /* border: 1px solid red; */
-    background-image: url("../../static/img/pic.png");
+    /*background-image: url("../../static/img/pic.png");*/
     background-size: 300% 300%;
     background-position: center;
+    background-repeat: no-repeat;
 }
 
 .pic2 {
@@ -924,9 +962,11 @@
     border-radius: 50%;
     overflow: hidden;
     /* border: 1px solid red; */
-    background-image: url("../../static/img/pic.png");
+    /*background-image: url("../../static/img/pic.png");*/
     background-size: 300% 300%;
     background-position: center;
+    background-repeat: no-repeat;
+
 }
 
 .pc-sppreview1 {

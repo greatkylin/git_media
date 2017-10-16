@@ -74,7 +74,7 @@
         //提交手机号和验证码
         $("#bind_phone_btn").click(function() {
             var phone = $.trim($('#phone').val());
-            var captcha = $.trim($('#captcha').val());
+            var captcha = $.trim($('#captcha').val);
             if(typeof (phone) === 'undefined' || phone === ''){
                 dialogInfo('请填写手机号');
                 return false;
@@ -99,11 +99,11 @@
                     if(res.error){
                         dialogInfo(res.detail);
                     }else{
-                        dialogInfo(res.detail,'', 1, true);
+                        dialogInfo(res.detail);
                     }
                 },
                 error : function() {
-                    dialogInfo('未知错误','', 1, true);
+                    dialogInfo('未知错误');
                 }
             });
         });
@@ -129,7 +129,7 @@
                 type: 'POST',
                 url: sendCodeUrl ,
                 dataType:'json',
-                data:{phone: phone, send_type: 6},
+                data:{phone: phone, send_type: 100},
                 async : false, //默认为true 异步
                 success:function(res) {
                     if(res.error){

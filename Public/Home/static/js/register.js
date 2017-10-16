@@ -245,14 +245,13 @@ $(function () {
         $.ajax({
             type: 'POST',
             url: "/Home/Login/do_login" ,
-            data: {login_name : login_name, password: password} ,
+            data: {login_name : login_name, password: password, is_remember: isRememberPwd} ,
             dataType:'json',
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
                     loginNameInput.focus();
-                    loginPwdInput.focus();
-                    loginInputPassStatus(loginNameInput,false)
+                    loginInputPassStatus(loginNameStatus,false)
                 }else{
                     window.location.reload();
                 }
@@ -262,6 +261,7 @@ $(function () {
             }
         });
     });
+
     //点击立即注册
     $('#login-box .register_now').click(function(){
         popBox.hide();
@@ -270,10 +270,10 @@ $(function () {
     });
 
     //点击忘记密码
-    $('#login-box .register_now').click(function(){
+    $('#login-box .forget_password').click(function(){
         popBox.hide();
-        $('#reset-pwd-box').show();
         //重置密码弹框显示
+        $('#reset-pwd-box').show();
     });
 
     loginPwdInput.change(function () {
@@ -305,6 +305,7 @@ $(function () {
                 elem.addClass('altb-icon');
             }
         }else{
+            console.log(1);
             if(elem.hasClass('altb-icon')){
                 elem.removeClass('altb-icon');
             }
@@ -331,6 +332,27 @@ $(function () {
         resetPwdBox.hide();
     });
 
+    phoneInput.change(function () {
+        $(this).blur(function () {
+            var phone = $.trim(phoneInput.val());
+            if(typeof (phone) === 'undefined' || phone === ''){
+                loginInputPassStatus(phoneStatus, false);
+                phoneInput.focus();
+                resetPhonePass = false;
+                return false;
+            }
+            var pattern = /^1[34578]\d{9}$/;
+            if(!pattern.test(phone)){
+                phoneInput.focus();
+                loginInputPassStatus(phoneStatus, false);
+                resetPhonePass = false;
+                return false;
+            }
+            resetPhonePass = true;
+            loginInputPassStatus(phoneStatus, true);
+        });
+    });
+
     //点击发送验证码
     sendCaptchaBtn.click(function(){
         var phone = $.trim(phoneInput.val());
@@ -343,10 +365,10 @@ $(function () {
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
             phoneInput.focus();
-            loginInputPassStatus(phoneStatus, false);
             resetPhonePass = false;
             return false;
         }
+        loginInputPassStatus(phoneStatus, true);
         $.ajax({
             type: 'POST',
             url: sendCodeUrl ,
@@ -405,6 +427,7 @@ $(function () {
         var new_password = passwordInput.val();
         //提交前再验证手机号码是否符合要求
         if(typeof (phone) === 'undefined' || phone === ''){
+            loginInputPassStatus(phoneStatus, false);
             phoneInput.focus();
             resetPhonePass = false;
             return false;
@@ -413,11 +436,12 @@ $(function () {
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            phoneInput.focus();
             loginInputPassStatus(phoneStatus, false);
+            phoneInput.focus();
             resetPhonePass = false;
             return false;
         }else{
+            loginInputPassStatus(phoneStatus, true);
             resetPhonePass = true;
         }
         if(typeof (captcha) === 'undefined' || captcha === ''){
@@ -427,18 +451,17 @@ $(function () {
         }else{
             captchaPass = true;
         }
-        var pattern = /^[0-9]\d{6}$/;
+        var pattern = /^\d{6}$/;
         if(!pattern.test(captcha)){
             captchaInput.focus();
             captchaPass = false;
-            loginInputPassStatus(captchaStatus, false);
             return false;
         }else{
             captchaPass = true;
         }
         if(typeof (new_password) === 'undefined' || new_password === ''){
             passwordInput.focus();
-            resetPwdPass == false
+            resetPwdPass = false;
             return false;
         }else{
             resetPwdPass = true;
@@ -479,22 +502,46 @@ $(function () {
     var canceltBindPhoneBtn = $('#bind_phone_btn .bind_phone_cancel_btn');
     var bindPhonePass = false;
     var bindCaptchaPass = false;
+
+    bindPhoneInput.change(function () {
+        $(this).blur(function () {
+            var phone = $.trim(bindPhoneInput.val());
+            if(typeof (phone) === 'undefined' || phone === ''){
+                bindPhoneInput.focus();
+                bindPhonePass = false;
+                return false;
+            }
+            var pattern = /^1[34578]\d{9}$/;
+            if(!pattern.test(phone)){
+                phoneInput.focus();
+                loginInputPassStatus(bindPhoneStatus, false);
+                bindPhonePass = false;
+                return false;
+            }
+            bindPhonePass = true;
+            loginInputPassStatus(bindPhoneStatus, true);
+        });
+    });
+
     //发送手机验证码
     bindSendCaptchaBtn.click(function(){
-        var phone = $.trim(phoneInput.val());
+        var phone = $.trim(bindPhoneInput.val());
         var sendCodeUrl = '/Home/User/ajax_send_sms_captcha.html';
         if(typeof (phone) === 'undefined' || phone === ''){
+            loginInputPassStatus(bindPhoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            bindPhoneInput.focus();
             loginInputPassStatus(bindPhoneStatus, false);
+            bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }
+        bindPhonePass = true;
+        loginInputPassStatus(bindPhoneStatus, true);
         $.ajax({
             type: 'POST',
             url: sendCodeUrl ,
@@ -523,19 +570,22 @@ $(function () {
         var captcha = bindCaptchaInput.val();
         //提交前再验证手机号码是否符合要求
         if(typeof (phone) === 'undefined' || phone === ''){
+            loginInputPassStatus(phoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }else{
+            loginInputPassStatus(phoneStatus, true);
             bindPhonePass = true;
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            bindPhoneInput.focus();
             loginInputPassStatus(phoneStatus, false);
+            bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }else{
+            loginInputPassStatus(phoneStatus, true);
             bindPhonePass = true;
         }
         if(typeof (captcha) === 'undefined' || captcha === ''){
@@ -545,11 +595,10 @@ $(function () {
         }else{
             bindCaptchaPass = true;
         }
-        var pattern = /^[0-9]\d{6}$/;
+        var pattern = /^\d{6}$/;
         if(!pattern.test(captcha)){
             bindCaptchaInput.focus();
             bindCaptchaPass = false;
-            loginInputPassStatus(captchaStatus, false);
             return false;
         }else{
             bindCaptchaPass = true;
@@ -603,8 +652,8 @@ $(function () {
             '                        <p>'+ detail +'</p>' +
             '                    </div>' +
             '                </div>' +
+            '                <button class="alt-button">我知道了</button>' +
             '            </div>' +
-            '            <button class="alt-button">我知道了</button>' +
             '        </div>' +
             '    </div>';
         $('body').append(html);

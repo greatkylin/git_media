@@ -23,7 +23,7 @@ class UserService extends BaseService
      */
     public function getUser ($usernameOrPhone) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("username = '{$usernameOrPhone}' OR phone = '{$usernameOrPhone}'")->find();
-        if($user === false || empty($user)){
+        if($user === false){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -38,7 +38,7 @@ class UserService extends BaseService
      */
     public function getUserByUsername ($username) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("username = '{$username}'")->find();
-        if($user === false || empty($user)){
+        if($user === false){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -53,7 +53,7 @@ class UserService extends BaseService
      */
     public function getUserByPhone ($phone) {
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("phone = '{$phone}'")->find();
-        if($user === false || empty($user)){
+        if($user === false){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;
@@ -68,7 +68,7 @@ class UserService extends BaseService
      */
     public function getUserByUserId($userId){
         $user = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("uid = '{$userId}'")->find();
-        if($user === false || empty($user)){
+        if($user === false){
             return $this->setError('查询失败，未找到对应的用户');
         }
         return $user;

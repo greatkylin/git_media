@@ -112,6 +112,12 @@ class LoginController extends HomeBaseController
             $userInfo = $result['data']['obj'];
             session('login_name', $loginName);
             session('media_web_user', $userInfo);
+            //若记住密码
+//            if(intval(I('is_remember'))){
+//                cookie('login_name', $loginName);
+//                cookie(md5($loginName), multiMD5(multiMD5($password)));
+//            }
+
             $this->outputJSON(false, 'success', '登录成功');
         }else{
             $this->outputJSON(true, 'false',  $result['info']);
@@ -129,7 +135,7 @@ class LoginController extends HomeBaseController
             $phone = trim(I('post.phone'));
             $captcha = intval(I('post.captcha'));
             $newPassword = trim(I('post.password'));
-            $result = $userService->changePasswordByValidBindPhone($userId, $phone, $captcha, $newPassword);
+            $result = $userService->changePasswordByValidBindPhone($phone, $captcha, $newPassword);
             if (!$result) {
                 $this->outputJSON(true, 'false', $userService->getFirstError());
             }

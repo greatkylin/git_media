@@ -20,7 +20,11 @@ class UserController extends HomeBaseController
     {
         parent::_initialize();
         if(!$this->userInfo){
-            $this->error('请先登录', '/');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         //判断是否已签到
         $signTime = M(C('DB_ZHIYU.DB_NAME') . '.' . 'user', C('DB_ZHIYU.DB_PREFIX'))->where("uid='".$this->userInfo['uid']."'")->getField('signtime');
@@ -75,7 +79,11 @@ class UserController extends HomeBaseController
     public function my_gift_list(){
         $userId = $this->getUserId();
         if(!$userId){
-            $this->error('请先登录');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         //当前页
         $page = intval(I('p'));
@@ -119,7 +127,11 @@ class UserController extends HomeBaseController
     public function my_coupon_list(){
         $userId = $this->getUserId();
         if(!$userId){
-            $this->error('请先登录');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         $page = intval(I('p'));
         if(empty($page)){
@@ -197,11 +209,15 @@ class UserController extends HomeBaseController
     public function my_notice_read_by_id(){
         $notice_id = intval(I('notice_id'));
         if (!$notice_id) {
-            $this->outputJSON(true, '', '参数不完整');
+            $this->outputJSON(true, 'false', '参数不完整');
         }
         $userId = $this->getUserId();
         if(!$userId){
-            $this->outputJSON(true, '', '请先登录');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         $where = array();
         $where['uid'] = $userId;
@@ -212,9 +228,9 @@ class UserController extends HomeBaseController
             ->save($save);
 
         if ($result !== false) {
-            $this->outputJSON(false,'','已阅');
+            $this->outputJSON(false,'success','已阅');
         } else {
-            $this->outputJSON(true,'','失败');
+            $this->outputJSON(true,'false','失败');
         }
     }
 
@@ -226,11 +242,15 @@ class UserController extends HomeBaseController
     public function my_notice_delete_by_id(){
         $notice_id = intval(I('notice_id'));
         if (!$notice_id) {
-            $this->outputJSON(true, '', '参数不完整');
+            $this->outputJSON(true, 'false', '参数不完整');
         }
         $userId = $this->getUserId();
         if(!$userId){
-            $this->outputJSON(true, '', '请先登录');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         $where = array();
         $where['uid'] = $userId;
@@ -241,9 +261,9 @@ class UserController extends HomeBaseController
             ->save($save);
 
         if ($result) {
-            $this->outputJSON(false,'','删除成功');
+            $this->outputJSON(false,'success','删除成功');
         } else {
-            $this->outputJSON(true,'','删除失败');
+            $this->outputJSON(true,'false','删除失败');
         }
     }
 
@@ -255,7 +275,11 @@ class UserController extends HomeBaseController
     public function my_app_list(){
         $userId = $this->getUserId();
         if(!$userId){
-            $this->error(true, '', '请先登录');
+            if(IS_AJAX){
+                $this->outputJSON(true, 'login', '请先登录');
+            }else{
+                $this->error('请先登录', '/');
+            }
         }
         //当前页
         $page = intval(I('p'));
@@ -504,19 +528,23 @@ class UserController extends HomeBaseController
         if(!$this->userInfo){
             $this->outputJSON(true, 'login', '请先登录');
         }
-
-        $avatarPath = upload_user_avatar_temp();
+        $circleRadius = floatval(I('circle_r_scale'));
+        if(empty($circleRadius)){
+            $circleRadius = 0.5;
+        }
+        //图片先上传至本地
+        $avatarPath = upload_user_avatar_temp($circleRadius);
+        if(!$avatarPath){
+            $this->outputJSON(true, 'false', '上传失败');
+        }
         //php5.5以上推荐使用CURLFile上传文件，5.5以下可以使用
         if (class_exists('\CURLFile')) {
             $fileInfo =  new \CURLFile($avatarPath);
         } else {
             $fileInfo  = '@' . $avatarPath;
         }
-        if(!$avatarPath){
-            $this->outputJSON(true, 'false', 上传失败);
-        }
         $paramArr = array(
-            'token' => $loginUserInfo['token'],
+            'token' => $this->userInfo['token'],
             'login_name' => session('login_name'),
             'timestamp' => time(),
         );
@@ -529,7 +557,7 @@ class UserController extends HomeBaseController
         $result = json_decode($result, true);
         //上传到指娱后删除本地的图片
         if(is_file($avatarPath)){
-            unlink($avatarPath);
+            //unlink($avatarPath);
         }
         if(empty($result)){
             $this->outputJSON(true, 'false',  '未知错误');

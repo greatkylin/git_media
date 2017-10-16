@@ -93,12 +93,21 @@
                                 if(couponList[i].coupon_type == 0){
                                     benefitNumHtml = '<b>'+couponList[i].discount_text[0]+'</b>.'+couponList[i].discount_text[1]+'&nbsp;折';
                                     couponTypeHtml = '<div class="pc-couponpiczk"></div>';
+                                    if(couponList[i].status == 2){
+                                        couponTypeHtml = '<div class="pc-couponpicygzk"></div>';
+                                    }
                                 }else if(couponList[i].coupon_type == 1){
                                     benefitNumHtml = '<small>￥</small><b>'+couponList[i].money+'</b>元';
                                     couponTypeHtml = '<div class="pc-couponpicmj"></div>';
+                                    if(couponList[i].status == 2){
+                                        couponTypeHtml = '<div class="pc-couponpicygmj"></div>';
+                                    }
                                 }else {
                                     benefitNumHtml = '<small>￥</small><b>'+couponList[i].money+'</b>元';
                                     couponTypeHtml = '<div class="pc-couponpicdy"></div>';
+                                    if(couponList[i].status == 2){
+                                        couponTypeHtml = '<div class="pc-couponpicygdy"></div>';
+                                    }
                                 }
                                 //优惠券使用范围判断
                                 var scope_text = '';

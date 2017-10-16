@@ -213,10 +213,10 @@ class ArticleService extends BaseService
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
-            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->field('a.*')
             ->where($where)
             ->limit($currentPage, $pageSize)
-            ->order('new_attr ASC, a.release_time DESC')
+            ->order('a.release_time DESC')
             ->select();
 
         if($articleList === false){
@@ -264,7 +264,7 @@ class ArticleService extends BaseService
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
             ->where($where)
-            ->order('a.attr ASC, a.release_time DESC')
+            ->order('a.release_time DESC')
             ->count();
         if($totalNum === false){
             return $this->setError('查询失败');
@@ -529,9 +529,9 @@ class ArticleService extends BaseService
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
-            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->field('a.*')
             ->where($where)
-            ->order('new_attr ASC, a.release_time DESC')
+            ->order('a.release_time DESC')
             ->select();
         if($articleList === false){
             return $this->setError('查询失败');
@@ -577,10 +577,10 @@ class ArticleService extends BaseService
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
-            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->field('a.*')
             ->where($where)
             ->limit($currentPage, $pageSize)
-            ->order('new_attr ASC, a.release_time DESC')
+            ->order('a.release_time DESC')
             ->select();
         if($articleList === false){
             return $this->setError('查询失败');
@@ -817,10 +817,10 @@ class ArticleService extends BaseService
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
-            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->field('a.*')
             ->where($where)
             ->limit($currentPage, $pageSize)
-            ->order('new_attr ASC, a.catid DESC')
+            ->order('a.catid DESC')
             ->select();
         if($articleList === false){
             return $this->setError('查询失败');
@@ -856,7 +856,7 @@ class ArticleService extends BaseService
         $artNum = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.id')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
-            ->field('a.*, IF(a.attr = 0, 999999999, a.attr) as new_attr')
+            ->field('a.*')
             ->where($where)
             ->count();
         if($artNum === false){
