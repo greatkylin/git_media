@@ -63,24 +63,14 @@
 <include file='Common:footer'/>
 <!--底部导航结束-->
 <script>
-    var currentPage = "{$page}";
-    var pageSize = "{$pageSize}";
-    ajaxGetGiftResult();
-    $('.pc-giftbag').scroll(function(){
-        var c_height = $(this).height();
-        var scrollTop = $(this).scrollTop();
-        if(c_height - scrollTop < 10){
-            ajaxGetGiftResult();
-        }
-    });
-    function ajaxGetGiftResult() {
-        var url = "{:U('Home/User/my_gift_list')}";
-        console.log(url);
+    var fristUrl = "{:U('Home/User/my_gift_list', array('p' => $currentPage))}";
+    ajaxGetGiftResult(fristUrl);
+
+    function ajaxGetGiftResult(url) {
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: url ,
             dataType:'json',
-            data:{p: currentPage, page_size: pageSize},
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
@@ -89,8 +79,6 @@
                     if (typeof (res.data) !== 'undefined') {
                         var giftList = res.data.giftList;
                         if(giftList.length > 0){
-                            currentPage = res.data.currentPage + 1;
-                            pageSize = res.data.pageSize;
                             var html = '';
                             for (var i = 0; i < giftList.length; i++){
                                 var expire = '';
@@ -116,7 +104,9 @@
                                         '</div>'+
                                     '</div>';
                             }
-                            $('.pc-giftbag').append(html);
+                            $('.pc-giftbag').empty().append(html);
+                            $('.pc-mynewspage').empty().html(res.data.show);
+                            userCenterPageJump();
                         }
                     }else{
                         $('.pc-giftbag').append(res.detail);
@@ -125,6 +115,15 @@
             },
             error : function() {
             }
+        });
+    }
+
+    //点击分页触发事件
+    function userCenterPageJump() {
+        $(".page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            ajaxGetGiftResult(url);
         });
     }
 </script>

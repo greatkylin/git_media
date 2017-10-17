@@ -2028,10 +2028,10 @@ tr {
 
 /* ---------------------------------弹窗系列------------------------------------- */
 
+/*个人中心分页样式*/
 .pc-mynewspage {
     width: 100%;
     height: 50px;
-    /* border: 1px solid red; */
     margin-top: 30px;
     padding: 0 212px;
     display: flex;
@@ -2052,7 +2052,13 @@ tr {
     background-position: center;
     border-radius: 5px;
 }
+.pc-mynewspage .pc-pageleft{
+    background-image:url('../../static/img/pc-pageleft.png');
+}
 
+.pc-mynewspage .pc-pageright{
+    background-image:url('../../static/img/pc-pageright.png')
+}
 .pc-pageactive {
     background-color: #00E3CB !important;
     color: white !important;

@@ -747,7 +747,7 @@ class UserService extends BaseService
              )
              ->join(C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') .  'notice as n on u_n.notice_id = n.notice_id')
              ->where($where)
-             ->page($currentPage, $pageSize)
+             ->limit($currentPage, $pageSize)
              ->order('u_n.create_time DESC')
              ->select();
 

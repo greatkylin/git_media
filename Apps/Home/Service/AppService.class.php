@@ -1785,4 +1785,57 @@ class AppService extends BaseService
         }
         return $appList;
     }
+    /**
+     * 用户的游戏总量，包含预约，下载过的，收藏的
+     * @author xy
+     * @since 2017/10/13 19:10
+     * @param int $userId 用户id
+     * @return bool|mixed
+     */
+    public function countUserAppNum($userId){
+        $model = new \Think\Model();
+        $downAppSql = '
+            SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down `ad` on list.app_id = ad.app_id 
+            WHERE ad.uid = "'.$userId.'" AND alist.is_publish IN (1) 
+            GROUP BY alist.app_id 
+            ORDER BY ad.down_time DESC
+            ';
+        $collectAppSql = '
+            SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_collection `mc` on list.app_id = mc.app_id 
+            WHERE mc.uid = "'.$userId.'" AND mc.status = 1 AND alist.is_publish IN (1) 
+            ORDER BY mc.create_time DESC
+            ';
+        $subscribeAppSql = '
+            SELECT alist.`app_id`,IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_subscribe `ms` on list.app_id = ms.app_id 
+            WHERE ms.uid = "'.$userId.'" AND ms.status = 1 AND alist.is_publish IN (1) 
+            ORDER BY lib.start_down_time ASC
+            ';
+
+        $unionSql = 'SELECT count(`app_id`) as total_num FROM (('.$downAppSql.') UNION ('.$collectAppSql.') UNION ('.$subscribeAppSql.')) AS app_list ORDER BY app_list.app_id DESC ';
+
+        $result = $model->query($unionSql);
+
+        if($result === false){
+            return $this->setError('查询失败');
+        }
+        if(!empty($result)){
+            return $result[0]['total_num'];
+        }
+        return 0;
+    }
 }

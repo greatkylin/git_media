@@ -1141,7 +1141,7 @@ class GiftService extends BaseService
             ->join( C('DB_ZHIYU.DB_NAME') . '.' . C('DB_ZHIYU.DB_PREFIX') .  'app_lib al ON al.app_id = gl.app_id', 'LEFT')
             ->join( C('DB_NAME') . '.' . C('DB_PREFIX') .  'app_lib alib ON al.app_id = alib.app_id', 'LEFT')
             ->where($where)
-            ->page($currentPage, $pageSize)
+            ->limit($currentPage, $pageSize)
             ->order('glc.status ASC, glc.receive_time DESC')
             ->select();
         if($giftList === false){

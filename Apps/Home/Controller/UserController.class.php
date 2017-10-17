@@ -13,6 +13,7 @@ use Common\Service\SmsService;
 use Home\Service\AppService;
 use Home\Service\GiftService;
 use Home\Service\UserService;
+use Think\UserPage;
 
 class UserController extends HomeBaseController
 {
@@ -86,35 +87,38 @@ class UserController extends HomeBaseController
             }
         }
         //当前页
-        $page = intval(I('p'));
-        if(empty($page)){
-            $page = 1;
+        $currentPage = intval(I('p'));
+        if(empty($currentPage)){
+            $currentPage = 1;
         }
-        $pageSize = intval(I('page_size', 4));
-        $currentPage = $pageSize * ($page - 1);
+        $pageSize = 4;
+
         if(IS_AJAX){
             $service = new GiftService();
             // 查询满足要求的总记录数
             $totalNum = $service->countUserGiftNum($userId);
             if($totalNum === false){
-                $this->outputJSON(true, '', $service->getFirstError());
+                $this->outputJSON(true, 'false', $service->getFirstError());
             }
             // 进行分页游戏数据查询 注意limit方法的参数要使用Page类的属性
-            $giftList = $service->getUserGiftListByPage($userId, $currentPage, $pageSize);
+            $page = new UserPage($totalNum, $pageSize);
+            $show = $page->show();
+            $giftList = $service->getUserGiftListByPage($userId, $page->firstRow, $page->listRows);
             if($giftList === false){
-                $this->outputJSON(true, '', $service->getFirstError());
+                $this->outputJSON(true, 'false', $service->getFirstError());
             }
             if(empty($giftList)){
-                $this->outputJSON(false, '', '您还没有领取礼包');
+                $this->outputJSON(false, 'success', '您还没有领取礼包');
             }
             $data = array(
-                'page' => $page,
+                'currentPage' => $currentPage,
                 'pageSize' => $pageSize,
-                'giftList' => $giftList
+                'giftList' => $giftList,
+                'show' => $show,
             );
-            $this->outputJSON(false,'','获取成功', $data);
+            $this->outputJSON(false,'success','获取成功', $data);
         }
-        $this->assign('page', $page);
+        $this->assign('currentPage', $currentPage);
         $this->assign('pageSize', $pageSize);
         $this->display();
     }
@@ -133,29 +137,36 @@ class UserController extends HomeBaseController
                 $this->error('请先登录', '/');
             }
         }
-        $page = intval(I('p'));
-        if(empty($page)){
-            $page = 1;
+        $currentPage = intval(I('p'));
+        if(empty($currentPage)){
+            $currentPage = 1;
         }
-        $pageSize = intval(I('page_size', 4));
-        $currentPage = $pageSize * ($page - 1);
+        $pageSize = 4;
+
         if(IS_AJAX){
             $service = new UserService();
-            $couponList = $service->getUserAllCouponByPage($userId, $currentPage, $pageSize);
+            $totalNum = $service->countUserAllCouponNum($userId);
+            if($totalNum === false){
+                $this->outputJSON(true, 'false', $service->getFirstError());
+            }
+            $page = new UserPage($totalNum, $pageSize);
+            $show = $page->show();
+            $couponList = $service->getUserAllCouponByPage($userId, $page->firstRow, $page->listRows);
             if($couponList === false){
-                $this->outputJSON(true, '', $service->getFirstError());
+                $this->outputJSON(true, 'false', $service->getFirstError());
             }
             if(empty($couponList)){
-                $this->outputJSON(false, '', '您还没有优惠券');
+                $this->outputJSON(false, 'success', '您还没有优惠券');
             }
             $data = array(
                 'page' => $page,
                 'pageSize' => $pageSize,
-                'couponList' => $couponList
+                'couponList' => $couponList,
+                'show' => $show
             );
-            $this->outputJSON(false,'','获取成功', $data);
+            $this->outputJSON(false,'success','获取成功', $data);
         }
-        $this->assign('page', $page);
+        $this->assign('currentPage', $currentPage);
         $this->assign('pageSize', $pageSize);
         $this->display();
 
@@ -168,35 +179,43 @@ class UserController extends HomeBaseController
      */
     public function my_notice_list(){
         $userId = $this->getUserId();
-        $page = intval(I('p'));
-        if(empty($page)){
-            $page = 1;
+        $currentPage = intval(I('p'));
+        if(empty($currentPage)){
+            $currentPage= 1;
         }
-        $pageSize = intval(I('page_size', 3));
-        $currentPage = $pageSize * ($page - 1);
+        $pageSize = 3;
+
         if(IS_AJAX){
             $where = array();
             $where['u_n.uid'] = $userId;
             $where['u_n.is_del'] = 0; //未被删除的
 
             $service = new UserService();
-            $noticeList = $service->getNoticeListByPage($where, $currentPage, $pageSize);
+            $totalNum = $service->countNoticeNum($where);
+            if($totalNum === false){
+                $this->outputJSON(true, 'false', $service->getFirstError());
+            }
+            $page = new UserPage($totalNum, $pageSize);
+            // 分页显示输出
+            $show = $page->show();
+            $noticeList = $service->getNoticeListByPage($where, $page->firstRow, $page->listRows);
 
             if($noticeList === false){
-                $this->outputJSON(true, '', $service->getFirstError());
+                $this->outputJSON(true, 'false', $service->getFirstError());
             }
             if(empty($noticeList)){
-                $this->outputJSON(false, '', '暂时没有消息');
+                $this->outputJSON(false, 'success', '暂时没有消息');
             }
 
             $data = array(
-                'page' => $page,
+                'currentPage' => $currentPage,
                 'pageSize' => $pageSize,
-                'noticeList' => $noticeList
+                'noticeList' => $noticeList,
+                'show' => $show,
             );
-            $this->outputJSON(false,'','获取成功', $data);
+            $this->outputJSON(false,'success','获取成功', $data);
         }
-        $this->assign('page', $page);
+        $this->assign('currentPage', $currentPage);
         $this->assign('pageSize', $pageSize);
         $this->display();
     }
@@ -282,25 +301,36 @@ class UserController extends HomeBaseController
             }
         }
         //当前页
-        $page = intval(I('p'));
-        if(empty($page)){
-            $page = 1;
+        $currentPage = intval(I('p'));
+        if(empty($currentPage)){
+            $currentPage = 1;
         }
-        $pageSize = intval(I('page_size', 6));
-        $currentPage = $pageSize * ($page - 1);
+        $pageSize = 6;
+
         if(IS_AJAX){
             $appService = new AppService();
-            $appList = $appService->getUserAppList($userId, $currentPage, $pageSize);
+            $totalNum = $appService->countUserAppNum($userId);
+            if($totalNum === false){
+                $this->outputJSON(true, 'false', $appService->getFirstError());
+            }
+            $page = new UserPage($totalNum, $pageSize);
+            // 分页显示输出
+            $show = $page->show();
+            $appList = $appService->getUserAppList($userId, $page->firstRow, $page->listRows);
             if($appList === false){
                 $this->outputJSON(true, 'false', '查询失败');
             }
-            $data = array('app_list' => $appList);
+            $data = array(
+                'currentPage' => $currentPage,
+                'pageSize' => $pageSize,
+                'app_list' => $appList,
+                'show' => $show,
+            );
             $this->outputJSON(false, 'success', '查询成功', $data);
         }
 
-        $this->assign('page', $page);
+        $this->assign('currentPage', $currentPage);
         $this->assign('pageSize', $pageSize);
-        $this->assign('appList', $appList);
         $this->display();
     }
 
@@ -314,14 +344,14 @@ class UserController extends HomeBaseController
             $url = U('Home/User/exchange_code');
             $code = trim(I('code', null));
             if(empty($code)){
-                $this->outputJSON(true,'','请填写激活码');
+                $this->outputJSON(true,'false','请填写激活码');
             }
             $service = new UserService();
             //执行兑换激活码操作
             if($service->exchangeCode($code)){
-                $this->outputJSON(false,'','兑换成功');
+                $this->outputJSON(false,'false','兑换成功');
             }else{
-                $this->outputJSON(true, '', $service->getFirstError());
+                $this->outputJSON(true, 'success', $service->getFirstError());
             }
         }
         $this->display();

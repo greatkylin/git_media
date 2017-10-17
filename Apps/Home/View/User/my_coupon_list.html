@@ -66,37 +66,22 @@
 <include file='Common:footer'/>
 <!--底部导航结束-->
 <script>
-    var currentPage = "{$page}";
-    var pageSize = "{$pageSize}";
-    ajaxGetCouponResult();
-    if($('.single-coupon').length > 0){
-        $('.pc-coupon').append('<hr />')
-    }
-    $('.pc-couponcontent').scroll(function(){
-        var c_height = $(this).height();
-        var scrollTop = $(this).scrollTop();
-        if(c_height - scrollTop < 10){
-            ajaxGetCouponResult();
-        }
-    });
-    function ajaxGetCouponResult() {
-        var url = "{:U('Home/User/my_coupon_list')}";
-        console.log(url);
+    var fristUrl = "{:U('Home/User/my_coupon_list', array('p' => $currentPage))}";
+    ajaxGetCouponResult(fristUrl);
+
+    function ajaxGetCouponResult(url) {
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: url ,
             dataType:'json',
-            data:{p: currentPage, page_size: pageSize},
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
-                    $('.pc-couponcontent').append(res.detail);
+                    dialogInfo(res.detail);
                 }else{
                     if (typeof (res.data) !== 'undefined') {
                         var couponList = res.data.couponList;
                         if(couponList.length > 0){
-                            currentPage = res.data.currentPage + 1;
-                            pageSize = res.data.pageSize;
                             var html = '';
                             for (var i = 0; i < couponList.length; i++){
                                 var benefitNumHtml =  '';
@@ -157,15 +142,27 @@
                                         '</div>'+
                                     '</div>';
                             }
-                            $('.pc-couponcontent').append(html);
+                            $('.pc-couponcontent').empty().append(html);
+                            $('.pc-mynewspage').empty().html(res.data.show);
+                            userCenterPageJump();
                         }
                     }else{
-                        $('.pc-couponcontent').append(res.detail);
+                        dialogInfo(res.detail);
                     }
                 }
             },
             error : function() {
+                dialogInfo(res.detail);
             }
+        });
+    }
+
+    //点击分页触发事件
+    function userCenterPageJump() {
+        $(".page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            ajaxGetCouponResult(url);
         });
     }
 </script>

@@ -33,16 +33,7 @@
                     </div>
                 </div>
                 <div class="pc-mynewspage">
-                    <section class="pc-pageleft" style="background-image:url('../../static/img/pc-pageleft.png');"></section>
-                    <div class="pagenum pc-pageactive">1</div>
-                    <div class="pagenum">2</div>
-                    <div class="pagenum">3</div>
-                    <div class="pagenum">4</div>
-                    <div class="pagenum">5</div>
-                    <div class="pagenum">…</div>
-                    <div class="pagenum">99</div>
-                    <div class="pagenum">100</div>
-                    <section class="pc-pageright" style="background-image:url('../../static/img/pc-pageright.png');"></section>
+
                 </div>
                 <!--其他信息容器结束-->
             </div>
@@ -106,38 +97,23 @@
     }
 </script>
 <script>
-    var currentPage = "{$page}";
-    var pageSize = "{$pageSize}";
-    ajaxGetNoticeResult();
 
-    $('#showList').click(function(){
-        ajaxGetNoticeResult();
-    });
-    
-    $('.pc-mynews').scroll(function () {
-        var c_height = $(this).height();
-        var scrollTop = $(this).scrollTop();
-        if(c_height - scrollTop < 10){
-            ajaxGetNoticeResult();
-        }
-    });
-    function ajaxGetNoticeResult() {
-        var url = "{:U('Home/User/my_notice_list')}";
+    var firstUrl = "{:U('Home/User/my_notice_list', array('p' => $currentPage))}";
+    ajaxGetNoticeResult(firstUrl);
+
+    function ajaxGetNoticeResult(url) {
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: url ,
             dataType:'json',
-            data:{p: currentPage, page_size: pageSize},
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
-                    $('.pc-mynews').append(res.detail);
+                    dialogInfo(res.detail);
                 }else{
                     if (typeof (res.data) !== 'undefined') {
                         var noticeList = res.data.noticeList;
                         if(noticeList.length > 0){
-                            currentPage = res.data.page + 1;
-                            pageSize = res.data.pageSize;
                             var html = '';
                             for (var i = 0; i < noticeList.length; i++){
                                 if(noticeList[i].is_read > 0){
@@ -161,19 +137,29 @@
                                     '</div>';
 
                             }
-                            $('.pc-mynews').append(html);
+                            $('.pc-mynews').empty().append(html);
+                            $('.pc-mynewspage').empty().html(res.data.show);
+                            userCenterPageJump();
                             explandViewNotice();
                         }
                     }else{
-                        //$('.pc-mynews').append(res.detail);
+                        dialogInfo(res.detail);
                     }
                 }
             },
             error : function() {
+                dialogInfo(res.detail);
             }
         });
     }
-
+    //点击分页触发事件
+    function userCenterPageJump() {
+        $(".page-jump").on('click',function(){
+            var pageObj = this;
+            var url = $(pageObj).attr('data-href');
+            ajaxGetNoticeResult(url);
+        });
+    }
 </script>
 </body>
 </html>
