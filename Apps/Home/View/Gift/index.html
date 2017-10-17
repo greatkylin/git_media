@@ -5,6 +5,7 @@
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
     <!--2017-7-6！！！！！！！！！！！！！！！！！-->
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/receive_gift.css">
 </head>
 <body class="bodygiftCenter">
 <!--头部注册栏开始-->
@@ -18,7 +19,7 @@
     <div class="subnav-box">
         <a href="{:U('Home/Gift/index')}" class="active">礼包中心</a>
         <a href="{:U('Home/Gift/all_gift')}">礼包大全</a>
-        <a href="#">我的礼包</a>
+        <a href="{:U('Home/User/my_gift_list')}">我的礼包</a>
     </div>
 </div>
 <!--子导航栏结束-->
@@ -58,7 +59,7 @@
                         <div class="icon"><a href="{:U('Home/Gift/gift_page', array('app_id' => $hotGift['app_id']))}"><img alt="" src="{$hotGift.icon|format_url}"></a></div>
                         <div class="name">
                             <div class="self">{$hotGift.app_name}</div>
-                            <div class="get">立即领取</div>
+                            <div class="get" data-giftid="{$hotGift.gift_id}">立即领取</div>
                         </div>
                     </div>
                     <div class="desp-and-icon">
@@ -89,7 +90,7 @@
                             <div class="icon"><a href="{:U('Home/Gift/gift_page', array('app_id' => $newGift['app_id']))}"><img alt="" src="{$newGift.icon|format_url}"></a></div>
                             <div class="name">
                                 <div class="self">{$newGift.app_name}</div>
-                                <div class="get">立即领取</div>
+                                <div class="get" data-giftid="{$newGift.gift_id}">立即领取</div>
                             </div>
                         </div>
                         <div class="desp-and-icon">
@@ -126,6 +127,7 @@
 <include file='Common:footer'/>
 <!--底部导航结束-->
 <script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/receive_gift.js"></script>
 <script>
 
     //ajax方式获取其他礼包分页列表
@@ -159,6 +161,11 @@
             $(self).css("width",newWidth);
         });
 
+        //领取礼包
+        $(".gift-tag .get").click(function () {
+            var gift_id = $(this).data('giftid');
+            receive_gift(gift_id);
+        });
 
     })
 </script>

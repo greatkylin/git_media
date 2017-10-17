@@ -1739,9 +1739,37 @@ class AppService extends BaseService
      */
     public function getUserAppList($userId, $currentPage, $pageSize){
         $model = new \Think\Model();
-        $downAppSql = 'SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_app_down `ad` on list.app_id = ad.app_id WHERE ad.uid = "'.$userId.'" AND alist.is_publish IN (1) GROUP BY alist.app_id ORDER BY ad.down_time DESC';
-        $collectAppSql = 'SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_my_collection `mc` on list.app_id = mc.app_id WHERE mc.uid = "'.$userId.'" AND mc.status = 1 AND alist.is_publish IN (1) ORDER BY mc.create_time DESC';
-        $subscribeAppSql = 'SELECT alist.`app_id`,IFNULL(alib.app_name,lib.app_name) as app_name, IFNULL(alib.icon,lib.icon) as icon FROM zy_media_app_list alist INNER JOIN zhiyu_test.zy_app_list list on list.app_id = alist.app_id INNER JOIN zhiyu_test.zy_app_lib lib on lib.app_id = alist.app_id LEFT JOIN media.zy_media_app_lib alib on alib.app_id = alist.app_id LEFT JOIN zhiyu_test.zy_my_subscribe `ms` on list.app_id = ms.app_id WHERE ms.uid = "'.$userId.'" AND ms.status = 1 AND alist.is_publish IN (1) ORDER BY lib.start_down_time ASC';
+        $downAppSql = '
+            SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_down `ad` on list.app_id = ad.app_id 
+            WHERE ad.uid = "'.$userId.'" AND alist.is_publish IN (1) 
+            GROUP BY alist.app_id 
+            ORDER BY ad.down_time DESC
+            ';
+        $collectAppSql = '
+            SELECT alist.`app_id`, IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_collection `mc` on list.app_id = mc.app_id 
+            WHERE mc.uid = "'.$userId.'" AND mc.status = 1 AND alist.is_publish IN (1) 
+            ORDER BY mc.create_time DESC
+            ';
+        $subscribeAppSql = '
+            SELECT alist.`app_id`,IFNULL(alib.app_name,lib.app_name) as app_name, 
+            IFNULL(alib.icon,lib.icon) as icon FROM '.C('DB_NAME').'.'.C('DB_PREFIX').'app_list alist 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_list list on list.app_id = alist.app_id 
+            INNER JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'app_lib lib on lib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'app_lib alib on alib.app_id = alist.app_id 
+            LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'my_subscribe `ms` on list.app_id = ms.app_id 
+            WHERE ms.uid = "'.$userId.'" AND ms.status = 1 AND alist.is_publish IN (1) 
+            ORDER BY lib.start_down_time ASC
+            ';
 
         $unionSql = 'SELECT `app_id`, app_name, icon FROM (('.$downAppSql.') UNION ('.$collectAppSql.') UNION ('.$subscribeAppSql.')) AS app_list ORDER BY app_list.app_id DESC LIMIT '.$currentPage.', '.$pageSize;
 

@@ -18,5 +18,5 @@ $connect['iqiyi']['managerUrl'] = 'http://openapi.iqiyi.com/';
 $connect['iqiyi']['uploadUrl'] = 'http://upload.iqiyi.com/';
 
 //指娱正式服域名 http://app.zhiyugame.com/ ，上线时需要修改此项，
-$connect['URL']['ZHIYU_URL'] = 'http://app.zhiyu.local/';
+$connect['URL']['ZHIYU_URL'] = 'http://test.app.zhiyugame.com/';
 return $connect;

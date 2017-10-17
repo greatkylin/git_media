@@ -9,6 +9,7 @@ $(function () {
     popBoxCloseBtn.click(function () {
         popBox.hide();
     });
+
     //注册的密码与用户名是否验证通过，默认否
     var isValidPass = false;
     var isPwdPass = false;
@@ -208,6 +209,7 @@ $(function () {
             $(this).css('background-image', 'url("/Public/Home/static/img/alerticon.png")');
         }
     });
+
     //关闭登录弹框
     $('#login-box .alt-close').click(function () {
         loginBox.hide();
@@ -225,22 +227,23 @@ $(function () {
             $(this).css('background-image', 'url("/Public/Home/static/img/gth.png")');
         }
     });
+
     //点击登录按钮
     $('#login_submit_btn').click(function(){
         var login_name = $.trim(loginNameInput.val());
         var password = $.trim(loginPwdInput.val());
 
         if(login_name == ''){
-            loginInputPassStatus(loginNameStatus, false);
+            InputPassStatus(loginNameStatus, false);
             return false;
         }else{
-            loginInputPassStatus(loginNameStatus, true);
+            InputPassStatus(loginNameStatus, true);
         }
         if(password == ''){
-            loginInputPassStatus(passwordStatus, false);
+            InputPassStatus(passwordStatus, false);
             return false;
         }else{
-            loginInputPassStatus(passwordStatus, true);
+            InputPassStatus(passwordStatus, true);
         }
         $.ajax({
             type: 'POST',
@@ -251,7 +254,7 @@ $(function () {
             success:function(res) {
                 if(res.error){
                     loginNameInput.focus();
-                    loginInputPassStatus(loginNameStatus,false)
+                    InputPassStatus(loginNameStatus,false)
                 }else{
                     window.location.reload();
                 }
@@ -278,18 +281,28 @@ $(function () {
 
     loginPwdInput.change(function () {
         $(this).blur(function () {
-            loginInputPassStatus($(this));
+            var login_pwd = $.trim(loginPwdInput.val());
+            if(typeof (login_pwd) !== 'undefined'){
+                InputPassStatus(passwordStatus, true);
+            }else{
+                InputPassStatus(passwordStatus);
+            }
         });
     });
 
     loginNameInput.change(function () {
         $(this).blur(function () {
-            loginInputPassStatus($(this));
+            var login_name = $.trim(loginNameInput.val());
+            if(typeof (login_name) !== 'undefined'){
+                InputPassStatus(loginNameStatus, true);
+            }else{
+                InputPassStatus(loginNameStatus);
+            }
         });
     });
 
     //登录的表单验证状态
-    function loginInputPassStatus(elem,isPass) {
+    function InputPassStatus(elem,isPass) {
         if(isPass === true){
             if(elem.hasClass('altb-icon')){
                 elem.removeClass('altb-icon');
@@ -305,7 +318,6 @@ $(function () {
                 elem.addClass('altb-icon');
             }
         }else{
-            console.log(1);
             if(elem.hasClass('altb-icon')){
                 elem.removeClass('altb-icon');
             }
@@ -331,12 +343,12 @@ $(function () {
     $('#reset-pwd-box .alt-close').click(function () {
         resetPwdBox.hide();
     });
-
+    //输入手机号触发
     phoneInput.change(function () {
         $(this).blur(function () {
             var phone = $.trim(phoneInput.val());
             if(typeof (phone) === 'undefined' || phone === ''){
-                loginInputPassStatus(phoneStatus, false);
+                InputPassStatus(phoneStatus, false);
                 phoneInput.focus();
                 resetPhonePass = false;
                 return false;
@@ -344,12 +356,12 @@ $(function () {
             var pattern = /^1[34578]\d{9}$/;
             if(!pattern.test(phone)){
                 phoneInput.focus();
-                loginInputPassStatus(phoneStatus, false);
+                InputPassStatus(phoneStatus, false);
                 resetPhonePass = false;
                 return false;
             }
             resetPhonePass = true;
-            loginInputPassStatus(phoneStatus, true);
+            InputPassStatus(phoneStatus, true);
         });
     });
 
@@ -368,7 +380,7 @@ $(function () {
             resetPhonePass = false;
             return false;
         }
-        loginInputPassStatus(phoneStatus, true);
+        InputPassStatus(phoneStatus, true);
         $.ajax({
             type: 'POST',
             url: sendCodeUrl ,
@@ -378,11 +390,14 @@ $(function () {
             success:function(res) {
                 if(res.error){
                     phoneInput.focus();
-                    loginInputPassStatus(phoneStatus, false);
+                    InputPassStatus(phoneStatus, false);
                     resetPhonePass = false;
                     return false;
                 }else{
-                    loginInputPassStatus(phoneStatus, true);
+                    InputPassStatus(phoneStatus, true);
+                    //按钮倒计时
+                    sendCaptchaBtn.css('background-color', '#CBCBCB');
+                    sendCaptchaSetCountDown(sendCaptchaBtn, 60, '#FEBD58');
                     resetPhonePass = true;
                 }
             },
@@ -404,11 +419,11 @@ $(function () {
                 async : false, //默认为true 异步
                 success:function(res) {
                     if(res.error){
-                        loginInputPassStatus(npasswordStatus, false);
+                        InputPassStatus(npasswordStatus, false);
                         resetPwdPass = false;
                         return false;
                     }else{
-                        loginInputPassStatus(npasswordStatus, true);
+                        InputPassStatus(npasswordStatus, true);
                         resetPwdPass = true;
                     }
                 },
@@ -427,7 +442,7 @@ $(function () {
         var new_password = passwordInput.val();
         //提交前再验证手机号码是否符合要求
         if(typeof (phone) === 'undefined' || phone === ''){
-            loginInputPassStatus(phoneStatus, false);
+            InputPassStatus(phoneStatus, false);
             phoneInput.focus();
             resetPhonePass = false;
             return false;
@@ -436,12 +451,12 @@ $(function () {
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            loginInputPassStatus(phoneStatus, false);
+            InputPassStatus(phoneStatus, false);
             phoneInput.focus();
             resetPhonePass = false;
             return false;
         }else{
-            loginInputPassStatus(phoneStatus, true);
+            InputPassStatus(phoneStatus, true);
             resetPhonePass = true;
         }
         if(typeof (captcha) === 'undefined' || captcha === ''){
@@ -477,7 +492,7 @@ $(function () {
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
-                    loginInputPassStatus(phoneStatus, false);
+                    InputPassStatus(phoneStatus, false);
                     resetPwdPass = false;
                     return false;
                 }else{
@@ -498,8 +513,8 @@ $(function () {
     var bindSendCaptchaBtn = $('#bind-phone-box .send_captcha_btn');
     var bindPhoneStatus = $('#bind-phone-box .phone_status');
     var bindCaptchaStatus = $('#bind-phone-box .captcha_status');
-    var submitBindPhoneBtn = $('#bind_phone_btn .bind_phone_btn');
-    var canceltBindPhoneBtn = $('#bind_phone_btn .bind_phone_cancel_btn');
+    var submitBindPhoneBtn = $('#bind-phone-box .bind_phone_btn');
+    var canceltBindPhoneBtn = $('#bind-phone-box .bind_phone_cancel_btn');
     var bindPhonePass = false;
     var bindCaptchaPass = false;
 
@@ -514,34 +529,34 @@ $(function () {
             var pattern = /^1[34578]\d{9}$/;
             if(!pattern.test(phone)){
                 phoneInput.focus();
-                loginInputPassStatus(bindPhoneStatus, false);
+                InputPassStatus(bindPhoneStatus, false);
                 bindPhonePass = false;
                 return false;
             }
             bindPhonePass = true;
-            loginInputPassStatus(bindPhoneStatus, true);
+            InputPassStatus(bindPhoneStatus, true);
         });
     });
 
-    //发送手机验证码
+    //绑定手机发送手机验证码
     bindSendCaptchaBtn.click(function(){
         var phone = $.trim(bindPhoneInput.val());
         var sendCodeUrl = '/Home/User/ajax_send_sms_captcha.html';
         if(typeof (phone) === 'undefined' || phone === ''){
-            loginInputPassStatus(bindPhoneStatus, false);
+            InputPassStatus(bindPhoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            loginInputPassStatus(bindPhoneStatus, false);
+            InputPassStatus(bindPhoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }
         bindPhonePass = true;
-        loginInputPassStatus(bindPhoneStatus, true);
+        InputPassStatus(bindPhoneStatus, true);
         $.ajax({
             type: 'POST',
             url: sendCodeUrl ,
@@ -551,11 +566,14 @@ $(function () {
             success:function(res) {
                 if(res.error){
                     bindPhoneInput.focus();
-                    loginInputPassStatus(bindPhoneStatus, false);
+                    InputPassStatus(bindPhoneStatus, false);
                     bindPhonePass = false;
                     return false;
                 }else{
-                    loginInputPassStatus(bindPhoneStatus, true);
+                    InputPassStatus(bindPhoneStatus, true);
+                    //发送成功后倒计时
+                    sendCaptchaBtn.css('background-color', '#CBCBCB');
+                    sendCaptchaSetCountDown(sendCaptchaBtn, 60, '#FEBD58');
                     bindPhonePass = true;
                 }
             },
@@ -570,22 +588,22 @@ $(function () {
         var captcha = bindCaptchaInput.val();
         //提交前再验证手机号码是否符合要求
         if(typeof (phone) === 'undefined' || phone === ''){
-            loginInputPassStatus(phoneStatus, false);
+            InputPassStatus(phoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }else{
-            loginInputPassStatus(phoneStatus, true);
+            InputPassStatus(phoneStatus, true);
             bindPhonePass = true;
         }
         var pattern = /^1[34578]\d{9}$/;
         if(!pattern.test(phone)){
-            loginInputPassStatus(phoneStatus, false);
+            InputPassStatus(phoneStatus, false);
             bindPhoneInput.focus();
             bindPhonePass = false;
             return false;
         }else{
-            loginInputPassStatus(phoneStatus, true);
+            InputPassStatus(phoneStatus, true);
             bindPhonePass = true;
         }
         if(typeof (captcha) === 'undefined' || captcha === ''){
@@ -614,11 +632,11 @@ $(function () {
             async : false, //默认为true 异步
             success:function(res) {
                 if(res.error){
-                    loginInputPassStatus(bindPhoneStatus, false);
+                    InputPassStatus(bindPhoneStatus, false);
                     return false;
                 }else{
                     bindPhoneBox.hide();
-                    alertInfoBox('绑定成功', '手机绑定成功', '');
+                    alertInfoAutoCloseBox('绑定成功', '手机绑定成功', 3);
                 }
             },
             error : function() {
@@ -629,6 +647,7 @@ $(function () {
 
     //取消绑定
     canceltBindPhoneBtn.click(function () {
+        console.log(1);
         bindPhoneBox.hide();
     });
 
@@ -642,11 +661,11 @@ $(function () {
             '        <div class="alt-phoneset">' +
             '            <div class="alt-div">' +
             '                <span class="alt-title">' + title + '</span>' +
-            '                <section class="alt-close">' +
-            '                    <img src="__PUBLIC__/Home/static/img/alertclose.png" alt="">' +
-            '                </section>' +
+            '                <span class="alt-close">' +
+            '                    <img src="/Public/Home/static/img/alertclose.png" alt="">' +
+            '                </span>' +
             '                <div class="alerticon">' +
-            '                    <img src="__PUBLIC__/Home/static/img/alerticon.png" alt="">' +
+            '                    <img src="/Public/Home/static/img/alerticon.png" alt="">' +
             '                    <div>' +
             '                        <p>' + message + '</p>' +
             '                        <p>'+ detail +'</p>' +
@@ -657,8 +676,54 @@ $(function () {
             '        </div>' +
             '    </div>';
         $('body').append(html);
+        var box = $('#message-alert-box');
         $('#message-alert-box .alt-close, #message-alert-box .alt-button').click(function () {
             box.remove();
         });
     }
+
+    //自动关闭消息弹框
+    function alertInfoAutoCloseBox(title, message, wait) {
+        var box = $('#message-alert-box');
+        if(box.length>0){
+            box.remove();
+        }
+        if(wait == 0 || wait == '' || wait == 'undefined'){
+            wait = 3;
+        }
+        var waitMessage = '<p><span class="wait-second">'+ wait +'</span>s 后关闭此页面</p>';
+        var html = '<div class="alertbackimg" id="message-alert-box">' +
+            '        <div class="alt-phoneset">' +
+            '            <div class="alt-div">' +
+            '                <span class="alt-title">' + title + '</span>' +
+            '                <span class="alt-close">' +
+            '                    <img src="/Public/Home/static/img/alertclose.png" alt="">' +
+            '                </span>' +
+            '                <div class="alerticon">' +
+            '                    <img src="/Public/Home/static/img/alerticon.png" alt="">' +
+            '                    <div>' +
+            '                        <p>' + message + '</p>' +
+            '                        <p>'+ waitMessage +'</p>' +
+            '                    </div>' +
+            '                </div>' +
+            '                <button class="alt-button">我知道了</button>' +
+            '            </div>' +
+            '        </div>' +
+            '    </div>';
+        $('body').append(html);
+        var box = $('#message-alert-box');
+        $('#message-alert-box .alt-close, #message-alert-box .alt-button').click(function () {
+            box.remove();
+        });
+        var interval = setInterval(function(){
+            var time = --wait;
+            $('#message-alert-box .wait-second').empty().html(time);
+            if(time <= 0) {
+                //window.location.reload();
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+
+
 });

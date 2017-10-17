@@ -68,7 +68,7 @@
 
         if(parseInt(remainTime) > 0){
             $('#send_code_btn').css('background-color', '#CBCBCB');
-            setCountDown(remainTime);
+            sendCaptchaSetCountDown($('#send_code_btn'), remainTime, '#00E3CB');
         }
 
         //提交手机号和验证码
@@ -136,7 +136,7 @@
                         dialogInfo(res.detail);
                     }else{
                         sendBtnObj.css('background-color', '#CBCBCB');
-                        setCountDown(60);
+                        sendCaptchaSetCountDown(sendBtnObj, 60, '#00E3CB');
                     }
                 },
                 error : function() {
@@ -146,23 +146,6 @@
         });
     });
 
-    //按钮的倒计时
-    var setTime;
-    function setCountDown(time) {
-        time = parseInt(time);
-        timeCount = time;
-        setTime = setInterval(function(){
-            if(time<=0){
-                clearInterval(setTime);
-                $("#send_code_btn").css('background-color', '#00E3CB');
-                $("#send_code_btn").val('获取验证码');
-                return;
-            }
-            time--;
-            var text = '剩余'+time+'秒';
-            $("#send_code_btn").val(text);
-        },1000);
-    }
 </script>
 </body>
 </html>

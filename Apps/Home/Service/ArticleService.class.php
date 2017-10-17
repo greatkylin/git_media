@@ -181,9 +181,10 @@ class ArticleService extends BaseService
      * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
      * @param int $currentPage 当前页
      * @param int $pageSize 页大小
+     * @param array $articleIds 不包含的文章id
      * @return bool|array
      */
-    public function getAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId, $currentPage, $pageSize = 5){
+    public function getAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId, $currentPage, $pageSize = 5, array $articleIds = array()){
         if(empty($cateId)){
             return $this->setError('必填参数缺失');
         }
@@ -210,6 +211,10 @@ class ArticleService extends BaseService
             $where['_string']  = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position) AND FIND_IN_SET(\''.$typeId.'\', a.typeids)' ;
         }
 
+        if(!empty($articleIds)){
+            $where['a.id'] = array('NOT IN', $articleIds);
+        }
+
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
@@ -232,9 +237,10 @@ class ArticleService extends BaseService
      * @param int $cateId 栏目id
      * @param int $appId 游戏id
      * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
+     * @param array $articleIds 不包含的文章id
      * @return bool|int
      */
-    public function countAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId){
+    public function countAppArticleStrategyByCateIdAndAppId($cateId, $appId, $typeId, array $articleIds = array()){
         if(empty($cateId)){
             return $this->setError('必填参数缺失');
         }
@@ -259,6 +265,9 @@ class ArticleService extends BaseService
         }
         if($typeId){
             $where['_string']  = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', show_position) AND FIND_IN_SET(\''.$typeId.'\', typeids)' ;
+        }
+        if(!empty($articleIds)){
+            $where['a.id'] = array('NOT IN', $articleIds);
         }
         $totalNum = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
@@ -863,6 +872,63 @@ class ArticleService extends BaseService
             return $this->setError('查询失败');
         }
         return $artNum;
+    }
+
+    /**
+     * 获取指定栏目以及该栏目的子栏目下指定游戏的置顶或热门 游戏攻略
+     * @author xy
+     * @since 2017/09/07 18:22
+     * @param int $cateId 栏目id
+     * @param int $appId 游戏id
+     * @param int $typeId 文章类型id 1表示初阶，2表示进阶，3表示高阶
+     * @param string $special IS_TOP置顶，IS_HOT热门
+     * @return bool|array
+     */
+    public function getOneHotOrTopAppStrategyByCateIdAndAppId($cateId, $appId, $typeId, $special){
+        if(empty($cateId)){
+            return $this->setError('必填参数缺失');
+        }
+        $cateList = self::getAllColumnInfoFromRedis();
+        if(empty($cateList)){
+            $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
+                ->field('catid, cat_name, parent_id')
+                ->select();
+        }
+        //递归获取指定分类以及该分类子类id
+        $catIdArr = get_id_array_recursive($cateList,$cateId,$newArray,'parent_id','catid');
+        $cateIdStr = implode(',', $catIdArr);
+        //展示在媒体站未删除已发布的文章 按创建时间倒序排序
+        $where = array(
+            'a.status' => self::ART_STATUS_PUBLISH,
+            'a.is_delete' => self::ART_DELETE_NO,
+            'a.catid' => array('IN', $cateIdStr),
+            '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
+        );
+        if($appId){
+            $where['app_id'] = $appId;
+        }
+        if($typeId){
+            $where['_string']  = 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position) AND FIND_IN_SET(\''.$typeId.'\', a.typeids)' ;
+        }
+        if(strtoupper($special) == 'IS_TOP'){
+            $where['a.is_top'] = 1;
+        }
+        if(strtoupper($special) == 'IS_HOT'){
+            $where['a.is_hot'] = 1;
+        }
+
+        $article = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
+            ->field('a.*')
+            ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
+            ->field('a.*')
+            ->where($where)
+            ->order('a.release_time DESC')
+            ->find();
+
+        if($article === false){
+            return $this->setError('查询失败');
+        }
+        return $article;
     }
 
     /**

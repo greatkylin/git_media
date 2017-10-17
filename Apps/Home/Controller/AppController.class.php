@@ -159,7 +159,10 @@ class AppController extends HomeBaseController {
         if($recommendApp === false){
             $this->error($appService->getFirstError());
         }
-        //4.获取指定游戏攻略的列表
+        //4.获取一篇置顶的游戏攻略文章
+
+        //5.获取一篇热门的游戏攻略文章
+        //6.获取指定游戏攻略的列表
         if(IS_AJAX){
             $this->ajaxGetStrategyList();
         }
@@ -261,15 +264,33 @@ class AppController extends HomeBaseController {
             'app_id' => $appId,
             'level_type' => $levelType,
         );
+        $topArticle = $service->getOneHotOrTopAppStrategyByCateIdAndAppId(1, $appId, $levelType, 'IS_TOP');
+        $hotArticle = $service->getOneHotOrTopAppStrategyByCateIdAndAppId(1, $appId, $levelType, 'IS_HOT');
+        $pageSize = 20;
+        if(!empty($topArticle)){
+            $pageSize = $pageSize - 1;
+        }
+        if(!empty($hotArticle)){
+            $pageSize = $pageSize - 1;
+        }
         $strategyTotalNum = $service->countAppArticleStrategyByCateIdAndAppId(1, $appId, $levelType);
         // 实例化分页类 传入总记录数和每页显示的记录数
-        $page = new NewPage($strategyTotalNum,19, $pageParams);
+        $page = new NewPage($strategyTotalNum, $pageSize, $pageParams);
         // 分页显示输出
         $show = $page->show();
         $strategyList = $service->getAppArticleStrategyByCateIdAndAppId(1, $appId, $levelType, $page->firstRow, $page->listRows);
         //获取游戏攻略阶级的类型
         $levelTypeArr = $service::getArticleLeverArr();
-
+        if(!empty($strategyList)){
+            $strategyList = array_reverse($strategyList);
+            if(!empty($hotArticle)){
+                $strategyList[] = $hotArticle;
+            }
+            if(!empty($topArticle)){
+                $strategyList[] = $topArticle;
+            }
+            $strategyList = array_reverse($strategyList);
+        }
         $this->assign('appId', $appId);
         $this->assign('currentPage', $currentPage);
         $this->assign('levelType', $levelType);

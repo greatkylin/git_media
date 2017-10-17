@@ -497,11 +497,12 @@ class UserController extends HomeBaseController
         $url = C('URL.ZHIYU_URL').U('Api/Gift/get_gift_media');
         $result = http($url, $paramArr, 'POST');
         $result = json_decode($result, true);
+        //var_dump($result);die;
         if(empty($result)){
             $this->outputJSON(true, 'false',  '未知错误');
         }
         if(isset($result['flag']) && $result['flag'] == 'success'){
-            $this->outputJSON(false, 'success', $result['data']['obj']['info']);
+            $this->outputJSON(false, 'success', $result['data']['obj']['info'], $result['data']['obj']);
         }else if(isset($result['flag']) && $result['flag'] == 'login'){
             unset_user_login_info();
             $this->outputJSON(true, 'false', $result['info']);
@@ -557,12 +558,17 @@ class UserController extends HomeBaseController
         $result = json_decode($result, true);
         //上传到指娱后删除本地的图片
         if(is_file($avatarPath)){
-            //unlink($avatarPath);
+            unlink($avatarPath);
         }
         if(empty($result)){
             $this->outputJSON(true, 'false',  '未知错误');
         }
         if(isset($result['flag']) && $result['flag'] == 'success'){
+            //更新session中保存的用户信息
+            $this->userInfo['head'] = $result['data']['obj'];
+            if(session('media_web_user')){
+                session('media_web_user', $this->userInfo);
+            }
             $this->outputJSON(false, 'success', $result['info'], array('head_url' => $result['data']['obj']));
         }else if(isset($result['flag']) && $result['flag'] == 'login'){
             unset_user_login_info();

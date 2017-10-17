@@ -153,6 +153,7 @@ class HomeBaseController extends Controller {
         if(empty($phone) || !isset($sendType)){
             $this->outputJSON(true, 'false', '必填参数缺失');
         }
+        //设置session防止频繁发送
         if(session('user_last_send_sms_time')){
             $lastSendTime = session('user_last_send_sms_time');
             $currentTime = time();

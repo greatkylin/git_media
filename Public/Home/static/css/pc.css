@@ -35,7 +35,7 @@
 
 .pc-menu {
     width: 200px;
-    /* height: 626px; */
+     height: 626px;
     background-color: white;
     border: 1px solid lightgray;
     display: flex;
@@ -66,18 +66,19 @@
 .pc-content {
     margin-left: 26px;
     width: 976px;
-    height: 626x;
+    /*height: 626px;*/
     /* background-color: white; */
     /* border: 1px solid red; */
     display: flex;
     display: -webkit-flex;
     flex-direction: column;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
 }
 
 .pc-content>div:nth-of-type(2) {
     width: 100%;
     height: 452px;
+    margin-top: 20px;
 }
 
 
@@ -2026,3 +2027,33 @@ tr {
 
 
 /* ---------------------------------弹窗系列------------------------------------- */
+
+.pc-mynewspage {
+    width: 100%;
+    height: 50px;
+    /* border: 1px solid red; */
+    margin-top: 30px;
+    padding: 0 212px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pc-mynewspage>div,
+.pc-mynewspage>section {
+    width: 48px;
+    height: 48px;
+    background-color: white;
+    color: #989898;
+    text-align: center;
+    line-height: 48px;
+    font-size: 18px;
+    cursor: default;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 5px;
+}
+
+.pc-pageactive {
+    background-color: #00E3CB !important;
+    color: white !important;
+}

@@ -25,7 +25,7 @@ class SearchService extends BaseService
         $clientIp = get_client_ip(0, true);
         $userInfo = get_user_info();
         if($userInfo){
-            $userId = $userInfo['id'];
+            $userId = $userInfo['uid'];
         }else{
             $userId = '';
         }

@@ -8,8 +8,9 @@
     <!--下面这个链接是其他头部没有的start！！！！！！！！！！！！！！！！！！！-->
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_md6a34q76dvaemi.css">-->
     <!--end-->
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/receive_gift.css">
 </head>
-<body class="searchApp">
+<body id="searchApp" class="searchApp">
 <!--头部注册栏开始-->
 <include file='Common:head_bar'/>
 <!--头部注册栏结束-->
@@ -63,11 +64,11 @@
 <include file='Common:footer'/>
 <!--底部导航结束-->
 <script src="__PUBLIC__/Home/static/js/page.js"></script>
+<script src="__PUBLIC__/Home/static/js/receive_gift.js"></script>
 <script>
     ajaxGetSearchResult();
     function ajaxGetSearchResult() {
         var url = $('.page-jump').data('href');
-        console.log(url);
         $.ajax({
             type: 'POST',
             url: url ,
@@ -83,7 +84,6 @@
     }
     $('.page-jump').click(function () {
         var url = $(this).data('href');
-        console.log(url);
         $.ajax({
             type: 'POST',
             url: url ,
@@ -92,6 +92,11 @@
             async : false, //默认为true 异步
             success:function(res) {
                 $('#search-result-box').empty().html(res);
+                //领取礼包
+                $(".gift-tag .get").click(function () {
+                    var gift_id = $(this).data('giftid');
+                    receive_gift(gift_id);
+                });
             },
             error : function() {
             }

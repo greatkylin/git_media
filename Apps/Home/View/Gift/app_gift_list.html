@@ -47,6 +47,11 @@
                     url:url,
                     success:function(res){
                         $('#app-gift-list').empty().html(res);
+                        //领取礼包
+                        $(".r").click(function () {
+                            var gift_id = $(this).data('giftid');
+                            receive_gift(gift_id);
+                        });
                     },
                     error : function() {
                     }
@@ -59,68 +64,6 @@
                 var newWidth = $(self).parent().next().text();
                 $(self).css("width", newWidth);
             });
-
-            //点击弹出mask
-            $(".r").click(function () {
-                var type = $(this).parents(".gift-bag").attr("data-type");
-                var gift_id = $(this).data('giftId');
-                if (type == "get-gift") {
-                    var url = '{:U("Home/User/receive_gift")}';
-                    $.ajax({
-                        type:'POST',
-                        url:url,
-                        data: {gift_id:gift_id},
-                        dataType: 'json',
-                        async : false, //默认为true 异步
-                        success:function(res){
-                            if(res.error){
-                                dialogInfo(res.detail);
-                            }else{
-                                $(".get-gift-mask").show();
-                                $(".taohao-mask").hide();
-                                $(".close").click(function () {
-                                    $(".get-gift-mask").hide();
-                                })
-
-                            }
-                        },
-                        error : function() {
-                        }
-                    });
-                }
-//                else {
-//                    $(".get-gift-mask").hide();
-//                    $(".taohao-mask").show();
-//                    $(".close").click(function () {
-//                        $(".taohao-mask").hide();
-//                    })
-//                }
-            })
-
-            // 复制相关
-            //先给按钮进行data-clipboard-text赋值
-            function giveVal(dom){
-                var value=$(dom).prev().text();
-                $(dom).attr("data-clipboard-text",value);
-            }
-            giveVal(".copy-taohao");
-
-            var client = new ZeroClipboard( $(".copy-taohao") );
-            client.on( 'ready', function(client) {
-                client.on( 'complete', function(client, args) {
-                    alert("Copied text to clipboard: " + args.text );
-                } );
-            } );
-            client.on( 'wrongflash noflash', function() {
-                ZeroClipboard.destroy();
-            } );
-
-            //这个能行
-            var client2 = new ZeroClipboard( $(".copy-button") );
-            client2.on( 'wrongflash noflash', function() {
-                ZeroClipboard.destroy();
-            } );
-
         });
     </script>
 </if>

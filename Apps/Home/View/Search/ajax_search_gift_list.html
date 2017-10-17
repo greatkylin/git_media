@@ -2,16 +2,16 @@
     <div class="gift-box">
         <if condition="count($giftList) gt 0">
             <volist name="giftList" id="gift">
-                <a class="gift-tag" href="{:U('Home/Gift/gift_page', array('app_id'=>$gift['app_id']))}">
+                <span class="gift-tag">
                     <div class="icon-and-name">
                         <div class="icon"><img alt="" src="{$gift.icon|format_url}"></div>
                         <div class="name">
                             <div class="self">{$gift.app_name}</div>
-                            <div class="get">立即领取</div>
+                            <div class="get" data-giftid="{$gift.gift_id}">立即领取</div>
                         </div>
                     </div>
                     <div class="desp-and-icon">
-                        <div>{$gift.latest_gift}</div>
+                        <div>{$gift.short_gift_name}</div>
                         <div>
                             <if condition="$gift['platform'] eq 1">
                                 <img alt="" src="__PUBLIC__/Home/static/img/anzhuo-icon.png">
@@ -27,7 +27,7 @@
                         </div>
                         <div class="yu-num">{$gift.residue_rate}%</div>
                     </div>
-                </a>
+                </span>
             </volist>
             <else />
             暂无礼包
@@ -47,6 +47,11 @@
             data: {keyword: '{$keyword}'},
             success:function(res){
                 $('#search-result-box').empty().html(res);
+                //领取礼包
+                $(".gift-tag .get").click(function () {
+                    var gift_id = $(this).data('giftid');
+                    receive_gift(gift_id);
+                });
             },
             error : function() {
             }

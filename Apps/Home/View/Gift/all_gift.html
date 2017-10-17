@@ -5,6 +5,7 @@
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_4he6muc0tua0pb9.css">-->
     <!--2017-7-6！！！！！！！！！！！！！！！！！-->
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <link rel="stylesheet" href="__PUBLIC__/Home/static/css/receive_gift.css">
 </head>
 <body class="bodygiftCenter bodygift-pocket">
 <!--头部注册栏开始-->
@@ -18,7 +19,7 @@
     <div class="subnav-box">
         <a href="{:U('Home/Gift/index')}" >礼包中心</a>
         <a href="{:U('Home/Gift/all_gift')}" class="active">礼包大全</a>
-        <a href="#">我的礼包</a>
+        <a href="{:U('Home/User/my_gift_list')}">我的礼包</a>
     </div>
 </div>
 <!--子导航栏结束-->
@@ -37,7 +38,7 @@
                             <div class="icon"><img alt="" src="{$hotGift.icon|format_url}"></div>
                             <div class="name">
                                 <div class="self">{$hotGift.app_name}</div>
-                                <div class="get">立即领取</div>
+                                <div class="get" data-giftid="{$hotGift.gift_id}">立即领取</div>
                             </div>
                         </div>
                         <div class="desp-and-icon">
@@ -76,6 +77,7 @@
 <script src="__PUBLIC__/Home/static/js/pinyinUtil.js"></script>
 <!--end-->
 <script src="__PUBLIC__/Home/static/js/swiper-3.4.2.min.js"></script>
+<script src="__PUBLIC__/Home/static/js/receive_gift.js"></script>
 <script>
     $(function () {
         //根据百分比来定长度
@@ -83,34 +85,6 @@
             var newWidth=$(self).parents(".yu").next().text();
             $(self).css("width",newWidth);
         });
-
-        //根据游戏名生成其首字母
-        /*function dataLetter(dom){
-            var letter=$(dom).find(".name").text();
-            var firstLe=pinyinUtil.getFirstLetter(letter).charAt(0);
-            $(dom).attr("data-letter",firstLe);
-        }
-        $(".whole-gift>.gift-tag").each(function(i,self){
-            dataLetter(this);
-        });*/
-
-        //相应首字母的游戏出现
-        /*$(".alphabet-list>span").click(function () {
-            $(this).addClass("active").siblings().removeClass("active");
-            $(".alphabet-choose").text($(this).text());
-            var txt=$(this).text();
-            if(txt=="#"){
-                $(".whole-gift>.gift-tag").show();
-            }else{
-                $(".whole-gift>.gift-tag").each(function(i,self){
-                    if($(self).attr("data-letter")==txt){
-                        $(self).show();
-                    }else{
-                        $(self).hide();
-                    }
-                });
-            }
-        });*/
 
         //ajax方式获取全部礼包分页列表
         $.ajax({
@@ -125,6 +99,11 @@
             error: function () {
             }
         });
+        //领取礼包
+//        $(".gift-tag .get").click(function () {
+//            var gift_id = $(this).data('giftid');
+//            receive_gift(gift_id);
+//        });
     })
 </script>
 </body>

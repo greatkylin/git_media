@@ -65,9 +65,13 @@ class GiftService extends BaseService
         //计算使用量 剩余量等信息
         if(!empty($giftList)){
             foreach ($giftList as $key=>&$gift){
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
             }
         }
         return $giftList;
@@ -124,9 +128,13 @@ class GiftService extends BaseService
         //计算使用量 剩余量等信息
         if(!empty($giftList)){
             foreach ($giftList as $key=>&$gift){
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
             }
         }
         return $giftList;
@@ -181,9 +189,13 @@ class GiftService extends BaseService
         //计算媒体站的礼包的数量，以及已使用量，还有剩余量
         if(!empty($hotGiftList)){
             foreach ($hotGiftList as $key => &$gift) {
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
                 //该游戏下最新的3款礼包
                 $giftList = $this->getLatestAppGiftList($gift['app_id']);
                 if(!empty($giftList)){
@@ -252,9 +264,13 @@ class GiftService extends BaseService
         //计算媒体站的礼包的数量，以及已使用量，还有剩余量
         if(!empty($newGiftList)){
             foreach ($newGiftList as $key => &$gift) {
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
                 //该游戏下最新的3款礼包
                 $giftList = $this->getLatestAppGiftList($gift['app_id']);
                 if(!empty($giftList)){
@@ -464,9 +480,13 @@ class GiftService extends BaseService
         //计算媒体站的礼包的数量，以及已使用量，还有剩余量
         if(!empty($giftList)){
             foreach ($giftList as $key => &$gift) {
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
                 //该游戏下最新的3款礼包
                 $latestGiftList = $this->getLatestAppGiftList($gift['app_id']);
                 if(!empty($latestGiftList)){
@@ -529,7 +549,7 @@ class GiftService extends BaseService
     }
 
     /**
-     * 分页获取有礼包的游戏列表
+     * 分页获取有礼包的游戏的礼包列表
      * @author xy
      * @since 2017/09/12 17:37
      * @param array $where
@@ -561,6 +581,7 @@ class GiftService extends BaseService
                 gl.original_name, gl.gift_name,
                 IF(sgl.final_hot_sort=0, 999999999, IFNULL(sgl.final_hot_sort,999999999)) as final_hot_sort, 
                 gl.gift_icon, CONCAT(lib.app_name, gl.gift_name, gl.original_name) AS full_gift_name, 
+                CONCAT(gl.gift_name, gl.original_name) AS short_gift_name, 
                 CONCAT(gl.app_id, gl.gift_name, gl.original_name) AS id_gift_name, 
                 (list.app_down_num + list.cardinal) as down_num, 
                 IFNULL(alib.platform, lib.platform) as platform,
@@ -585,9 +606,13 @@ class GiftService extends BaseService
         //计算媒体站的礼包的数量，以及已使用量，还有剩余量
         if(!empty($giftList)){
             foreach ($giftList as $key => &$gift) {
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
             }
         };
         return $giftList;
@@ -711,9 +736,13 @@ class GiftService extends BaseService
 
         if(!empty($giftList)){
             foreach ($giftList as $key=>&$gift){
+                if(!empty($gift['gift_icon'])){
+                    $gift['icon'] = $gift['gift_icon'];
+                }
                 $gift['total_num'] = $this->countMediaAppGift($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['use_num'] = $this->countMediaAppGiftUse($gift['app_id'], $gift['gift_name'], $gift['original_name']);
                 $gift['residue_rate'] = (($gift['total_num'] - $gift['use_num'])/$gift['total_num']) * 100;
+                $gift['residue_rate'] = intval($gift['residue_rate']);
             }
         }
 

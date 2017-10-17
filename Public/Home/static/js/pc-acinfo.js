@@ -1,30 +1,4 @@
 $(function() {
-    var hdlt = 0;
-    $(".headdownlart").click(function() {
-        hdlt++;
-        if (hdlt % 2) {
-            $(".headdownlart").attr("src", "/Public/Home/static/gulp/img/Downarrow1.png")
-            $(".header-up-login-div").css("background-color", "white");
-            $(".colorsseta").css("color", "red");
-            $(".headloginalert").show();
-            $(".headpcenter").attr("src", "/Public/Home/static/img/pcenter1.png");
-        } else {
-            $(".headdownlart").attr("src", "/Public/Home/static/gulp/img/Downarrow2.png")
-            $(".header-up-login-div").css("background-color", "");
-            $(".colorsseta").css("color", "white");
-            $(".headloginalert").hide();
-            $(".headpcenter").attr("src", "/Public/Home/static/img/pcenter.png");
-        }
-    });
-    $(".pc-headbtnwallet").click(function() {
-        var href = $(this).data('href');
-        window.location.href = href
-    })
-    $(".pc-headbtncoupon").click(function() {
-        var href = $(this).data('href');
-        window.location.href = href
-    })
-
     /*$(".pc-qianbi").click(function() {
         $(".pc-qianbi").css("background-image", "url('/Public/Home/static/img/pc-qianbi2.png')");
         $(".pc-qianbi").text("已签");
@@ -167,51 +141,6 @@ $(function() {
 
     });
 
-    //领取礼包
-    function receive_gift(gift_id) {
-        var url = '/Home/User/receive_gift';
-        $.ajax({
-            type:'POST',
-            url:url,
-            data: {gift_id:gift_id},
-            dataType: 'json',
-            async : false, //默认为true 异步
-            success:function(res){
-                if($('get-gift-mask').length > 0){
-                    $('get-gift-mask').remove();
-                }
-                if(res.error){
-
-                }else{
-                    var html = '<div class="system-alert get-gift-mask" style="display: none">' +
-                        '    <div class="container">' +
-                        '        <div class="hd">' +
-                        '            <span>系统提示</span><img class="close" alt="" src="/Public/Home/static/img/close-mask.png">' +
-                        '        </div>' +
-                        '        <div class="main-content">' +
-                        '            <div><img alt="" src="/Public/Home/static/img/success.png"></div>' +
-                        '            <div>' +
-                        '                <div class="text">' +
-                        '                    <span>ABCDEFGHIJ</span>' +
-                        '                    <span class="copy copy-gift" data-clipboard-target="">复制</span></div>' +
-                        '                <div>领取成功，请尽快使用</div>' +
-                        '            </div>' +
-                        '        </div>' +
-                        '        <!--<div class="use-now"><img alt="" src="__PUBLIC__/Home/static/img/dengpao.png">您领取的礼包将60分钟后进入淘号，请您尽快激活使用</div>-->' +
-                        '    </div>' +
-                        '</div>';
-                    $('body').append(html);
-                    $(".get-gift-mask").show();
-                    $(".taohao-mask").hide();
-                    $(".close").click(function () {
-                        $(".get-gift-mask").remove();
-                    })
-                }
-            },
-            error : function() {
-            }
-        });
-    }
 });
 /**
  * 个人中心消息弹窗

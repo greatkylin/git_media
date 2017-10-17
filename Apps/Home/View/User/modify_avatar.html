@@ -236,8 +236,8 @@
                     return false;
                     $(".filepath").val('');
                     $('#avatar-tips-message').empty().html('上传失败');
-
                 }else{
+                    dialogInfo('修改成功', '', 1, true);
                     window.location.reload();
                 }
             },

@@ -27,18 +27,15 @@
 </div>
 <div class="key-strategy" style="height: 985px">
     <if condition = "count($strategyList) gt 0">
-        <volist name="strategyList" id="strategy">
+        <volist name="strategyList" id="strategy" key="i">
             <a href="{:U('Home/Article/strategy_detail', array('id' => $strategy['id']))}" class="strategy-tag" data-type="{$currentType}">
                 <div class="img-and-font">
                     <img src="__PUBLIC__/Home/static/img/news-icon.png" alt="">
-                    <if condition="$strategy['attr'] gt 0">
-                        <if condition="$strategy['attr'] eq 1">
-                            <div class="zhiding">置顶</div>
-                            <elseif condition="$strategy['attr'] eq 2" />
-                            <div class="remen">热门</div>
-                            <else />
-                            <div class="jingping">精品</div>
-                        </if>
+                    <if condition="$strategy['is_top'] eq 1">
+                        <div class="zhiding">置顶</div>
+                    </if>
+                    <if condition="$strategy['is_hot'] eq 1">
+                        <div class="remen">热门</div>
                     </if>
                     <span>{$strategy.title}</span>
                 </div>
