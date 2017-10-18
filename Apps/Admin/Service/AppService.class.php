@@ -119,7 +119,7 @@ class AppService extends BaseService
             $insertData[$key]['pre_new_sort'] = 0;
             $insertData[$key]['edit_time'] = 0;
             $insertData[$key]['sync_time'] = time();
-            $insertData[$key]['is_publish'] = 2;    //默认同步过来的游戏列表未发布状态
+            $insertData[$key]['is_publish'] = 0;    //默认同步过来的游戏列表未发布状态
             $insertData[$key]['pin_yin'] = strtoupper($char); //首字母拼音
         }
         $appList = NULL;
@@ -484,11 +484,11 @@ class AppService extends BaseService
             }
         }else if($optType == self::UN_SHELVE_GAME){
             //执行下架操作，如果是未发布状态，则提示已下架，否则执行下架操作
-            if($appData['is_publish'] == 2){
+            if($appData['is_publish'] == 0){
                 $this->setError('该游戏已是下架状态');
                 return false;
             }else{
-                $appData['is_publish'] = 2;
+                $appData['is_publish'] = 0;
                 $result = M('app_list')->save($appData);
                 if($result === false){
                     $this->setError('游戏下架失败');

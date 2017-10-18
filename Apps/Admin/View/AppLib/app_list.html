@@ -12,9 +12,9 @@
                 <input type="text" name="id_or_name" id="id_or_name" placeholder=" 请输入游戏名称或者游戏id进行搜索" style="width:250px" class="input-text" value="{$idOrName}">
                 <span class="select-box inline">
                     <select name="is_publish" class="select">
-                        <option value="0">上架状态</option>
-                        <option value="1" <if condition="$isPublish eq 1">selected="selected"</if>>已发布</option>
-                        <option value="2" <if condition="$isPublish eq 2">selected="selected"</if>>下架</option>
+                        <option value="">发布状态</option>
+                        <option value="1" <if condition="$isPublish heq 1">selected="selected"</if>>发布</option>
+                        <option value="0" <if condition="$isPublish heq 0">selected="selected"</if>>下架</option>
                     </select>
                 </span>
                 <button name="submit" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
@@ -63,11 +63,9 @@
                     </if>
                 </if>
                 <td>
-                    <if condition="$val['is_publish'] eq 0">
-                        未知
-                        <elseif condition="$val['is_publish'] eq 1"/>
+                    <if condition="$val['is_publish'] eq 1">
                         已发布
-                        <elseif condition="$val['is_publish'] eq 2"/>
+                        <else />
                         下架
                     </if>
                 </td>
@@ -227,7 +225,7 @@
     //搜索表单重置按钮
     $("#reset").click(function(){
         $("input[name=id_or_name]").val('');
-        $("select[name=is_publish]").val(0);
+        $("select[name=is_publish]").val('');
     });
     /*编辑按钮点击弹框*/
     function app_sort_edit(title, url, w, h) {

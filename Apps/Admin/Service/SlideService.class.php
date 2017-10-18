@@ -26,7 +26,7 @@ class SlideService extends BaseService
             return false;
         }
         $where['cid'] = $cid;
-        $where['is_delete'] = 1;
+        $where['is_delete'] = 0;
         $category = M('slide_cat')->where($where)->find();
         if(empty($category)){
             return $this->setError('分类不存在或者已删除');
@@ -78,13 +78,13 @@ class SlideService extends BaseService
         foreach ($slideList as &$value) {
             # 自动下架
             if ($value['end_time'] < $now_time) {
-                M('slide')->save(array('slide_id' => $value['slide_id'], 'is_publish' => 2));
+                M('slide')->save(array('slide_id' => $value['slide_id'], 'is_publish' => 0));
             }
             if ($now_time < $value['start_time'] && $value['is_publish'] == 1) {
                 $value['publish_name'] = '待上线';
             } elseif ($value['start_time'] < $now_time && $value['end_time'] > $now_time && $value['is_publish'] == 1) {
                 $value['publish_name'] = '已上线';
-            } elseif ($value['end_time'] < $now_time || $value['is_publish'] == 2) {
+            } elseif ($value['end_time'] < $now_time || $value['is_publish'] == 0) {
                 $value['publish_name'] = '已下线';
             }
         }

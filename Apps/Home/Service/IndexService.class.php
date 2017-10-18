@@ -26,8 +26,8 @@ class IndexService extends BaseService
         }
 
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //图片未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //图片未删除
             'c.is_publish' => 1, //图片已发布
             'acc.keyword' => strtoupper($keyword), //指定的分类
         );
@@ -62,8 +62,8 @@ class IndexService extends BaseService
         }
 
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //图片未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //图片未删除
             'c.is_publish' => 1, //图片已发布
             'acc.id' => $id, //指定的分类
         );
@@ -99,8 +99,8 @@ class IndexService extends BaseService
         }
 
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //未删除
             'c.is_publish' => 1, //已发布
             'acc.keyword' => strtoupper($keyword), //指定的分类
         );
@@ -133,11 +133,11 @@ class IndexService extends BaseService
             $timeStamp = time();
         }
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //未删除
             'c.is_publish' => 1, //已发布
             'acc.keyword' => strtoupper('NEW_APP_NOTICE'), //指定的分类 新游预告
-            'app.is_delete' => 1, //游戏未删除
+            'app.is_delete' => 0, //游戏未删除
             'app.open_test_time' => array(array('egt', $timeStamp), array('lt', $timeStamp+86400), 'AND'), //指定的时间
         );
 
@@ -170,7 +170,7 @@ class IndexService extends BaseService
         }
         $where = array(
             'pa.is_publish' => 1, //已上架
-            'pa.is_delete' => 1,  //未删除
+            'pa.is_delete' => 0,  //未删除
             'pa.activity_id' => $activityId, //指定的id
         );
         $activity = M('popular_activity')->alias('pa')
@@ -230,8 +230,8 @@ class IndexService extends BaseService
         }
 
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //图片未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //图片未删除
             'c.is_publish' => 1, //图片已发布
             'acc.keyword' => strtoupper($keyword), //指定的分类
         );
@@ -265,8 +265,8 @@ class IndexService extends BaseService
         }
 
         $where = array(
-            'acc.is_delete' => 1, //分类未删除
-            'c.is_delete' => 1, //图片未删除
+            'acc.is_delete' => 0, //分类未删除
+            'c.is_delete' => 0, //图片未删除
             'c.is_publish' => 1, //图片已发布
             'acc.keyword' => strtoupper($keyword), //指定的分类
         );
@@ -299,7 +299,7 @@ class IndexService extends BaseService
         $where = array(
             'keyword' => strtoupper($keyword),
             'is_publish' => 1,
-            'is_delete' => 1
+            'is_delete' => 0
         );
         $content = M('independent_content')->where($where)->find();
         if($content === false){

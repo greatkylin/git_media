@@ -8,6 +8,7 @@ $(function () {
     var popBoxCloseBtn = $('.pop-box .module-off, .pop-box .alt-close');
     popBoxCloseBtn.click(function () {
         popBox.hide();
+        window.location.reload();
     });
 
     //注册的密码与用户名是否验证通过，默认否
@@ -191,7 +192,7 @@ $(function () {
     });
 
     /************************************登录弹框*************************************/
-    var isRememberPwd = 0;
+    var isRememberPwd = 1;
     var loginBox = $('#login-box');
     var loginNameInput = $('#login_name');
     var loginPwdInput = $('#login_password');

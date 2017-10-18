@@ -54,8 +54,8 @@
             <div class="formControls col-xs-8 col-sm-9">
                 <span class="select-box"  style="width: 300px">
                     <select id="is_publish" name="is_publish" class="select valid" aria-required="true" aria-invalid="false">
-                        <option value="1" <if condition="$appInfo[is_publish] eq 1">selected</if>>正常</option>
-                        <option value="2" <if condition="$appInfo[is_publish] eq 2">selected</if>>删除</option>
+                        <option value="1" <if condition="$appInfo[is_publish] eq 1">selected</if>>发布</option>
+                        <option value="0" <if condition="$appInfo[is_publish] eq 0">selected</if>>下架</option>
                     </select>
                     <label id="is_publish-error" class="error valid" style="display: block;"></label>
 				</span>

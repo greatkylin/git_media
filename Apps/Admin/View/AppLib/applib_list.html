@@ -42,11 +42,9 @@
                 <td>{$val.app_id}</td>
                 <td>{$val.app_name}</td>
                 <td>
-                    <if condition="$val['is_publish'] eq 0">
-                        未知
-                        <elseif condition="$val['is_publish'] eq 1"/>
+                    <if condition="$val['is_publish'] eq 1">
                         已发布
-                        <elseif condition="$val['is_publish'] eq 2"/>
+                    <else />
                         下架
                     </if>
                 </td>

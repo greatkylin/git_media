@@ -16,6 +16,8 @@ class HomeBaseController extends Controller {
         $this->getDefaultSiteInfo();
         //获取推荐的热词
         $this->getRecommendSearchKeyword(5);
+        //检查是否记住密码免登录
+        $this->checkUserLogin();
         //获取用户信息
         $this->userInfo = get_user_info();
         $this->assign('userInfo', $this->userInfo);
@@ -78,7 +80,7 @@ class HomeBaseController extends Controller {
             'SITE_SEO_DESCRIPTION', //网站默认描述
         );
         $where = array(
-            'is_delete' => 1,
+            'is_delete' => 0,
             'keyword' => array('IN', $siteConfigKeywordArr),
         );
         $configList = M('sys_config')->where($where)->select();
@@ -207,6 +209,33 @@ class HomeBaseController extends Controller {
             $this->outputJSON(false, '', $result['info']);
         }else{
             $this->outputJSON(true, '', $result['info']);
+        }
+    }
+
+    /**
+     * 检查是否有记住密码免登录
+     * @author xy
+     * @since 2017/10/18 09:47
+     */
+    protected function checkUserLogin(){
+        $userInfo = session('media_web_user');
+        if(!empty($userInfo)){
+            $loginName = cookie('login_name');
+            if(!empty($loginName)){
+                $encryptedPwd = cookie(multiMD5($loginName));
+                if(!empty($encryptedPwd)){
+                    $service = new UserService();
+                    $user = $service->getUser($loginName);
+                    if(!empty($user)){
+                        if(multiMD5($user['password']) == $encryptedPwd){
+                            unset($user['password']);
+                            $user['head'] = format_url($user['head']);
+                            session('login_name', $loginName);
+                            session('media_web_user', $user);
+                        }
+                    }
+                }
+            }
         }
     }
 }

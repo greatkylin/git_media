@@ -59,7 +59,7 @@ class MenuService extends BaseService
     protected function getIndexMenu(){
         $category = M('index_column_category')
             ->field('id, keyword, is_delete, name')
-            ->where('is_delete = 1')->select();
+            ->where('is_delete = 0')->select();
         if(!empty($category)){
             $newCategory = array();
             foreach ($category as $key => $value){

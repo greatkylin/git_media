@@ -34,7 +34,7 @@ class SlideController extends AdminBaseController
             $where['s.start_time'] = array('lt', $nowTime);
             $where['s.end_time'] = array('gt', $nowTime);
         } elseif ($publishStatus == 3) {// 已下线
-            $where['s.is_publish'] = 2;
+            $where['s.is_publish'] = 0;
         }
 
         if(!empty($slideCid)){
@@ -225,7 +225,7 @@ class SlideController extends AdminBaseController
         $slide['update_time'] = time();
         $slide['admin_id'] = $this->user_info['id'];
         if($slide['is_publish'] == 1){
-            $slide['is_publish'] = 2;
+            $slide['is_publish'] = 0;
         }else{
             $slide['is_publish'] = 1;
         }

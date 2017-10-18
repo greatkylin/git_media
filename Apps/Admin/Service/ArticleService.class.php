@@ -34,17 +34,23 @@ class ArticleService extends BaseService
         $userInfo = self::getAdminUserInfo();
         if($userInfo){
             //子查询，查询分类下展示在媒体站文章的数量
-            $subQuery =
-                ' SELECT app_id, catid, COUNT(*) as total_num FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'article'.
-                ' WHERE FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\',show_position) and app_id <> 0'.
-                ' GROUP BY `catid` ';
-            $query =
-                ' SELECT c.*, IF(c.`sort` = 0,99999999,c.`sort`) as `self_sort`, a.`nickname`, IFNULL(t.total_num,0) as total_num, arc.`id` as arcid, arc.`sort_rank`,IF(arc.`sort_rank` = 0,99999999,IFNULL(arc.`sort_rank`,99999999)) as `self_sort_rank` FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'category AS c'.
-                ' LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'admin_user AS a ON a.`id` = c.`admin_id`'.
-                ' LEFT JOIN ('.$subQuery.') AS t ON t.`catid` = c.`catid`'.
-                ' LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'arctype AS arc ON arc.`app_id` = c.`app_id` AND arc.`cat_id` = c.`catid`'.
-                ' WHERE ( c.`parent_id` = 0 and c.`app_id` = 0 and c.`type` = '.self::ARTICLE_TYPE_APP.') OR (c.`app_id` = '.$appId.' AND c.`type`= '.self::ARTICLE_TYPE_APP.')'.
-                ' ORDER BY `self_sort` ASC, `self_sort_rank` ASC';
+            $subQuery = '
+                SELECT app_id, catid, COUNT(*) as total_num 
+                FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'article 
+                WHERE FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\',show_position) and app_id = '.$appId.' 
+                GROUP BY `app_id`, `catid` 
+                ';
+            $query = '
+                SELECT c.*, IF(c.`sort` = 0,99999999,c.`sort`) as `self_sort`, a.`nickname`, 
+                IFNULL(t.total_num,0) as total_num, arc.`id` as arcid, arc.`sort_rank`, 
+                IF(arc.`sort_rank` = 0,99999999,IFNULL(arc.`sort_rank`,99999999)) as `self_sort_rank` 
+                FROM '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'category AS c 
+                LEFT JOIN '.C('DB_ZHIYU.DB_NAME').'.'.C('DB_ZHIYU.DB_PREFIX').'admin_user AS a ON a.`id` = c.`admin_id` 
+                LEFT JOIN ('.$subQuery.') AS t ON t.`catid` = c.`catid` 
+                LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'arctype AS arc ON arc.`app_id` = c.`app_id` AND arc.`cat_id` = c.`catid` 
+                WHERE ( c.`parent_id` = 0 and c.`app_id` = 0 and c.`type` = '.self::ARTICLE_TYPE_APP.') OR (c.`app_id` = '.$appId.' AND c.`type`= '.self::ARTICLE_TYPE_APP.') 
+                GROUP BY `catid` 
+                ORDER BY `self_sort_rank` ASC';
             $columnInfo = M()->query($query);
             //var_dump($columnInfo);
             $column = array();

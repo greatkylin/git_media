@@ -34,8 +34,8 @@
             <div class="formControls col-xs-8 col-sm-9">
                 <span class="select-box">
                     <select name="is_delete" class="select valid" aria-required="true" aria-invalid="false">
-                        <option value="1" <if condition="$configData['is_delete'] eq 1">selected</if>>正常</option>
-                        <option value="2" <if condition="$configData['is_delete'] eq 2">selected</if>>删除</option>
+                        <option value="0" <if condition="$configData['is_delete'] eq 0">selected</if>>正常</option>
+                        <option value="1" <if condition="$configData['is_delete'] eq 1">selected</if>>删除</option>
                     </select>
                     <label id="articlecolumn-error" class="error valid" style="display: block;"></label>
 				</span>

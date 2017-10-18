@@ -55,13 +55,13 @@ class AppLibController extends AdminBaseController
         if(!empty($idOrName)){
             $where['_string'] = 'alist.app_id = \''.$idOrName.'\' OR alib.app_name like \'%'.$idOrName.'%\' OR lib.app_name like \'%'.$idOrName.'%\'';
         }
-        $isPublish = intval(I('is_publish'));
+        $isPublish = I('is_publish');
         if(!empty($isPublish)){
             //根据上架状态进行查询
             $where['alist.is_publish'] = array('IN', array($isPublish));
         }else{
             //媒体站已上架和未上架的游戏
-            $where['alist.is_publish'] = array('IN', array(1, 2));
+            $where['alist.is_publish'] = array('IN', array(0, 1));
         }
 
         // 分页
@@ -202,11 +202,14 @@ class AppLibController extends AdminBaseController
         //判断是否有通过游戏名称搜索游戏
         $appName = trim(I('app_name'));
         if(!empty($appName)){
-            $where['alib.app_name'] = array('like', '%'.$appName.'%');
-            $where['lib.app_name'] = array('like', '%'.$appName.'%');
+            $condition['alib.app_name'] = array('like', '%'.$appName.'%', 'OR');
+            $condition['lib.app_name'] = array('like', '%'.$appName.'%');
+            $condition['_logic'] = 'OR';
+            $where['_complex'] = $condition;
+
         }
         //媒体站已上架和未上架的游戏
-        $where['alist.is_publish'] = array('IN', array(1, 2));
+        $where['alist.is_publish'] = array('IN', array(0, 1));
 
         // 分页
         $service = new AppService();

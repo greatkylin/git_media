@@ -24,8 +24,8 @@ class SysConfigController extends AdminBaseController {
         if($isDelete == 1){
             $where[] = ' `is_delete` = 1 ';
         }
-        if($isDelete == 2){
-            $where[] = ' `is_delete` = 2 ';
+        if($isDelete == 0){
+            $where[] = ' `is_delete` = 0 ';
         }
         //$where[] = ' (IF(sort=0,9999999,sort) OR IFNULL(sort,9999999)) as self_sort';
         $where = implode('AND',$where);
@@ -161,10 +161,10 @@ class SysConfigController extends AdminBaseController {
             $this->outputJSON(true,'100001','未找到id为'.$id.'的分类');
         }
         $currentStatus = $configData['is_delete'];
-        if($currentStatus == 1){
-            $configData['is_delete'] = 2;
-        }else{
+        if($currentStatus == 0){
             $configData['is_delete'] = 1;
+        }else{
+            $configData['is_delete'] = 0;
         }
         M()->startTrans();
         $result = M('sys_config')->where(array('id'=>$id))->save($configData);
@@ -279,7 +279,7 @@ class SysConfigController extends AdminBaseController {
             'SITE_SEO_DESCRIPTION',
         );
         $where['keyword'] = array('IN', $keywordArr);
-        $where['is_delete'] = 1;
+        $where['is_delete'] = 0;
         $configs = M('sys_config')->field('keyword, config_value')->where($where)->select();
         $newArr = array();
         if(!empty($configs)){

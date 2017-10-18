@@ -14,16 +14,16 @@ class ContentController extends AdminBaseController {
     public function content_list(){
         $id = intval(I('id'));
         $keyword = trim(I('keyword'));
-        $isPublish = intval(I('is_publish'));
-        $isDelete = intval(I('is_delete'));
+        $isPublish =I('is_publish');
+        $isDelete = I('is_delete');
         $where = array();
         if(!empty($keyword)){
             $where['keyword'] = array('like', '%'.$keyword.'%');
         }
-        if(!empty($isPublish)){
+        if($isPublish != ''){
             $where['is_publish'] = $isPublish;
         }
-        if(!empty($isDelete)){
+        if($isDelete != ''){
             $where['is_delete'] = $isDelete;
         }
         if(!empty($id)){
@@ -94,7 +94,7 @@ class ContentController extends AdminBaseController {
             $data['title'] = $title;
             $data['sort'] = $sort;
             //默认是未发布，编辑后点击发布才发布
-            $data['is_publish'] = 2;
+            $data['is_publish'] = 0;
             $data['is_delete'] = 1;
             $data['update_time'] = time();
             $data['create_time'] = time();
@@ -214,10 +214,10 @@ class ContentController extends AdminBaseController {
             $this->outputJSON(true,'100001','未找到id为'.$id.'的内容');
         }
         $content['update_time'] = time();
-        if($content['is_delete'] == 1){
-            $content['is_delete'] = 2;
-        }else{
+        if($content['is_delete'] == 0){
             $content['is_delete'] = 1;
+        }else{
+            $content['is_delete'] = 0;
         }
         $result = M('independent_content')->where(array('id'=>$id))->save($content);
         if(empty($result)){
@@ -242,7 +242,7 @@ class ContentController extends AdminBaseController {
         }
         $content['update_time'] = time();
         if($content['is_publish'] == 1){
-            $content['is_publish'] = 2;
+            $content['is_publish'] = 0;
         }else{
             $content['is_publish'] = 1;
         }

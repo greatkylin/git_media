@@ -841,7 +841,7 @@ class GiftService extends BaseService
      * @return bool
      */
     public function getGiftIndexLeftAd($limit = 1){
-        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
+        $slideCate = M('slide_cat')->where(array('is_delete' => 0, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
         // 获取搜索条件
         if($slideCate === false){
             $this->setError('获取分类信息失败');

@@ -16,9 +16,9 @@
                 <input type="text" value="{$keyword}" name="keyword" placeholder=" 关键字" style="width:250px" class="input-text">
                 <span class="select-box inline">
                     <select name="is_delete" class="select">
-                        <option value="0">请选择</option>
-                        <option value="1" <if condition="$isDelete eq 1">selected</if>>正常</option>
-                        <option value="2" <if condition="$isDelete eq 2">selected</if>>删除</option>
+                        <option value="">请选择</option>
+                        <option value="0" <if condition="$isDelete heq 0">selected</if>>正常</option>
+                        <option value="1" <if condition="$isDelete heq 1">selected</if>>删除</option>
                     </select>
                 </span>
                 <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜分类</button>
@@ -48,8 +48,8 @@
                 <td>{$val.keyword}</td>
                 <td>{$val.config_value}</td>
                 <td>
-                    <if condition="$val['is_delete'] eq 2">删除</if>
-                    <if condition="$val['is_delete'] eq 1">正常</if>
+                    <if condition="$val['is_delete'] eq 1">删除</if>
+                    <if condition="$val['is_delete'] eq 0">正常</if>
                 </td>
                 <td>
                     <if condition="$val['self_sort'] eq 9999999">
@@ -66,7 +66,7 @@
                         <i class="Hui-iconfont Hui-iconfont-edit"></i>编辑
                     </a>
                     <php>
-                        if($val['is_delete'] == 1){
+                        if($val['is_delete'] == 0){
                             $message='确定要删除这个分类吗？';
                             $tips = '删除';
                         }else{

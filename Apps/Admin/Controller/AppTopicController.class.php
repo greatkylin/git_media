@@ -289,7 +289,7 @@ class AppTopicController extends AdminBaseController
         }
 
         if($topic['is_publish'] == 1){
-            $data['is_publish'] = 2;
+            $data['is_publish'] = 0;
         }else{
             $data['is_publish'] = 1;
         }
@@ -319,10 +319,10 @@ class AppTopicController extends AdminBaseController
             $this->outputJSON(true,'100001','未找到id为'.$topicId.'的专题');
         }
 
-        if($topic['is_delete'] == 1){
-            $data['is_delete'] = 2;
-        }else{
+        if($topic['is_delete'] == 0){
             $data['is_delete'] = 1;
+        }else{
+            $data['is_delete'] = 0;
         }
         M()->startTrans();
         $result = M('app_topic')->where(array('topic_id'=>$topicId))->save($data);
@@ -363,7 +363,7 @@ class AppTopicController extends AdminBaseController
             $where['s.start_time'] = array('lt', $nowTime);
             $where['s.end_time'] = array('gt', $nowTime);
         } elseif ($publishStatus == 3) {// 已下线
-            $where['s.is_publish'] = 2;
+            $where['s.is_publish'] = 0;
         }
 
         if(empty($slideCid)){

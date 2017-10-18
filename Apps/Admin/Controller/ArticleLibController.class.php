@@ -672,10 +672,10 @@ class ArticleLibController extends AdminBaseController
         $cateIdArr = $service->getNewsArticleColumnIdAndChildColumnIdByCatId($catId);
         if (empty($cateIdArr)) {
             //当前栏目分类下，且游戏id为$appId的展示在媒体站文章
-            $where['_string'] = 'a.catid =' . $catId . ' AND a.app_id = 0 AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
+            $where['_string'] = 'a.catid =' . $catId . ' AND a.app_id <= 0 AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
         } else {
             //当前栏目分类以及子分类下，且游戏id为$appId的展示在媒体站文章
-            $where['_string'] = 'a.catid IN (' . implode(',', $cateIdArr) . ') AND a.app_id = 0 AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
+            $where['_string'] = 'a.catid IN (' . implode(',', $cateIdArr) . ') AND a.app_id <= 0 AND FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)';
         }
 
         $totalCount = $service->getArticleListTotalNum($where); //获取总条数

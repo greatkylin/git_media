@@ -138,9 +138,10 @@ class ArticleService extends BaseService
      * @return bool|array
      */
     public function getAppArticleByCateIdAndAppId($cateId, $appId, $limit = 5){
-        if(empty($cateId) || empty($appId)){
+        if(empty($cateId)){
             return $this->setError('必填参数缺失');
         }
+
         $cateList = self::getAllColumnInfoFromRedis();
         if(empty($cateList)){
             $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
@@ -155,10 +156,11 @@ class ArticleService extends BaseService
             'a.status' => self::ART_STATUS_PUBLISH,
             'a.is_delete' => self::ART_DELETE_NO,
             'a.catid' => array('IN', $cateIdStr),
-            'a.app_id' => $appId,
             '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
         );
-
+        if($appId !== false){
+            $where['a.app_id'] = $appId;
+        }
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id=a.id')
@@ -531,7 +533,7 @@ class ArticleService extends BaseService
             'a.catid' => array('IN', $cateIdStr),
             '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
         );
-        if($appId){
+        if($appId !== false){
             $where['app_id'] = $appId;
         }
 
@@ -661,9 +663,10 @@ class ArticleService extends BaseService
      * @return bool|array
      */
     public function getMostReadArticleListByCateIdAndAppId($cateId, $appId, $limit = 4){
-        if(empty($cateId) || empty($appId)){
+        if(empty($cateId)){
             return $this->setError('必填参数缺失');
         }
+
         $cateList = self::getAllColumnInfoFromRedis();
         if(empty($cateList)){
             $cateList = M(C('DB_ZHIYU.DB_NAME').'.'.'category', C('DB_ZHIYU.DB_PREFIX'))
@@ -678,9 +681,11 @@ class ArticleService extends BaseService
             'a.status' => self::ART_STATUS_PUBLISH,
             'a.is_delete' => self::ART_DELETE_NO,
             'a.catid' => array('IN', $cateIdStr),
-            'a.app_id' => $appId,
             '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
         );
+        if($appId !== false){
+            $where['a.app_id'] = $appId;
+        }
         $articleList = M(C('DB_ZHIYU.DB_NAME').'.'.'article', C('DB_ZHIYU.DB_PREFIX'))->alias('a')
             ->field('a.*')
             ->join('LEFT JOIN '.C('DB_NAME').'.'.C('DB_PREFIX').'archives arc on arc.article_id = a.id')
@@ -705,7 +710,7 @@ class ArticleService extends BaseService
      * @return bool|array
      */
     public function getArticleReleaseBeforeTodayByCateIdAndAppId($cateId, $appId, $limit = 4){
-        if(empty($cateId) || empty($appId)){
+        if(empty($cateId)){
             return $this->setError('必填参数缺失');
         }
         $cateList = self::getAllColumnInfoFromRedis();
@@ -722,9 +727,11 @@ class ArticleService extends BaseService
             'a.status' => self::ART_STATUS_PUBLISH,
             'a.is_delete' => self::ART_DELETE_NO,
             'a.catid' => array('IN', $cateIdStr),
-            'a.app_id' => $appId,
             '_string' => 'FIND_IN_SET(\''.self::ART_SHOW_POSITION_MEDIA.'\', a.show_position)',
         );
+        if($appId !== false){
+            $where['a.app_id'] = $appId;
+        }
         //获取今天的开始时间
         $todayStartTime = strtotime(date('Y-m-d', time));
         $where['a.release_time'] = array('lt', $todayStartTime);

@@ -62,7 +62,7 @@ class AppService extends BaseService
      */
     public function getPublishAppIdArray(){
         $where = array(
-            'alist.is_delete' => array('IN', array(1)), //媒体站已上架的游戏
+            'alist.is_delete' => array('IN', array(0)), //媒体站已上架的游戏
             'alist.publish_time' => array('lt', time()) //上架时间小于当前时间
         );
         //获取已经上架的游戏的id
@@ -804,7 +804,7 @@ class AppService extends BaseService
         $timeArr = get_a_week_time_start_and_end($currentTimeStamp, 1);
         $where = array(
             't.is_publish' => 1, //发布的游戏专题
-            't.is_delete' => 1,  //未删除的游戏专题
+            't.is_delete' => 0,  //未删除的游戏专题
             't.time_range_start' => array('egt', $timeArr[0]), //专题开始时间大于或等于本周的开始时间
             't.time_range_end' => array('elt', $timeArr[1]),    //专题的结束时间小于或等于本周结束的时间
         );
@@ -1422,7 +1422,7 @@ class AppService extends BaseService
         //已发布的未删除的每周专题
         $where = array(
             'is_publish' => 1,
-            'is_delete' => 1,
+            'is_delete' => 0,
         );
         $totalNum = M('app_topic')->alias('a')
             ->field('a.topic_id')
@@ -1447,7 +1447,7 @@ class AppService extends BaseService
         //已发布的未删除的每周专题
         $where = array(
             'a.is_publish' => 1,   //已上架
-            'a.is_delete' => 1,    //未删除
+            'a.is_delete' => 0,    //未删除
             'a.publish_time' => array(array('gt', 0), array('lt', time())) //上架时间小于当前时间的，表示已上架
         );
         $topicList = M('app_topic')->alias('a')
@@ -1482,7 +1482,7 @@ class AppService extends BaseService
      */
     public function getAppTopicListImage(){
         $where = array(
-            'c.is_delete' => 1,
+            'c.is_delete' => 0,
             's.is_publish' => 1,
             'c.keyword' => 'APP_TOPIC_TOP_IMAGE', //分类关键词 ,
         );
@@ -1511,7 +1511,7 @@ class AppService extends BaseService
         //已发布的未删除的每周专题
         $where = array(
             'a.is_publish' => 1,   //已上架
-            'a.is_delete' => 1,    //未删除
+            'a.is_delete' => 0,    //未删除
             'a.publish_time' => array(array('gt', 0), array('lt', time())), //上架时间小于当前时间的，表示已上架
             'a.topic_id' => $topicId,
         );

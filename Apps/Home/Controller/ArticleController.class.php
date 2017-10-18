@@ -78,7 +78,7 @@ class ArticleController extends HomeBaseController
         }
         $supplierId = $supplier['supplier_id'];
         $txAppList = $service->getStrategyAppListBySupplierId($supplierId, 12);
-        if(empty($txAppList)){
+        if($txAppList === false){
             $this->error('获取腾讯热门游戏失败');
         }
         //6.ajax网易游戏攻略
@@ -218,7 +218,7 @@ class ArticleController extends HomeBaseController
      */
     public function app_ques(){
         $appId = intval(I('app_id'));
-        if(empty($appId)){
+        if($appId <= 0){
             $this->error('必填参数缺失');
         }
         if(IS_AJAX){
@@ -576,10 +576,12 @@ class ArticleController extends HomeBaseController
             $this->error($giftService->getFirstError());
         }
         //5.取同类型的五款游戏
-        $appService = new AppService();
-        $recommendAppList = $appService -> getAppsInSameAppTypeByAppId($article['app_id']);
-        if($recommendAppList === false){
-            $this->error($appService->getFirstError());
+        if($article['app_id']>0){
+            $appService = new AppService();
+            $recommendAppList = $appService -> getAppsInSameAppTypeByAppId($article['app_id']);
+            if($recommendAppList === false){
+                $this->error($appService->getFirstError());
+            }
         }
         //根据游戏id获取获取游戏信息
         if(!empty($article['app_id'])){

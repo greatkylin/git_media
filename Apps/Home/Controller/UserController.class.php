@@ -588,7 +588,7 @@ class UserController extends HomeBaseController
         $result = json_decode($result, true);
         //上传到指娱后删除本地的图片
         if(is_file($avatarPath)){
-            unlink($avatarPath);
+            //unlink($avatarPath);
         }
         if(empty($result)){
             $this->outputJSON(true, 'false',  '未知错误');

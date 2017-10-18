@@ -24,8 +24,10 @@ function get_user_info(){
  * @since 2017/10/10 1：33
  */
 function unset_user_login_info(){
-    if(session('login_name')){
+    $loginName = session('login_name');
+    if($loginName){
         session('login_name', null);
+        cookie(multiMD5($loginName), null);
     }
     if(session('media_web_user')){
         session('media_web_user', null);
@@ -145,8 +147,9 @@ function circle_img($imgpath, $r) {
         }
     }
     $userInfo = session('media_web_user');
-    $savePath = dirname(__FILE__).'/../../../Uploads/Images/user/avatar'.$userInfo['uid'].'/circle.'.$ext['extension'];
-
+    $saveDir = dirname(__FILE__).'/../../../Uploads/Images/user/avatar'.$userInfo['uid'];
+    $savePath = $saveDir.'/circle.'.$ext['extension'];
+    mk_dir_ext($saveDir);
     switch ($ext['extension']) {
         case 'jpg':
             imagejpeg($img, $savePath);

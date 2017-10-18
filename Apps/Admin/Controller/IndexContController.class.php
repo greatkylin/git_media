@@ -44,8 +44,8 @@ class IndexContController extends AdminBaseController
         if($isDelete == 1){
             $where['is_delete'] = 1;
         }
-        if($isDelete == 2){
-            $where['is_delete'] = 2;
+        if($isDelete == 0){
+            $where['is_delete'] = 0;
         }
         // 分页
         $totalCount = count(M('index_column_category')->where($where)->select()); //获取总条数
@@ -172,7 +172,7 @@ class IndexContController extends AdminBaseController
         }
         $currentStatus = $categoryInfo['is_delete'];
         if($currentStatus == 1){
-            $cateData['is_delete'] = 2;
+            $cateData['is_delete'] = 0;
         }else{
             $cateData['is_delete'] = 1;
         }
@@ -182,9 +182,9 @@ class IndexContController extends AdminBaseController
             M()->rollback();
             $this->outputJSON(true,'100001','改变状态失败');
         }else{
-            if($currentStatus == 1){
-                $data['is_delete'] = 2;
-                $result = M('index_column_content')->where(array('category_id'=>$id,'is_delete'=>1))->save($data);
+            if($currentStatus == 0){
+                $data['is_delete'] = 1;
+                $result = M('index_column_content')->where(array('category_id'=>$id,'is_delete'=>0))->save($data);
                 if($result === false){
                     M()->rollback();
                     $this->outputJSON(true,'100001','改变状态失败');
@@ -203,8 +203,8 @@ class IndexContController extends AdminBaseController
     public function content_list(){
         $title = trim(I('title'));
         $categoryId = intval(I('category_id'));
-        $isDelete = intval(I('is_delete'));
-        $isPublish = intval(I('is_publish'));
+        $isDelete = I('is_delete');
+        $isPublish = I('is_publish');
         $where = array();
         if(!empty($title)){
             $where['i.title'] = array('like', '%'.$title.'%');
@@ -213,12 +213,10 @@ class IndexContController extends AdminBaseController
             $where['i.category_id'] = $categoryId;
         }
         //默认显示未删除的图片
-        if(!empty($isDelete)){
+        if($isDelete != ''){
             $where['i.is_delete'] = $isDelete;
-        }else{
-            $where['i.is_delete'] = 1;
         }
-        if(!empty($isPublish)){
+        if($isPublish != ''){
             $where['i.is_publish'] = $isPublish;
         }
         // 分页
@@ -250,7 +248,7 @@ class IndexContController extends AdminBaseController
         //图片分类列表
         $categoryList = M('index_column_category')
             ->field('id, keyword, is_delete, name')
-            ->where('is_delete = 1')
+            ->where('is_delete = 0')
             ->select();
         $this->assign('categoryList',$categoryList);
 
@@ -308,7 +306,7 @@ class IndexContController extends AdminBaseController
             $data['is_publish'] = $isPublish;
             $data['description'] = $description;
             //默认未删除
-            $data['is_delete'] = 1;
+            $data['is_delete'] = 0;
             $data['create_time'] = time();
             $data['update_time'] = time();
 
@@ -369,7 +367,7 @@ class IndexContController extends AdminBaseController
         }else{
             $categoryId = intval(I('category_id'));
             //获取未删除的分类列表
-            $where['is_delete'] = 1;
+            $where['is_delete'] = 0;
             $where['id'] = $categoryId;
             $category = M('index_column_category')->where($where)->find();
             if(empty($category)){
@@ -427,7 +425,7 @@ class IndexContController extends AdminBaseController
             $data['is_publish'] = $isPublish;
             $data['sort'] = $sort;
             //默认未删除
-            $data['is_delete'] = 1;
+            $data['is_delete'] = 0;
             $data['update_time'] = time();
 
             //热门攻略需要指定文章分类id的图片
@@ -521,12 +519,12 @@ class IndexContController extends AdminBaseController
             $this->outputJSON(true,'100001','id不能为空');
         }
         $content = M('index_column_content')->where(array('id'=>$id))->find();
-        if(empty($image)){
+        if(empty($content)){
             $this->outputJSON(true,'100001','未找到id为'.$id.'的图片');
         }
         $currentStatus = $content['is_publish'];
         if($currentStatus == 1){
-            $data['is_publish'] = 2;
+            $data['is_publish'] = 0;
         }else{
             $data['is_publish'] = 1;
         }
@@ -558,12 +556,12 @@ class IndexContController extends AdminBaseController
         }
         $keyword = $this->getKeywordByCategoryId($content['category_id']);
         $currentStatus = $content['is_delete'];
-        if($currentStatus == 1){
-            $data['is_delete'] = 2;
-            $appData['is_delete'] = 2;
-        }else{
+        if($currentStatus == 0){
             $data['is_delete'] = 1;
             $appData['is_delete'] = 1;
+        }else{
+            $data['is_delete'] = 0;
+            $appData['is_delete'] = 0;
         }
         M()->startTrans();
         $result = M('index_column_content')->where(array('id'=>$id))->save($data);
@@ -603,7 +601,7 @@ class IndexContController extends AdminBaseController
         //当前分类下，所有未发布的图片
         $where = array(
             'category_id' => $categoryId,
-            'is_publish' => 2
+            'is_publish' => 0
         );
         $result = M('index_column_content')->where($where)->save(array('is_publish' => 1));
         if($result === false){
@@ -739,7 +737,7 @@ class IndexContController extends AdminBaseController
             return false;
         }
         //获取当前分类下所有未删除图片的数量
-        $imageNum = M('index_column_content')->where(array('category_id'=>$categoryId, 'is_delete'=>1))->count();
+        $imageNum = M('index_column_content')->where(array('category_id'=>$categoryId, 'is_delete'=>0))->count();
         //判断图片总量的数量是否超过限制数量
         if(!empty($category['num_limit'])){
             if($imageNum >= $category['num_limit']){

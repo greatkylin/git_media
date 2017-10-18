@@ -249,7 +249,7 @@
 }
 
 .pc-giftbag>div {
-    width: 940;
+    width: 940px;
     /* height: 120px; */
     padding-right: 29px;
     border-bottom: 1px solid #EAEAEA;
@@ -444,7 +444,7 @@
 .pc-couponpicdy {
     width: 49px;
     height: 55px;
-    background-image: url("../../static/img/pc-couponpic10.png");
+    background-image: url("../../static/img/pc-couponpic11.png");
     position: absolute;
     top: -5px;
     right: -2px;
@@ -471,7 +471,7 @@
 .pc-couponpicygdy {
     width: 49px;
     height: 55px;
-    background-image: url("../../static/img/pc-couponpic11.png");
+    background-image: url("../../static/img/pc-couponpic10.png");
     position: absolute;
     top: -5px;
     right: -2px;
@@ -490,15 +490,6 @@
     width: 65px;
     height: 65px;
     background-image: url("../../static/img/pc-couponpic12.png");
-    position: absolute;
-    left: 3px;
-    bottom: 2px;
-}
-
-.guoqiquan {
-    width: 65px;
-    height: 65px;
-    background-image: url("../../static/img/pc-couponpic8.png");
     position: absolute;
     left: 3px;
     bottom: 2px;
@@ -1831,7 +1822,7 @@ tr {
 }
 
 .pc-payfortext>div:nth-of-type(2) {
-    font-size: 16;
+    font-size: 16px;
     color: #656565;
     text-align: right;
 }

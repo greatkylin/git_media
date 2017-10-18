@@ -97,13 +97,13 @@ class AppController extends HomeBaseController {
         }
         //4.获取游戏新闻
         $artService = new ArticleService();
-        $newsList = $artService->getAppArticleByCateIdAndAppId(2, $appId, 10);
+        $newsList = $artService->getAppArticleByCateIdAndAppId($artService::ARTICLE_NEWS, $appId, 10);
         //5.获取游戏测评
-        $testList = $artService->getAppArticleByCateIdAndAppId(3, $appId, 10);
+        $testList = $artService->getAppArticleByCateIdAndAppId($artService::ARTICLE_EVALUATION, $appId, 10);
         //6.获取游戏攻略
-        $appGuideLowerList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_LOWER, 0, 10);
-        $appGuideMiddleList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_MIDDLE, 0, 10);
-        $appGuideHighList = $artService->getAppArticleStrategyByCateIdAndAppId(1, $appId, $artService::ARTICLE_LEVEL_HIGH, 0,10);
+        $appGuideLowerList = $artService->getAppArticleStrategyByCateIdAndAppId($artService::ARTICLE_STRATEGY, $appId, $artService::ARTICLE_LEVEL_LOWER, 0, 10);
+        $appGuideMiddleList = $artService->getAppArticleStrategyByCateIdAndAppId($artService::ARTICLE_STRATEGY, $appId, $artService::ARTICLE_LEVEL_MIDDLE, 0, 10);
+        $appGuideHighList = $artService->getAppArticleStrategyByCateIdAndAppId($artService::ARTICLE_STRATEGY, $appId, $artService::ARTICLE_LEVEL_HIGH, 0,10);
         $artLevelArr = $artService::getArticleLeverArr();
         //获取相同类型下最热的5款游戏
         $recommendApp = $appService->getAppsInSameAppTypeByAppId($appInfo['app_id'], 5);

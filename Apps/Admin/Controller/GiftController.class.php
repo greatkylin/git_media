@@ -564,7 +564,7 @@ class GiftController extends AdminBaseController
             $where['gs.start_time'] = array('lt', $nowTime);
             $where['gs.end_time'] = array('gt', $nowTime);
         } elseif ($publishStatus == 3) {// 已下线
-            $where['gs.is_publish'] = 2;
+            $where['gs.is_publish'] = 0;
         }
 
         if(!empty($showPosition)){
@@ -794,7 +794,7 @@ class GiftController extends AdminBaseController
         $slide['update_time'] = time();
         $slide['admin_id'] = $this->user_info['id'];
         if($slide['is_publish'] == 1){
-            $slide['is_publish'] = 2;
+            $slide['is_publish'] = 0;
         }else{
             $slide['is_publish'] = 1;
         }
@@ -828,7 +828,7 @@ class GiftController extends AdminBaseController
      * @since 2017/09/15 18:13
      */
     public function gift_index_ad_list(){
-        $slideCate = M('slide_cat')->where(array('is_delete' => 1, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
+        $slideCate = M('slide_cat')->where(array('is_delete' => 0, 'keyword' => 'GIFT_INDEX_LEFT_AD'))->getField('cid');
         // 获取搜索条件
         if($slideCate === false){
             $this->error('获取分类信息失败');
@@ -850,7 +850,7 @@ class GiftController extends AdminBaseController
             $where['s.start_time'] = array('lt', $nowTime);
             $where['s.end_time'] = array('gt', $nowTime);
         } elseif ($publishStatus == 3) {// 已下线
-            $where['s.is_publish'] = 2;
+            $where['s.is_publish'] = 0;
         }
 
         if(empty($slideCid)){

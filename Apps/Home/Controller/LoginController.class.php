@@ -112,12 +112,12 @@ class LoginController extends HomeBaseController
             $userInfo = $result['data']['obj'];
             session('login_name', $loginName);
             session('media_web_user', $userInfo);
-            //若记住密码
-//            if(intval(I('is_remember'))){
-//                cookie('login_name', $loginName);
-//                cookie(md5($loginName), multiMD5(multiMD5($password)));
-//            }
-
+            //若记住密码,保存用户名和加密后的密码到cookie
+            if(intval(I('is_remember'))){
+                cookie('login_name', $loginName, 7*86400);
+                $password = strtoupper(md5($password));
+                cookie(multiMD5($loginName), multiMD5(multiMD5($password)), 7*86400);
+            }
             $this->outputJSON(false, 'success', '登录成功');
         }else{
             $this->outputJSON(true, 'false',  $result['info']);

@@ -20,12 +20,12 @@ class ActivityController extends AdminBaseController
         if(!empty($activityTitle)){
             $where['activity_title'] = array('like', "%".$activityTitle."%");
         }
-        $isPublish = intval(I('is_publish'));
-        if(!empty($isPublish)){
+        $isPublish = I('is_publish');
+        if($isPublish != ''){
             $where['is_publish'] = $isPublish;
         }
-        $isDelete = intval(I('is_delete'));
-        if(!empty($isDelete)){
+        $isDelete = I('is_delete');
+        if($isDelete != ''){
             $where['is_delete'] = $isDelete;
         }
         $totalCount = M('popular_activity')->where($where)->count(); //获取总条数
@@ -105,7 +105,7 @@ class ActivityController extends AdminBaseController
                 'create_time' => time(),
             );
             if(empty($publishStatus)){
-                $data['is_publish'] = 2;
+                $data['is_publish'] = 0;
             }else{
                 $data['is_publish'] = 1;
                 $data['publish_time'] = time();
@@ -179,7 +179,7 @@ class ActivityController extends AdminBaseController
                 $data['image_path'] = $imaUrl;
             }
             if(empty($publishStatus)){
-                $data['is_publish'] = 2;
+                $data['is_publish'] = 0;
             }else{
                 $data['is_publish'] = 1;
                 $data['publish_time'] = time();
@@ -220,7 +220,7 @@ class ActivityController extends AdminBaseController
         }
         $activity['update_time'] = time();
         if($activity['is_publish'] == 1){
-            $activity['is_publish'] = 2;
+            $activity['is_publish'] = 0;
         }else{
             $activity['is_publish'] = 1;
             $activity['publish_time'] = time();
@@ -247,10 +247,10 @@ class ActivityController extends AdminBaseController
             $this->outputJSON(true,'100001','未找到id为'.$activityId.'的活动');
         }
         $activity['update_time'] = time();
-        if($activity['is_delete'] == 1){
-            $activity['is_delete'] = 2;
-        }else{
+        if($activity['is_delete'] == 0){
             $activity['is_delete'] = 1;
+        }else{
+            $activity['is_delete'] = 0;
         }
         $result = M('popular_activity')->where(array('activity_id'=>$activityId))->save($activity);
         if(empty($result)){

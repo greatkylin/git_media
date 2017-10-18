@@ -31,16 +31,16 @@
                 <input type="hidden" value="{$categoryId}" name="category_id" placeholder=" " style="width:250px" class="input-text">
                 <span class="select-box inline">
                     <select name="is_delete" class="select">
-                        <option value="0">删除状态</option>
-                        <option value="1" <if condition="$isDelete eq 1">selected</if>>正常</option>
-                        <option value="2" <if condition="$isDelete eq 2">selected</if>>删除</option>
+                        <option value="">删除状态</option>
+                        <option value="0" <if condition="$isDelete heq 0">selected</if>>正常</option>
+                        <option value="1" <if condition="$isDelete heq 1">selected</if>>删除</option>
                     </select>
                 </span>
                 <span class="select-box inline">
                     <select name="is_publish" class="select">
-                        <option value="0">发布状态</option>
-                        <option value="1" <if condition="$isPublish eq 1">selected</if>>发布</option>
-                        <option value="2" <if condition="$isPublish eq 2">selected</if>>下架</option>
+                        <option value="">发布状态</option>
+                        <option value="1" <if condition="$isPublish heq 1">selected</if>>发布</option>
+                        <option value="0" <if condition="$isPublish heq 0">selected</if>>下架</option>
                     </select>
                 </span>
                 <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont"></i> 搜索</button>
@@ -73,12 +73,12 @@
                 <td>{$val.category_name}</td>
                 <td>{$val.sort}</td>
                 <td>
-                    <if condition="$val['is_delete'] eq 1">正常</if>
-                    <if condition="$val['is_delete'] eq 2">删除</if>
+                    <if condition="$val['is_delete'] eq 0">正常</if>
+                    <if condition="$val['is_delete'] eq 1">删除</if>
                 </td>
                 <td>
                     <if condition="$val['is_publish'] eq 1">发布</if>
-                    <if condition="$val['is_publish'] eq 2">下架</if>
+                    <if condition="$val['is_publish'] eq 0">下架</if>
                 </td>
                 <td>
                     <a title="编辑"
@@ -88,7 +88,7 @@
                         <i class="Hui-iconfont Hui-iconfont-edit2"></i>编辑
                     </a>
                     <php>
-                        if($val['is_delete'] == 1){
+                        if($val['is_delete'] == 0){
                             $statusMessage='确定要删除这条记录吗？';
                             $statusTips = '删除';
                         }else{
@@ -272,8 +272,8 @@
     $("#reset").click(function(){
         $("input[name=title]").val('');
         $("select[name=category_id]").val(category_id);
-        $("select[name=is_delete]").val(0);
-        $("select[name=is_publish]").val(0);
+        $("select[name=is_delete]").val('');
+        $("select[name=is_publish]").val('');
     });
 
     $(function() {

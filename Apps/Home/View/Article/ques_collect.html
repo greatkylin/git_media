@@ -3,6 +3,11 @@
 <head>
     <include file='Common:header'/>
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_7hq35kn0ha7nwmi.css">-->
+    <style>
+        body.everyDayTopicCollect .banner-container .pics-and-ban .pics .pics-inner > a{
+            margin-left: 28px;
+        }
+    </style>
 </head>
 <body class="everyDayTopicCollect">
 <!--头部注册栏开始-->
@@ -177,7 +182,7 @@
         });
         $("#week").click(function () {
             showGiftBox(this,".week");
-        })
+        });
 
 
 
@@ -189,8 +194,6 @@
             var starWidth=parseInt($(".icon-xingxing").parent().css("width"));
             var newWidth=(score-n)*starWidth+"px";
 
-
-            console.log(score,n,starWidth,newWidth);
             if(n>=1){
                 $(dom).find(".cover-top span").each(function (z,ele) {
                     if(z<n){

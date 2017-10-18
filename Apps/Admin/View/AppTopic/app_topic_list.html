@@ -58,7 +58,7 @@
                            class="btn btn-success radius" style="text-decoration:none">
                             <i class="Hui-iconfont Hui-iconfont-edit"></i>修改
                         </a>
-                        <if condition="$val[is_publish] eq 2">
+                        <if condition="$val[is_publish] eq 0">
                             <a title="发布"
                                href="javascript:;"
                                onclick="topicPublishChange('{$val.topic_id}', '确定要发布这篇专题吗')"
@@ -73,7 +73,7 @@
                                 <i class="Hui-iconfont Hui-iconfont-xiajia"></i>下架
                             </a>
                         </if>
-                        <if condition="$val[is_delete] eq 1">
+                        <if condition="$val[is_delete] eq 0">
                             <a title="删除"
                                href="javascript:;"
                                onclick="topicDeleteChange('{$val.topic_id}', '确定要删除这边文章吗')"
